@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "publications.html",
+    "href": "publications.html",
+    "title": "Publications",
+    "section": "",
+    "text": "Martin, S. (2024). piar: Price Index Aggregation in R. Journal of Open Source Software, 9(101): 6781.\nKirby-McGregor, M. and Martin, S. (2019). An R package for calculating repeat-sale price indices. Romanian Statistical Review, 3/2019: 17-33."
+  },
+  {
+    "objectID": "publications.html#software-papers",
+    "href": "publications.html#software-papers",
+    "title": "Publications",
+    "section": "",
+    "text": "Martin, S. (2024). piar: Price Index Aggregation in R. Journal of Open Source Software, 9(101): 6781.\nKirby-McGregor, M. and Martin, S. (2019). An R package for calculating repeat-sale price indices. Romanian Statistical Review, 3/2019: 17-33."
+  },
+  {
+    "objectID": "publications.html#statistics-canada-publications",
+    "href": "publications.html#statistics-canada-publications",
+    "title": "Publications",
+    "section": "Statistics Canada publications",
+    "text": "Statistics Canada publications\n\nMartin, S. (2021). A note on general decompositions for price indexes. Prices Analytical Series. Statistics Canada Catalogue 62F0014M.\nMartin, S. (2020). Gearing up to stay open: Trends in businesses’ needs for personal protective equipment since July. Statcan COVID-19: Data Insights for a Better Canada. Statistics Canada Catalogue 45-28-0001.\nMartin, S. (2020). Gearing up to restart: Businesses’ need for personal protective equipment. Statcan COVID-19: Data Insights for a Better Canada. Statistics Canada Catalogue 45-28-0001.\nMartin, S. and Rouleau, B. (2020). An exploration of work, learning, and work-integrated learning in Canada using the Longitudinal and International Study of Adults. LISA Research Paper Series. Statistics Canada Catalogue 89-648-X.\nMartin, S. (2019). Methodology of the Residential Property Price Index (RPPI). Prices Analytical Series. Statistics Canada Catalogue 62F0014M.\nMartin, S. (2018). The association between job flexibility and job satisfaction. Insights on Canadian Society. Statistics Canada Catalogue 75-006-X.\nMartin, S. (2018). In sickness and in health: The association between health and household income. LISA Research Paper Series. Statistics Canada Catalogue 89-648-X."
+  },
+  {
+    "objectID": "publications.html#academic-journals",
+    "href": "publications.html#academic-journals",
+    "title": "Publications",
+    "section": "Academic journals",
+    "text": "Academic journals\n\nHeyes, A., Kapur, S., Kennedy, P., Martin, S., and Maxwell, J. (2020). But What Does it Mean? Competition between Products Carrying Alternative Green Labels when Consumers are Active Acquirers of Information. Journal of the Association of Environmental and Resource Economists, 7(2): 243-277.\nMartin, S. (2019). Moral management in competitive markets. Journal of Economics and Management Strategy, 28(3): 541–560.\nHeyes, A. and Martin, S. (2018). Inefficient social labels: Strategic proliferation and fragmentation in the market for certification. Journal of Economics and Management Strategy, 27(2): 206–220.\nHeyes, A., Lyon, T. P., and Martin, S. (2018). Salience games: Private politics when public attention is limited. Journal of Environmental Economics and Management, 88: 396–410.\nMartin, S. and Rivers, N. (2018). Information provision, market incentives, and household electricity consumption: Evidence from a large-scale field deployment. Journal of the Association of Environmental and Resource Economists, 5(1): 207–231.\nHeyes, A. and Martin, S. (2017). Social labeling by competing NGOs: A model with multiple issues and entry. Management Science, 63(6): 1800–1813.\nHeyes, A. and Martin, S. (2016). Fuzzy products. International Journal of Industrial Organization, 45: 1–9.\nHeyes, A. and Martin, S. (2015). NGO mission design. Journal of Economic Behavior & Organization, 119: 197–210."
+  },
+  {
+    "objectID": "publications.html#refereed-for",
+    "href": "publications.html#refereed-for",
+    "title": "Publications",
+    "section": "Refereed for",
+    "text": "Refereed for\n\nEnvironmental and Resource Economics\nJournal of the Association of Environmental and Resource Economists\nJournal of Economics and Management Strategy\nJournal of Environmental Economics and Management\nJournal of Open Source Software"
+  },
+  {
+    "objectID": "software.html",
+    "href": "software.html",
+    "title": "Software",
+    "section": "",
+    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes."
+  },
+  {
+    "objectID": "software.html#piar",
+    "href": "software.html#piar",
+    "title": "Software",
+    "section": "",
+    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes."
+  },
+  {
+    "objectID": "software.html#sps",
+    "href": "software.html#sps",
+    "title": "Software",
+    "section": "{sps}",
+    "text": "{sps}\n\n\n\n\n\nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012)."
+  },
+  {
+    "objectID": "software.html#gpindex",
+    "href": "software.html#gpindex",
+    "title": "Software",
+    "section": "{gpindex}",
+    "text": "{gpindex}\n\n\n\n\nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020)."
+  },
+  {
+    "objectID": "software.html#rsmatrix",
+    "href": "software.html#rsmatrix",
+    "title": "Software",
+    "section": "{rsmatrix}",
+    "text": "{rsmatrix}\n\n\n\nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
+  },
+  {
+    "objectID": "software.html#contributions",
+    "href": "software.html#contributions",
+    "title": "Software",
+    "section": "Contributions",
+    "text": "Contributions\n\n{sampling}\n{concstats}\n{bootstrapFP}\n{tempodisco}\n{goodpractice}\nR (base and stats)\nDVC"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Steve Martin",
+    "section": "",
+    "text": "I’m a principal researcher at Statistics Canada where I use economics and data science to measure the economy. I’m particularly interested in making software to make better official statistics."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "PhD Economics, University of Ottawa, 2013-2017.\nB.SocSc Economics, University of Ottawa, 2009-2012.\n\n\n\n\n\nEuropean Summer School in Environmental Economics, Venice International University, 2015.\nVisiting Scholar, University of Michigan, 2015."
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About",
+    "section": "",
+    "text": "PhD Economics, University of Ottawa, 2013-2017.\nB.SocSc Economics, University of Ottawa, 2009-2012.\n\n\n\n\n\nEuropean Summer School in Environmental Economics, Venice International University, 2015.\nVisiting Scholar, University of Michigan, 2015."
+  },
+  {
+    "objectID": "about.html#work-experience",
+    "href": "about.html#work-experience",
+    "title": "About",
+    "section": "Work experience",
+    "text": "Work experience\n\nPrincipal researcher, Statistics Canada, 2024–present\nData scientist, Government of Canada, 2022–2024.\nEconomist, Statistics Canada, 2017–2022.\nPart-time professor of economics, University of Ottawa, 2016–2018."
+  },
+  {
+    "objectID": "about.html#conference-presentations",
+    "href": "about.html#conference-presentations",
+    "title": "About",
+    "section": "Conference presentations",
+    "text": "Conference presentations\n\nBiennial meeting of Statistics Canada’s Price Measurement Advisory Committee (Ottawa, 2019).\n52nd Annual Conference of the Canadian Economics Association (Montreal, 2018).\nAnnual meeting of the Canadian Public Economics Group (Montreal, 2016).\n50th Annual Conference of the Canadian Economics Association (Ottawa, 2016).\n4th Canadian Early Career Workshop in Environmental Economics (Ottawa, 2016).\n14th Annual International Industrial Organization Conference (Philadelphia, 2016).\nEAERE-FEEM-VIU European Summer School (Venice, 2015).\n5th World Congress of Environmental and Resource Economists (Istanbul, 2014).\n12th Annual International Industrial Organization Conference (Chicago, 2014)."
+  },
+  {
+    "objectID": "about.html#awards-and-prizes",
+    "href": "about.html#awards-and-prizes",
+    "title": "About",
+    "section": "Awards and Prizes",
+    "text": "Awards and Prizes\n\nOutstanding Contribution Award, Statistics Canada, 2020.\nYouth Leadership Award, Statistics Canada, 2018.\nPierre Laberge prize for outstanding doctoral thesis, University of Ottawa, 2018.\nJoseph-Armande Bombardier Canadian Graduate Scholarship, SSHRC, 2015 ($105,000).\nOntario Graduate Scholarship, Government of Ontario, 2014 ($15,000).\nExcellence Scholarship, University of Ottawa, 2014 ($28,296)."
+  }
+]
