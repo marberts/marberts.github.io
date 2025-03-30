@@ -1,0 +1,39 @@
+project:
+  type: website
+  
+execute:
+  freeze: auto
+
+website:
+  title: "Steve Martin"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About me
+      - href: software.qmd
+        text: Software
+      - href: publications.qmd
+        text: Publications
+    right:
+      - href: https://github.com/marberts
+        text: "{{< fa brands github >}}"
+      - href: https://orcid.org/0000-0003-2544-9480
+        text: "{{< fa brands orcid >}}"
+      - href: https://scholar.google.ca/citations?user=CEJjbeoAAAAJ&hl=en
+        text: "{{< fa brands google-scholar >}}"
+  announcement: 
+    icon: info-circle
+    dismissable: true
+    content: "This webpage is a work in progress."
+    type: primary
+    position: below-navbar
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
+    toc: true
