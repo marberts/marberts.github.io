@@ -3,9 +3,9 @@ title: "Steve Martin"
 ---
 
 I'm a principal researcher at Statistics Canada where I use economics and data science
-to measure the economy. I'm particularly interested in making software to make
+to measure the economy. Most of my public-facing work is about building software to make
 better official statistics.
 
 ::: {.column-margin}
-![](logo.png)
+![](img/logo.png)
 :::

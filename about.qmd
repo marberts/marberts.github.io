@@ -1,6 +1,16 @@
 ---
-title: "About"
+title: "About me"
 ---
+
+## Interests
+
+- Price statistics and index numbers.
+
+- R programming and data science.
+
+- Industrial organization.
+
+- Environmental economics.
 
 ## Education
 
@@ -26,26 +36,6 @@ title: "About"
 
 - Part-time professor of economics, University of Ottawa, 2016--2018.
 
-## Conference presentations
-
-- Biennial meeting of Statistics Canada's Price Measurement Advisory Committee (Ottawa, 2019).
-
-- 52nd Annual Conference of the Canadian Economics Association (Montreal, 2018).
-
-- Annual meeting of the Canadian Public Economics Group (Montreal, 2016).
-
-- 50th Annual Conference of the Canadian Economics Association (Ottawa, 2016).
-
-- 4th Canadian Early Career Workshop in Environmental Economics (Ottawa, 2016).
-
-- 14th Annual International Industrial Organization Conference (Philadelphia, 2016).
-
-- EAERE-FEEM-VIU European Summer School (Venice, 2015).
-
-- 5th World Congress of Environmental and Resource Economists (Istanbul, 2014).
-
-- 12th Annual International Industrial Organization Conference (Chicago, 2014).
-
 ## Awards and Prizes
 
 - Outstanding Contribution Award, Statistics Canada, 2020.
@@ -54,8 +44,4 @@ title: "About"
 
 - Pierre Laberge prize for outstanding doctoral thesis, University of Ottawa, 2018.
 
-- Joseph-Armande Bombardier Canadian Graduate Scholarship, SSHRC, 2015 ($105,000).
-
-- Ontario Graduate Scholarship, Government of Ontario, 2014 ($15,000).
-
-- Excellence Scholarship, University of Ottawa, 2014 ($28,296).
+- Joseph-Armande Bombardier Canadian Graduate Scholarship, SSHRC, 2015.
