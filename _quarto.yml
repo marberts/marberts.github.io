@@ -25,6 +25,8 @@ website:
         text: "{{< fa brands orcid >}}"
       - href: https://scholar.google.ca/citations?user=CEJjbeoAAAAJ&hl=en
         text: "{{< fa brands google-scholar >}}"
+      - href: https://linkedin.com/in/steve-martin-2570a0249
+        text: "{{< fa brands linkedin >}}"
       - href: mailto:marberts@protonmail.com
         text: "{{< fa envelope >}}"
   favicon: img/favicon-32x32.png
@@ -36,4 +38,4 @@ format:
       light: flatly
       dark: darkly
     css: styles.css
-    toc: true
+    toc: false

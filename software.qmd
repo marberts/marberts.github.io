@@ -3,10 +3,10 @@ title: "Software"
 default-image-extension: ""
 ---
 
-## [{piar}](https://marberts.github.io/piar)
+## piar
 
 :::{.column-sidebar}
-![](img/piar.png)
+[![](img/piar.png)](https://marberts.github.io/piar)
 :::
 :::{.column-body}
 [![CRAN status](https://www.r-pkg.org/badges/version/piar)](https://cran.r-project.org/package=piar)
@@ -19,10 +19,10 @@ default-image-extension: ""
 Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes.
 :::
 
-## [{sps}](https://marberts.github.io/sps)
+## sps
 
 :::{.column-sidebar}
-![](img/sps.png)
+[![](img/sps.png)](https://marberts.github.io/sps)
 :::
 :::{.column-body}
 [![CRAN status](https://www.r-pkg.org/badges/version/sps)](https://cran.r-project.org/package=sps)
@@ -34,10 +34,10 @@ Most price indexes are made with a two-step procedure, where period-over-period 
 Sequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012).
 :::
 
-## [{gpindex}](https://marberts.github.io/gpindex)
+## gpindex
 
 :::{.column-sidebar}
-![](img/gpindex.png)
+[![](img/gpindex.png)](https://marberts.github.io/gpindex)
 :::
 :::{.column-body}
 [![CRAN status](https://www.r-pkg.org/badges/version/gpindex)](https://cran.r-project.org/package=gpindex)
@@ -48,10 +48,10 @@ Sequential Poisson sampling is a variation of Poisson sampling for drawing proba
 Tools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020).
 :::
 
-## [{rsmatrix}](https://marberts.github.io/rsmatrix)
+## rsmatrix
 
 :::{.column-sidebar}
-![](img/rsmatrix.png)
+[![](img/rsmatrix.png)](https://marberts.github.io/rsmatrix)
 :::
 :::{.column-body}
 [![CRAN status](https://www.r-pkg.org/badges/version/rsmatrix)](https://cran.r-project.org/package=rsmatrix)
