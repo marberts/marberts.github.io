@@ -2,10 +2,18 @@
 title: "Steve Martin"
 ---
 
-I'm a principal researcher at Statistics Canada where I use economics and data science
-to measure the economy. Most of my public-facing work is about building software to make
-better official statistics.
-
 ::: {.column-margin}
 ![](img/logo.png)
 :::
+
+I'm a principal researcher at Statistics Canada where I use economics and data science
+to measure the economy.
+
+I work on several side projects building open source software to make better
+official statistics, particularly in the area of price statistics and inflation.
+Checkout [software](software.qmd) for more information.
+
+Prior to working at Statistics Canada, I completed by PhD in economics where I
+examined firms' corporate social responsibility its implication for the efficient
+provision of public goods. Checkout [research and publications](publications.qmd)
+for more information.
