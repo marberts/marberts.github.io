@@ -69,4 +69,5 @@ Calculate the matrices in Shiller (1991) that serve as the foundation for many r
 - [{goodpractice}](https://cran.r-project.org/package=goodpractice)
 - [R](https://r-project.org) (base and stats)
 - [{sampling}](https://cran.r-project.org/package=sampling)
+- [{tabulapdf}](https://cran.r-project.org/package=tabulapdf)
 - [{tempodisco}](https://github.com/kinleyid/tempodisco)
