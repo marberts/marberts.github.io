@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://marberts.github.io/software.html</loc>
-    <lastmod>2025-06-08T01:51:54.524Z</lastmod>
-  </url>
-  <url>
     <loc>https://marberts.github.io/publications.html</loc>
-    <lastmod>2025-06-08T01:51:54.524Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/about.html</loc>
-    <lastmod>2025-06-08T01:51:54.521Z</lastmod>
+    <lastmod>2025-06-14T02:02:32.961Z</lastmod>
   </url>
   <url>
     <loc>https://marberts.github.io/index.html</loc>
-    <lastmod>2025-06-08T01:51:54.524Z</lastmod>
+    <lastmod>2025-06-14T02:02:32.961Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/software.html</loc>
+    <lastmod>2025-06-14T02:02:32.961Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/about.html</loc>
+    <lastmod>2025-06-14T02:02:32.958Z</lastmod>
   </url>
 </urlset>
