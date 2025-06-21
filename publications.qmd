@@ -24,7 +24,7 @@ title: "Research and Publications"
 
 - Martin, S. (2018). [In sickness and in health: The association between health and household income](https://publications.gc.ca/pub?id=9.857907&sl=0). *LISA Research Paper Series*. Statistics Canada Catalogue 89-648-X.
 
-## Academic journals
+## Academic publications
 
 - Heyes, A., Kapur, S., Kennedy, P., Martin, S., and Maxwell, J. (2020). [But What Does it Mean? Competition between Products Carrying Alternative Green Labels when Consumers are Active Acquirers of Information](https://doi.org/10.1086/706548). *Journal of the Association of Environmental and Resource Economists*, 7(2): 243-277.
 
@@ -44,7 +44,7 @@ title: "Research and Publications"
 
 ## Conference presentations
 
-- Biennial meeting of Statistics Canada's Price Measurement Advisory Committee (Ottawa, 2019).
+- Statistics Canada's Price Measurement Advisory Committee (Ottawa, 2019 and 2025).
 
 - 52nd Annual Conference of the Canadian Economics Association (Montreal, 2018).
 
