@@ -88,7 +88,7 @@
     "href": "software.html#contributed-to",
     "title": "Software",
     "section": "Contributed to",
-    "text": "Contributed to\n\n{bootstrapFP}\n{concstats}\nDVC\n{goodpractice}\n{gseries}\nR (base and stats)\n{sampling}\n{tabulapdf}\n{tempodisco}"
+    "text": "Contributed to\n\n{accumulate}\n{bootstrapFP}\n{concstats}\nDVC\n{goodpractice}\n{gseries}\nR (base and stats)\n{sampling}\n{tabulapdf}\n{tempodisco}"
   },
   {
     "objectID": "about.html",
