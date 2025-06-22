@@ -1,9 +1,6 @@
 ---
 title: "Software"
 default-image-extension: ""
-format:
-  html:
-    toc: true
 ---
 
 ## R packages
