@@ -28,6 +28,13 @@
     "text": "Academic publications\n\nHeyes, A., Kapur, S., Kennedy, P., Martin, S., and Maxwell, J. (2020). But What Does it Mean? Competition between Products Carrying Alternative Green Labels when Consumers are Active Acquirers of Information. Journal of the Association of Environmental and Resource Economists, 7(2): 243-277.\nMartin, S. (2019). Moral management in competitive markets. Journal of Economics and Management Strategy, 28(3): 541–560.\nHeyes, A. and Martin, S. (2018). Inefficient social labels: Strategic proliferation and fragmentation in the market for certification. Journal of Economics and Management Strategy, 27(2): 206–220.\nHeyes, A., Lyon, T. P., and Martin, S. (2018). Salience games: Private politics when public attention is limited. Journal of Environmental Economics and Management, 88: 396–410.\nMartin, S. and Rivers, N. (2018). Information provision, market incentives, and household electricity consumption: Evidence from a large-scale field deployment. Journal of the Association of Environmental and Resource Economists, 5(1): 207–231.\nHeyes, A. and Martin, S. (2017). Social labeling by competing NGOs: A model with multiple issues and entry. Management Science, 63(6): 1800–1813.\nHeyes, A. and Martin, S. (2016). Fuzzy products. International Journal of Industrial Organization, 45: 1–9.\nHeyes, A. and Martin, S. (2015). NGO mission design. Journal of Economic Behavior & Organization, 119: 197–210."
   },
   {
+    "objectID": "publications.html#conference-papers",
+    "href": "publications.html#conference-papers",
+    "title": "Research and Publications",
+    "section": "Conference papers",
+    "text": "Conference papers\n\nBurnett-Isaacs, K. and Martin, S. (2019). Unifying Approach to Statistics Canada´s Residential Property Price Index. UNECE Ottawa Group.\nBurnett-Isaacs, K. and Martin, S. (2019). Constructing a Resale Residential Property Price Index for Vancouver using Repeat Sales. UNECE Ottawa Group."
+  },
+  {
     "objectID": "publications.html#conference-presentations",
     "href": "publications.html#conference-presentations",
     "title": "Research and Publications",
@@ -53,35 +60,14 @@
     "href": "software.html",
     "title": "Software",
     "section": "",
-    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes."
+    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes.\n\n\n\n\n\n\n    \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012).\n\n\n\n\n\n\n   \nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020).\n\n\n\n\n\n\n  \nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
   },
   {
-    "objectID": "software.html#piar",
-    "href": "software.html#piar",
+    "objectID": "software.html#r-packages",
+    "href": "software.html#r-packages",
     "title": "Software",
     "section": "",
-    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes."
-  },
-  {
-    "objectID": "software.html#sps",
-    "href": "software.html#sps",
-    "title": "Software",
-    "section": "sps",
-    "text": "sps\n\n\n\n\n    \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012)."
-  },
-  {
-    "objectID": "software.html#gpindex",
-    "href": "software.html#gpindex",
-    "title": "Software",
-    "section": "gpindex",
-    "text": "gpindex\n\n\n\n\n   \nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020)."
-  },
-  {
-    "objectID": "software.html#rsmatrix",
-    "href": "software.html#rsmatrix",
-    "title": "Software",
-    "section": "rsmatrix",
-    "text": "rsmatrix\n\n\n\n\n  \nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
+    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes.\n\n\n\n\n\n\n    \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012).\n\n\n\n\n\n\n   \nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020).\n\n\n\n\n\n\n  \nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
   },
   {
     "objectID": "software.html#contributed-to",
