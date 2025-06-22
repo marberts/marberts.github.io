@@ -64,10 +64,12 @@ Calculate the matrices in Shiller (1991) that serve as the foundation for many r
 
 ## Contributed to
 
+- [{accumulate}](https://cran.r-project.org/package=accumulate)
 - [{bootstrapFP}](https://cran.r-project.org/package=bootstrapFP)
 - [{concstats}](https://cran.r-project.org/package=concstats)
 - [DVC](https://dvc.org)
 - [{goodpractice}](https://cran.r-project.org/package=goodpractice)
+- [{gseries}](https://github.com/StatCan/gensol-gseries)
 - [R](https://r-project.org) (base and stats)
 - [{sampling}](https://cran.r-project.org/package=sampling)
 - [{tabulapdf}](https://cran.r-project.org/package=tabulapdf)
