@@ -16,8 +16,9 @@ website:
         text: Software
       - href: publications.qmd
         text: Research and publications
-      - href: cv.qmd
+      - href: cv.pdf
         text: cv
+        icon: pdf
     right:
       - href: https://github.com/marberts
         text: "{{< fa brands github >}}"

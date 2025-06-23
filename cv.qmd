@@ -1,8 +1,9 @@
 ---
-title: "Steve Martin"
+title: "Steve Martin | Resume"
 format:
   pdf:
     geometry: margin=1in
+    output-file: "cv.pdf"
 ---
 
 {{< include _education.qmd >}}
