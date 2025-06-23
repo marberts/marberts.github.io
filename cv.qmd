@@ -1,0 +1,24 @@
+---
+title: "Steve Martin"
+format:
+  pdf:
+    geometry: margin=1in
+---
+
+{{< include _education.qmd >}}
+
+{{< include _work.qmd >}}
+
+{{< include _publications.qmd >}}
+
+## Software
+
+- Martin, S. (2025). piar: Price Index Aggregation. doi:10.5281/zenodo.10110046, R package version 0.8.2, https://cran.r-project.org/package=piar. 
+
+- Martin, S. (2025). sps: Sequential Poisson Sampling. doi:10.5281/zenodo.10109857, R package version 0.6.0, https://cran.r-project.org/package=sps. 
+
+- Martin, S. (2025). gpindex: Generalized Price and Quantity Indexes. doi:10.5281/zenodo.10097742, R package version 0.6.3, https://cran.r-project.org/package=gpindex.
+
+- Martin, S. (2024). rsmatrix: Matrices for Repeat-Sales Price Indexes. doi:10.5281/zenodo.10110159, R package version 0.2.9, https://cran.r-project.org/package=rsmatrix. 
+
+{{< include _awards.qmd >}}

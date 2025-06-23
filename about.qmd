@@ -4,44 +4,20 @@ title: "About me"
 
 ## Interests
 
-- Price statistics and index numbers.
+::: {layout-ncol=2}
 
-- R programming and data science.
+Price statistics and index numbers
 
-- Industrial organization.
+R programming and data science
 
-- Environmental economics.
+Industrial organization
 
-## Education
+Environmental economics
 
-### Degrees
+:::
 
-- PhD Economics, University of Ottawa, 2013-2017.
+{{< include _education.qmd >}}
 
-- B.SocSc Economics, University of Ottawa, 2009-2012.
+{{< include _work.qmd >}}
 
-### Other education
-
-- European Summer School in Environmental Economics, Venice International University, 2015.
-
-- Visiting Scholar, University of Michigan, 2015.
-
-## Work experience
-
-- Principal researcher, Statistics Canada, 2024--present
-
-- Data scientist, Government of Canada, 2022--2024.
-
-- Economist, Statistics Canada, 2017--2022.
-
-- Part-time professor of economics, University of Ottawa, 2016--2018.
-
-## Awards and Prizes
-
-- Outstanding Contribution Award, Statistics Canada, 2020.
-
-- Youth Leadership Award, Statistics Canada, 2018.
-
-- Pierre Laberge prize for outstanding doctoral thesis, University of Ottawa, 2018.
-
-- Joseph-Armande Bombardier Canadian Graduate Scholarship, SSHRC, 2015.
+{{< include _awards.qmd >}}
