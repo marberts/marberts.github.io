@@ -46,7 +46,7 @@
     "href": "publications.html#refereed-for",
     "title": "Research and Publications",
     "section": "Refereed for",
-    "text": "Refereed for\n\nCanadian Journal of Economics.\nEnvironmental and Resource Economics.\nJournal of the Association of Environmental and Resource Economists.\nJournal of Economics and Management Strategy.\nJournal of Environmental Economics and Management.\nJournal of Open Source Software."
+    "text": "Refereed for\n\n\n\nCanadian Journal of Economics\n\n\nEnvironmental and Resource Economics\n\n\n\n\nJournal of the Association of Environmental and Resource Economists\n\n\nJournal of Economics and Management Strategy\n\n\n\n\nJournal of Environmental Economics and Management\n\n\nJournal of Open Source Software"
   },
   {
     "objectID": "index.html",
@@ -74,21 +74,21 @@
     "href": "software.html#contributed-to",
     "title": "Software",
     "section": "Contributed to",
-    "text": "Contributed to\n\n{accumulate}\n{bootstrapFP}\n{concstats}\nDVC\n{goodpractice}\n{gseries}\nR (base and stats)\n{sampling}\n{tabulapdf}\n{tempodisco}"
+    "text": "Contributed to\n\n\n\n{accumulate}\n\n\n{bootstrapFP}\n\n\n{concstats}\n\n\n\n\nDVC\n\n\n{goodpractice}\n\n\n{gseries}\n\n\n\n\nR (base and stats)\n\n\n{sampling}\n\n\n{tabulapdf}\n\n\n\n\n{tempodisco}"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About me",
     "section": "",
-    "text": "Price statistics and index numbers.\nR programming and data science.\nIndustrial organization.\nEnvironmental economics."
+    "text": "Price statistics and index numbers\n\n\nR programming and data science\n\n\n\n\nIndustrial organization\n\n\nEnvironmental economics"
   },
   {
     "objectID": "about.html#interests",
     "href": "about.html#interests",
     "title": "About me",
     "section": "",
-    "text": "Price statistics and index numbers.\nR programming and data science.\nIndustrial organization.\nEnvironmental economics."
+    "text": "Price statistics and index numbers\n\n\nR programming and data science\n\n\n\n\nIndustrial organization\n\n\nEnvironmental economics"
   },
   {
     "objectID": "about.html#education",
@@ -102,7 +102,7 @@
     "href": "about.html#work-experience",
     "title": "About me",
     "section": "Work experience",
-    "text": "Work experience\n\nPrincipal researcher, Statistics Canada, 2024–present\nData scientist, Government of Canada, 2022–2024.\nEconomist, Statistics Canada, 2017–2022.\nPart-time professor of economics, University of Ottawa, 2016–2018."
+    "text": "Work experience\n\nEmployment\n\nPrincipal researcher, Statistics Canada, 2024–present\nData scientist, Government of Canada, 2022–2024.\nEconomist, Statistics Canada, 2017–2022.\nPart-time professor of economics, University of Ottawa, 2016–2018.\n\n\n\nTeaching\n\nA Course on Price Indices, Statistics Canada, 2019–2022.\nDigital Academy (lecture on R), Canada School of Public Service, Spring and Fall 2019.\nResearch Seminar in Economics of the Environment, University of Ottawa, Fall 2016 and Winter 2018."
   },
   {
     "objectID": "about.html#awards-and-prizes",
