@@ -1,5 +1,33 @@
 [
   {
+    "objectID": "software.html",
+    "href": "software.html",
+    "title": "Software",
+    "section": "",
+    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes.\n\n\n\n\n\n\n    \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012).\n\n\n\n\n\n\n   \nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020).\n\n\n\n\n\n\n  \nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
+  },
+  {
+    "objectID": "software.html#r-packages",
+    "href": "software.html#r-packages",
+    "title": "Software",
+    "section": "",
+    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes.\n\n\n\n\n\n\n    \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012).\n\n\n\n\n\n\n   \nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020).\n\n\n\n\n\n\n  \nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
+  },
+  {
+    "objectID": "software.html#python-packages",
+    "href": "software.html#python-packages",
+    "title": "Software",
+    "section": "Python packages",
+    "text": "Python packages\n\npysps\n\n\n\n \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package is a Python implementation of the {sps} R package."
+  },
+  {
+    "objectID": "software.html#contributed-to",
+    "href": "software.html#contributed-to",
+    "title": "Software",
+    "section": "Contributed to",
+    "text": "Contributed to\n\n\n\n{accumulate}\n\n\n{bootstrapFP}\n\n\n{concstats}\n\n\n\n\nDVC\n\n\n{goodpractice}\n\n\n{gseries}\n\n\n\n\n{lintr}\n\n\nR (base and stats)\n\n\n{sampling}\n\n\n\n\n{tabulapdf}\n\n\n{tempodisco}"
+  },
+  {
     "objectID": "publications.html",
     "href": "publications.html",
     "title": "Research and Publications",
@@ -49,41 +77,6 @@
     "text": "Refereed for\n\n\n\nCanadian Journal of Economics\n\n\nEnvironmental and Resource Economics\n\n\n\n\nJournal of the Association of Environmental and Resource Economists\n\n\nJournal of Economics and Management Strategy\n\n\n\n\nJournal of Environmental Economics and Management\n\n\nJournal of Open Source Software"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Steve Martin",
-    "section": "",
-    "text": "I’m a principal researcher at Statistics Canada where I use economics and data science to measure the economy.\nI work on several side projects building open source software to make better official statistics, particularly in the area of price statistics and inflation. Checkout software for more information.\nPrior to working at Statistics Canada, I completed by PhD in economics where I examined firms’ corporate social responsibility and its implication for the efficient provision of public goods. Checkout research and publications for more information."
-  },
-  {
-    "objectID": "software.html",
-    "href": "software.html",
-    "title": "Software",
-    "section": "",
-    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes.\n\n\n\n\n\n\n    \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012).\n\n\n\n\n\n\n   \nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020).\n\n\n\n\n\n\n  \nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
-  },
-  {
-    "objectID": "software.html#r-packages",
-    "href": "software.html#r-packages",
-    "title": "Software",
-    "section": "",
-    "text": "Most price indexes are made with a two-step procedure, where period-over-period elemental indexes are first calculated for a collection of elemental aggregates at each point in time, and then aggregated according to a price index aggregation structure. These indexes can then be chained together to form a time series that gives the evolution of prices with respect to a fixed base period. This package contains a collection of functions that revolve around this work flow, making it easy to build standard price indexes, and implement the methods described by Balk (2008), von der Lippe (2007), and the CPI manual (2020) / PPI manual (2004) for bilateral price indexes.\n\n\n\n\n\n\n    \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package gives functions to draw stratified sequential Poisson samples according to the method by Ohlsson (1998), as well as other order sample designs by Rosén (1997), and generate appropriate bootstrap replicate weights according to the generalized bootstrap method by Beaumont and Patak (2012).\n\n\n\n\n\n\n   \nTools to build and work with bilateral generalized-mean price indexes (and by extension quantity indexes), and indexes composed of generalized-mean indexes (e.g., superlative quadratic-mean indexes, GEKS). Covers the core mathematical machinery for making bilateral price indexes, computing price relatives, detecting outliers, and decomposing indexes, with wrappers for all common (and many uncommon) index-number formulas. Implements and extends many of the methods in Balk (2008), von der Lippe (2007), and the CPI manual (2020).\n\n\n\n\n\n\n  \nCalculate the matrices in Shiller (1991) that serve as the foundation for many repeat-sales price indexes."
-  },
-  {
-    "objectID": "software.html#python-packages",
-    "href": "software.html#python-packages",
-    "title": "Software",
-    "section": "Python packages",
-    "text": "Python packages\n\npysps\n\n\n\n \nSequential Poisson sampling is a variation of Poisson sampling for drawing probability-proportional-to-size samples with a given number of units, and is commonly used for price-index surveys. This package is a Python implementation of the {sps} R package."
-  },
-  {
-    "objectID": "software.html#contributed-to",
-    "href": "software.html#contributed-to",
-    "title": "Software",
-    "section": "Contributed to",
-    "text": "Contributed to\n\n\n\n{accumulate}\n\n\n{bootstrapFP}\n\n\n{concstats}\n\n\n\n\nDVC\n\n\n{goodpractice}\n\n\n{gseries}\n\n\n\n\nR (base and stats)\n\n\n{sampling}\n\n\n{tabulapdf}\n\n\n\n\n{tempodisco}"
-  },
-  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About me",
@@ -117,5 +110,12 @@
     "title": "About me",
     "section": "Awards and Prizes",
     "text": "Awards and Prizes\n\nOutstanding Contribution Award, Statistics Canada, 2020.\nYouth Leadership Award, Statistics Canada, 2018.\nPierre Laberge prize for outstanding doctoral thesis, University of Ottawa, 2018.\nJoseph-Armande Bombardier Canadian Graduate Scholarship, SSHRC, 2015."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Steve Martin",
+    "section": "",
+    "text": "I’m a principal researcher at Statistics Canada where I use economics and data science to measure the economy.\nI work on several side projects building open source software to make better official statistics, particularly in the area of price statistics and inflation. Checkout software for more information.\nPrior to working at Statistics Canada, I completed by PhD in economics where I examined firms’ corporate social responsibility and its implication for the efficient provision of public goods. Checkout research and publications for more information."
   }
 ]
