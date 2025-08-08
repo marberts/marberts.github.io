@@ -88,7 +88,9 @@ Python implementation of the [{sps}](https://cran.r-project.org/package=sps) R p
 
 [{goodpractice}](https://cran.r-project.org/package=goodpractice)
 
-[{gseries}](https://github.com/StatCan/gensol-gseries)
+[{gseries}](https://cran.r-project.org/package=gseries)
+
+[{lintr}](https://cran.r-project.org/package=lintr)
 
 [R](https://r-project.org) (base and stats)
 
