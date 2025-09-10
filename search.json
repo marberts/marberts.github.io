@@ -28,6 +28,41 @@
     "text": "Contributed to\n\n\n\n{accumulate}\n\n\n{bootstrapFP}\n\n\n{concstats}\n\n\n\n\nDVC\n\n\n{goodpractice}\n\n\n{gseries}\n\n\n\n\n{lintr}\n\n\nR (base and stats)\n\n\n{sampling}\n\n\n\n\n{tabulapdf}\n\n\n{tempodisco}"
   },
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About me",
+    "section": "",
+    "text": "Price statistics and index numbers\n\n\nR programming and data science\n\n\n\n\nIndustrial organization\n\n\nEnvironmental economics"
+  },
+  {
+    "objectID": "about.html#interests",
+    "href": "about.html#interests",
+    "title": "About me",
+    "section": "",
+    "text": "Price statistics and index numbers\n\n\nR programming and data science\n\n\n\n\nIndustrial organization\n\n\nEnvironmental economics"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About me",
+    "section": "Education",
+    "text": "Education\n\nDegrees\n\nPhD Economics, University of Ottawa, 2013-2017.\nB.SocSc Economics, University of Ottawa, 2009-2012.\n\n\n\nOther education\n\nEuropean Summer School in Environmental Economics, Venice International University, 2015.\nVisiting Scholar, University of Michigan, 2015."
+  },
+  {
+    "objectID": "about.html#work-experience",
+    "href": "about.html#work-experience",
+    "title": "About me",
+    "section": "Work experience",
+    "text": "Work experience\n\nEmployment\n\nPrincipal researcher, Statistics Canada, 2024–present\nData scientist, Government of Canada, 2022–2024.\nEconomist, Statistics Canada, 2017–2022.\nPart-time professor of economics, University of Ottawa, 2016–2018.\n\n\n\nTeaching\n\nA Course on Price Indices, Statistics Canada, 2019–2022.\nDigital Academy (lecture on R), Canada School of Public Service, Spring and Fall 2019.\nResearch Seminar in Economics of the Environment, University of Ottawa, Fall 2016 and Winter 2018."
+  },
+  {
+    "objectID": "about.html#awards-and-prizes",
+    "href": "about.html#awards-and-prizes",
+    "title": "About me",
+    "section": "Awards and Prizes",
+    "text": "Awards and Prizes\n\nEconomic Statistics Field Shining Star Award, Statistics Canada, 2025.\nOutstanding Contribution Award, Statistics Canada, 2020.\nYouth Leadership Award, Statistics Canada, 2018.\nPierre Laberge prize for outstanding doctoral thesis, University of Ottawa, 2018.\nJoseph-Armande Bombardier Canadian Graduate Scholarship, SSHRC, 2015."
+  },
+  {
     "objectID": "publications.html",
     "href": "publications.html",
     "title": "Research and Publications",
@@ -75,41 +110,6 @@
     "title": "Research and Publications",
     "section": "Refereed for",
     "text": "Refereed for\n\n\n\nCanadian Journal of Economics\n\n\nEnvironmental and Resource Economics\n\n\n\n\nJournal of the Association of Environmental and Resource Economists\n\n\nJournal of Economics and Management Strategy\n\n\n\n\nJournal of Environmental Economics and Management\n\n\nJournal of Open Source Software"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About me",
-    "section": "",
-    "text": "Price statistics and index numbers\n\n\nR programming and data science\n\n\n\n\nIndustrial organization\n\n\nEnvironmental economics"
-  },
-  {
-    "objectID": "about.html#interests",
-    "href": "about.html#interests",
-    "title": "About me",
-    "section": "",
-    "text": "Price statistics and index numbers\n\n\nR programming and data science\n\n\n\n\nIndustrial organization\n\n\nEnvironmental economics"
-  },
-  {
-    "objectID": "about.html#education",
-    "href": "about.html#education",
-    "title": "About me",
-    "section": "Education",
-    "text": "Education\n\nDegrees\n\nPhD Economics, University of Ottawa, 2013-2017.\nB.SocSc Economics, University of Ottawa, 2009-2012.\n\n\n\nOther education\n\nEuropean Summer School in Environmental Economics, Venice International University, 2015.\nVisiting Scholar, University of Michigan, 2015."
-  },
-  {
-    "objectID": "about.html#work-experience",
-    "href": "about.html#work-experience",
-    "title": "About me",
-    "section": "Work experience",
-    "text": "Work experience\n\nEmployment\n\nPrincipal researcher, Statistics Canada, 2024–present\nData scientist, Government of Canada, 2022–2024.\nEconomist, Statistics Canada, 2017–2022.\nPart-time professor of economics, University of Ottawa, 2016–2018.\n\n\n\nTeaching\n\nA Course on Price Indices, Statistics Canada, 2019–2022.\nDigital Academy (lecture on R), Canada School of Public Service, Spring and Fall 2019.\nResearch Seminar in Economics of the Environment, University of Ottawa, Fall 2016 and Winter 2018."
-  },
-  {
-    "objectID": "about.html#awards-and-prizes",
-    "href": "about.html#awards-and-prizes",
-    "title": "About me",
-    "section": "Awards and Prizes",
-    "text": "Awards and Prizes\n\nOutstanding Contribution Award, Statistics Canada, 2020.\nYouth Leadership Award, Statistics Canada, 2018.\nPierre Laberge prize for outstanding doctoral thesis, University of Ottawa, 2018.\nJoseph-Armande Bombardier Canadian Graduate Scholarship, SSHRC, 2015."
   },
   {
     "objectID": "index.html",
