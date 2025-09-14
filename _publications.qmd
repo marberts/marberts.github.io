@@ -40,6 +40,9 @@
 
 ## Conference papers
 
+- Ha, X. and Martin, S. (2025). [Modernizing Official Statistics: Transition to Open-Source
+Systems for Production of Producer Price Indexes](https://voorburggroup.org/Documents/2025%20Copenhagen/Papers/1002.pdf). *Voorburg Group on Service Statistics*.
+
 - Brown, C. and Martin, S. (2025). [Interim Report: Survey of CPI Production Systems](https://un-task-team-for-scanner-data.github.io/production-systems-survey/report-site/). *UNECE Meeting of the Group of Experts on Consumer Price Indices*.
 
 - Burnett-Isaacs, K. and Martin, S. (2019). [Unifying Approach to Statistics Canada´s Residential Property Price Index](https://stats.unece.org/ottawagroup/download/f561.pdf). *UNECE Ottawa Group on Price Indices*.
