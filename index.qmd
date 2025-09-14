@@ -13,7 +13,7 @@ I work on several side projects building open source software to make better
 official statistics, particularly in the area of price statistics and inflation.
 Checkout [software](software.qmd) for more information.
 
-Prior to working at Statistics Canada, I completed by PhD in economics where I
+Prior to working at Statistics Canada, I completed my PhD in economics where I
 examined firms' corporate social responsibility and its implication for the efficient
 provision of public goods. Checkout [research and publications](publications.qmd)
 for more information.

@@ -1,5 +1,8 @@
 ---
 title: "Research and Publications"
+format: 
+  html: 
+    toc-depth: 3
 ---
 
 {{< include _publications.qmd >}}
