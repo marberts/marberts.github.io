@@ -9,7 +9,7 @@ title: "Steve Martin"
 I'm a principal researcher at Statistics Canada where I use economics and data science
 to measure the economy.
 
-I work on several side projects building open source software to make better
+I work on several side projects in my spare time building open source software to make better
 official statistics, particularly in the area of price statistics and inflation.
 Checkout [software](software.qmd) for more information.
 

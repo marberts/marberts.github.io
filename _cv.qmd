@@ -1,14 +1,24 @@
 ---
 title: "Steve Martin | Resume"
+subtitle: |
+  [{{< fa envelope >}}](mailto:marberts@protonmail.com)
+  [{{< fa globe >}}](https://marberts.github.io)
+  [{{< fa brands orcid >}}](https://orcid.org/0000-0003-2544-9480)
+  [{{< fa brands github >}}](https://github.com/marberts)
 format:
   pdf:
     geometry: margin=1in
+    colorlinks: false
     output-file: "cv.pdf"
 ---
 
 {{< include _education.qmd >}}
 
+---
+
 {{< include _work.qmd >}}
+
+---
 
 ## Software
 
@@ -20,6 +30,10 @@ format:
 
 - Martin, S. (2024). rsmatrix: Matrices for Repeat-Sales Price Indexes. doi:10.5281/zenodo.10110159, R package version 0.2.9, https://cran.r-project.org/package=rsmatrix. 
 
+---
+
 {{< include _publications.qmd >}}
+
+---
 
 {{< include _awards.qmd >}}
