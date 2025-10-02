@@ -6,6 +6,8 @@ title: "Steve Martin"
 ![](img/logo.png)
 :::
 
+Hi there, I'm Steve 👋. Welcome to my personal website.
+
 I'm a principal researcher at Statistics Canada where I use economics and data science
 to measure the economy.
 
