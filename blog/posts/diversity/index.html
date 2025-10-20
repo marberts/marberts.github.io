@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2025-10-19">
 
-<title>Steve Martin</title>
+<title>Decomposing diversity indexes – Steve Martin</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,34 +21,89 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./img/favicon-32x32.png" rel="icon" type="image/png">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1713a1406d2974de726a81ab5f352b8f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-1c87a099bb9fd63c2abcf394cd43e1cd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-1713a1406d2974de726a81ab5f352b8f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
-<link href="site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../img/favicon-32x32.png" rel="icon" type="image/png">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-1713a1406d2974de726a81ab5f352b8f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-1c87a099bb9fd63c2abcf394cd43e1cd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-1713a1406d2974de726a81ab5f352b8f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,8 +132,37 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<link rel="stylesheet" href="styles.css">
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.css">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -249,9 +334,9 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Steve Martin</span>
     </a>
   </div>
@@ -262,28 +347,28 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./software.html"> 
+    <a class="nav-link" href="../../../software.html"> 
 <span class="menu-text">Software</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./publications.html"> 
+    <a class="nav-link" href="../../../publications.html"> 
 <span class="menu-text">Research and publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./cv.pdf"> <i class="bi bi-pdf" role="img">
+    <a class="nav-link" href="../../../cv.pdf"> <i class="bi bi-pdf" role="img">
 </i> 
 <span class="menu-text">cv</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./blog/index.html"> 
+    <a class="nav-link" href="../../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -324,23 +409,41 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#what-is-diversity-anyway" id="toc-what-is-diversity-anyway" class="nav-link active" data-scroll-target="#what-is-diversity-anyway">What is diversity, anyway?</a></li>
+  <li><a href="#decomposing-diversity" id="toc-decomposing-diversity" class="nav-link" data-scroll-target="#decomposing-diversity">Decomposing diversity</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Steve Martin</h1>
-</div>
+<h1 class="title">Decomposing diversity indexes</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Index numbers</div>
+    <div class="quarto-category">R</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 19, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -350,17 +453,118 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>A diversity index is a way to measure the prevalence species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.</p>
+<section id="what-is-diversity-anyway" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-diversity-anyway">What is diversity, anyway?</h2>
+<p>Diversity is a tricky concept to formalize. Up until writing this post, I would have said it was just the number of species in an ecosystem. In his seminal paper, <span class="citation" data-cites="hill">Hill (<a href="#ref-hill" role="doc-biblioref">1973</a>)</span> considers a family diversity indexes that give a measure of the effective number of species in an ecosystem—that is, the number of species that would be present in an ecosystem if all species were equally prevalent. Mathemetically, if there are <span class="math inline">\(n\)</span> species and the <span class="math inline">\(i\)</span>-th species appears with probability <span class="math inline">\(p_{i}\)</span>, then the diversity index of order <span class="math inline">\(\alpha\)</span> is</p>
+<p><span class="math display">\[
+N_{\alpha}(p_{1}, \ldots, p_{n}) = \left(\sum_{i=1}^{n}p_{i}^{\alpha}\right)^{\frac{1}{1 - \alpha}}.
+\]</span></p>
+<p>Different values for <span class="math inline">\(\alpha\)</span> yield different indexes; for example, <span class="math inline">\(N_{0}\)</span> measures diversity by the total number of species <span class="math inline">\(n\)</span>, also known as the richness of the ecosystem. As a function of <span class="math inline">\(\alpha\)</span>, <span class="math inline">\(N_{\alpha}\)</span> is a continuously decreasing function that maps values in <span class="math inline">\([0, \infty)\)</span> onto <span class="math inline">\([n, 1 / \max(p_{1}, \ldots, p_{n}))\)</span>. We can see this with an example of an ecosystem with 10 species.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>diversity_index <span class="ot">&lt;-</span> <span class="cf">function</span>(x, alpha) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (alpha <span class="sc">!=</span> <span class="dv">1</span>) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(x<span class="sc">^</span>alpha)<span class="sc">^</span>(<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> alpha))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">sum</span>(p <span class="sc">*</span> <span class="fu">log</span>(p)))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">54321</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">sort</span>(gpindex<span class="sc">::</span><span class="fu">scale_weights</span>(<span class="fu">rlnorm</span>(<span class="dv">10</span>)))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(p, <span class="at">main =</span> <span class="st">"Abundance of species in an ecosystem"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>alphas <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="fl">0.25</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>index <span class="ot">&lt;-</span> <span class="fu">sapply</span>(alphas, \(a) <span class="fu">diversity_index</span>(p, a))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(alphas, index, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">10</span>), <span class="at">xlab =</span> <span class="st">"Alpha"</span>, <span class="at">ylab =</span> <span class="st">"Index"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="fu">max</span>(p), <span class="dv">0</span>, <span class="at">lty =</span> <span class="st">"dashed"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>With a bit of rearranging, we can see that <span class="math inline">\(N_\alpha\)</span> is the reciprocal of the generalized mean of <span class="math inline">\((p_{1}, \ldots, p_{n})\)</span> with these same values as weights</p>
+<p><span class="math display">\[
+N_{\alpha}(p_{1}, \ldots, p_{n}) = 1 / \left(\sum_{i=1}^{n} p_{i}^{\alpha - 1} p_{i}\right)^{\frac{1}{\alpha - 1}}.
+\]</span></p>
+<p>Formulating <span class="math inline">\(N_{\alpha}\)</span> as a generalized mean shows a clear link between diversity indexes and concentration indexes, as <span class="math inline">\(N_{2}\)</span> is the reciprocal of the well-known Simpson index (or Herfindahl–Hirschman index if you’re an economist). (It also shows a link with measures of entropy, as <span class="math inline">\(\log(N_{\alpha})\)</span> is a generalization of Shannon entropy.) What makes a diversity index different from a measure of concentration (or entropy) is that it expresses diversity in terms of the effective size of the ecosystem that would give rise to a particular concentration of species if species were all equally abundant. Intuitively, <span class="math inline">\(1 / p_{i}\)</span> gives the effective size of the ecosystem if all species were as prevalent as species <span class="math inline">\(i\)</span>. Rather than considering a single species, <span class="math inline">\(N_{a}\)</span> uses the average abundance across all species to arrive at a measure of diversity.</p>
+</section>
+<section id="decomposing-diversity" class="level2">
+<h2 class="anchored" data-anchor-id="decomposing-diversity">Decomposing diversity</h2>
+<p><span class="citation" data-cites="hill">Hill (<a href="#ref-hill" role="doc-biblioref">1973</a>)</span> notes that different choices for <span class="math inline">\(\alpha\)</span> imply different sensitivities to rare versus abundant species in an ecosystem. Setting <span class="math inline">\(\alpha = 0\)</span> means that diversity depends only on the number of species, no matter how rare some may be, whereas when <span class="math inline">\(\alpha \rightarrow \infty\)</span> then only the most prevalent species influences diversity. We can go one step further by decomposing <span class="math inline">\(N_{\alpha}\)</span> so that it’s represented as an arithmetic mean of the effective size of each species <span class="math inline">\(1 / p_{i}\)</span> and we can see the contribution of each species towards total diversity. We’ll do this by borrowing some of the machinery from price and quantity indexes to derive weights <span class="math inline">\((w_{1}, \ldots, w_{n})\)</span> such that</p>
+<p><span class="math display">\[
+N_{\alpha}(p_{1}, \ldots, p_{n}) = \sum_{i=1}^{n} w_{i} / p_{i}.
+\]</span></p>
+<p>The core tool to do with comes from my <a href="https://marberts.github.io/gpindex"><code>{gpindex}</code></a> package.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diversity_weights <span class="ot">&lt;-</span> <span class="cf">function</span>(x, alpha) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  gpindex<span class="sc">::</span><span class="fu">transmute_weights</span>(alpha <span class="sc">-</span> <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>)(x, x)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>When <span class="math inline">\(\alpha = 0\)</span>, each species contributes the same amount to overall diversity.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diversity_weights</span>(p, <span class="dv">0</span>) <span class="sc">/</span> p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 1 1 1 1 1 1 1 1 1 1</code></pre>
+</div>
+</div>
+<p>Increasing <span class="math inline">\(\alpha\)</span> to 2, the measure of diversity decreases and more weight is shifted towards more abundant species.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diversity_weights</span>(p, <span class="dv">2</span>) <span class="sc">/</span> p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0.02204630 0.02298373 0.04003915 0.04733940 0.05467209 0.07962440
+ [7] 0.10013170 0.14336078 0.48334916 1.48242257</code></pre>
+</div>
+</div>
+<p>As alpha becomes larger, rare species get a small weight and contribute little towards overall diversity.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diversity_weights</span>(p, <span class="dv">5</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 4.429620e-05 4.817851e-05 1.481826e-04 2.083463e-04 2.795183e-04
+ [6] 6.049503e-04 9.729488e-04 2.068354e-03 3.261787e-02 9.630074e-01</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diversity_weights</span>(p, <span class="dv">5</span>) <span class="sc">/</span> p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0.004974804 0.005190128 0.009163420 0.010897035 0.012658720 0.018811300
+ [7] 0.024058228 0.035722328 0.167085953 1.608432485</code></pre>
+</div>
+</div>
+<p>This gives a different way to view the prevalence of a species, not just by their abundance but by how their abundance contributes towards overall diversity in an ecosystem.</p>
+</section>
+<section id="references" class="level2 unnumbered">
 
-<div class="no-row-height column-margin column-container"><div class="">
-<p><img src="img/logo.png" class="img-fluid"></p>
-</div></div><p>Hi there, I’m Steve 👋. Welcome to my personal website.</p>
-<p>I’m a principal researcher at Statistics Canada where I use economics and data science to measure the economy.</p>
-<p>I work on several side projects in my spare time building open source software to make better official statistics, particularly in the area of price statistics and inflation. Checkout <a href="./software.html">software</a> for more information.</p>
-<p>Prior to working at Statistics Canada, I completed my PhD in economics where I examined firms’ corporate social responsibility and its implication for the efficient provision of public goods. Checkout <a href="./publications.html">research and publications</a> for more information.</p>
 
 
 
-</main> <!-- /main -->
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-hill" class="csl-entry" role="listitem">
+Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its Consequences.”</span> <em>Ecology</em> 54 (2): 427–32.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
+  author = {Martin, Steve},
+  title = {Decomposing Diversity Indexes},
+  date = {2025-10-19},
+  url = {https://marberts.github.io/blog/posts/diversity/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas" role="listitem">
+Martin, Steve. 2025. <span>“Decomposing Diversity Indexes.”</span>
+October 19, 2025. <a href="https://marberts.github.io/blog/posts/diversity/">https://marberts.github.io/blog/posts/diversity/</a>.
+</div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
