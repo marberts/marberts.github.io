@@ -1,0 +1,15 @@
+{
+  "hash": "5bfc18225fb073ca5dcf72abe863d6cf",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\nauthor: Steve Martin\ntitle: Principal economist\ntagline: \n  field1: David Schoch\n  field2: R Developer\n  field3: Cologne, Germany\n  colored: david@schochastics.net\n  field5: Cologne, Germany\nformat:\n  modern-cv-pdf: default\ncvfooter:\n  left: \"mr.schochastics.net\"\n  right: \"github.com/schochastics\"\ncvcolor: \tFF9600 #without `#`\nbgcolor: 616161\ncvfont: raleway #texlive fonts like raleway,fetamont,gillius,comfortaa\ncvmeta:\n  - title: Status\n    text: Team Lead for Transparent Social Analytics, GESIS\n  - title: Field\n    text: Software Engineering, Data Science\n  - title: Techs\n    text: R, bash, Python, javascript, Lua\nexecute:\n  echo: false\n---\n\n\n::: {.cell}\n\n:::\n\n\n\n# Experience\n\n\n\\cvevent{since 03/2022}{Team Lead}{GESIS}{Coordination of a project to build an Open Science platform with reusable code and tutorials}{Implementation of tools to enhance reproducibility and facilitate research with digital data in R}\n\\cvevent{2018 - 2022}{Presidential Fellow}{University of Manchester}{Research on Disinformation on Social Media}{Analyses of large scale and unstructured data sets with R, Python and Bash}\n\\cvevent{2017 - 2018}{Post Doctoral Researcher}{ETH Zurich}{Developing new methods to analyze social networks}{Gathering and analyzing large datsets from Social Media APIs}\n\\cvevent{ 2015 - 2017}{Post Doctoral Researcher}{University of Konstanz}{Developing new methods to analyze social networks}{Webscraping and harmonizing a large corpus of football data}\n\\cvevent{2012 - 2015}{Ph.D. Candidate}{University of Konstanz}{Developing new methods to analyze social networks}{Implementing methods in libraries}\n\n# Education\n\n\\cvevent{2012 - 2015}{Ph.D. in Computer Science}{Konstanz, Germany}{Thesis: A Positional Approach for Network Centrality}{Developed and implemented new methods to assess network centrality}\n\\cvevent{2006 - 2012}{Diploma in Business Mathematics}{Karlsruhe, Germany}{Thesis: Modularity Maximization}{Implementation and comparison of different clustering algorithms using Matlab}\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": null,
+    "postProcess": false
+  }
+}

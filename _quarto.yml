@@ -19,6 +19,8 @@ website:
       - href: cv.pdf
         text: cv
         icon: pdf
+      - href: blog/index.qmd
+        text: Blog
     right:
       - href: https://github.com/marberts
         text: "{{< fa brands github >}}"
@@ -34,6 +36,7 @@ website:
         text: "{{< fa envelope >}}"
   favicon: img/favicon-32x32.png
   site-url: https://marberts.github.io
+  page-footer: "Copyright 2025, Steve Martin." 
 
 format:
   html:
