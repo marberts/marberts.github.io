@@ -36,7 +36,14 @@ hist(p, main = "Abundance of species in an ecosystem")
 alphas <- seq(0, 5, 0.25)
 index <- sapply(alphas, \(a) diversity_index(p, a))
 
-plot(alphas, index, ylim = c(0, 10), xlab = "Alpha", ylab = "Index")
+plot(
+  alphas,
+  index,
+  ylim = c(0, 10),
+  xlab = "𝛼",
+  ylab = "Index",
+  main = "Diversity decreases with 𝛼"
+)
 abline(1 / max(p), 0, lty = "dashed")
 ```
 
@@ -79,7 +86,7 @@ diversity_weights(p, 2) / p
 As alpha becomes larger, rare species get a small weight and contribute little towards overall diversity.
 
 ```{r}
-diversity_weights(p, 5) 
+diversity_weights(p, 5)
 
 diversity_weights(p, 5) / p
 ```

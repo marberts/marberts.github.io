@@ -6,7 +6,7 @@
 
 - Kirby-McGregor, M. and Martin, S. (2019). [An R package for calculating repeat-sale price indices](https://www.revistadestatistica.ro/2019/09/an-r-package-for-calculating-repeat-sale-price-indices/). *Romanian Statistical Review*, 3/2019: 17-33.
 
-### Statistics Canada publications
+### Statistics Canada papers
 
 - Martin, S. (2021). [A note on general decompositions for price indexes](https://publications.gc.ca/pub?id=9.900889&sl=0). *Prices Analytical Series*. Statistics Canada Catalogue 62F0014M.
 
@@ -22,7 +22,7 @@
 
 - Martin, S. (2018). [In sickness and in health: The association between health and household income](https://publications.gc.ca/pub?id=9.857907&sl=0). *LISA Research Paper Series*. Statistics Canada Catalogue 89-648-X.
 
-### Academic publications
+### Academic papers
 
 - Heyes, A., Kapur, S., Kennedy, P., Martin, S., and Maxwell, J. (2020). [But What Does it Mean? Competition between Products Carrying Alternative Green Labels when Consumers are Active Acquirers of Information](https://doi.org/10.1086/706548). *Journal of the Association of Environmental and Resource Economists*, 7(2): 243-277.
 
