@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Steve Martin&#39;s blog</title>
+<link>https://marberts.github.io/blog/</link>
+<atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.8.25</generator>
+<lastBuildDate>Sun, 19 Oct 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Decomposing diversity indexes</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2025/diversity/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>A diversity index is a way to measure the prevalence species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.</p>
+<section id="what-is-diversity-anyway" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-diversity-anyway">What is diversity, anyway?</h2>
+<p>Diversity is a tricky concept to formalize. Up until writing this post, I would have said it was just the number of species in an ecosystem. In his seminal paper, <span class="citation" data-cites="hill">Hill (1973)</span> considers a family diversity indexes that give a measure of the effective number of species in an ecosystem—that is, the number of species that would be present in an ecosystem if all species were equally prevalent. Mathemetically, if there are <img src="https://latex.codecogs.com/png.latex?n"> species and the <img src="https://latex.codecogs.com/png.latex?i">-th species appears with probability <img src="https://latex.codecogs.com/png.latex?p_%7Bi%7D">, then the diversity index of order <img src="https://latex.codecogs.com/png.latex?%5Calpha"> is</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AN_%7B%5Calpha%7D(p_%7B1%7D,%20%5Cldots,%20p_%7Bn%7D)%20=%20%5Cleft(%5Csum_%7Bi=1%7D%5E%7Bn%7Dp_%7Bi%7D%5E%7B%5Calpha%7D%5Cright)%5E%7B%5Cfrac%7B1%7D%7B1%20-%20%5Calpha%7D%7D.%0A"></p>
+<p>Different values for <img src="https://latex.codecogs.com/png.latex?%5Calpha"> yield different indexes; for example, <img src="https://latex.codecogs.com/png.latex?N_%7B0%7D"> measures diversity by the total number of species <img src="https://latex.codecogs.com/png.latex?n">, also known as the richness of the ecosystem. As a function of <img src="https://latex.codecogs.com/png.latex?%5Calpha">, <img src="https://latex.codecogs.com/png.latex?N_%7B%5Calpha%7D"> is a continuously decreasing function that maps values in <img src="https://latex.codecogs.com/png.latex?%5B0,%20%5Cinfty)"> onto <img src="https://latex.codecogs.com/png.latex?%5Bn,%201%20/%20%5Cmax(p_%7B1%7D,%20%5Cldots,%20p_%7Bn%7D))">. We can see this with an example of an ecosystem with 10 species.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">diversity_index <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x, alpha) {</span>
+<span id="cb1-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (alpha <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) {</span>
+<span id="cb1-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span>alpha)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> alpha))</span>
+<span id="cb1-4">  } <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> {</span>
+<span id="cb1-5">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(p <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(p)))</span>
+<span id="cb1-6">  }</span>
+<span id="cb1-7">}</span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">54321</span>)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11">p <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sort</span>(gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_weights</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)))</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">hist</span>(p, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">main =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Abundance of species in an ecosystem"</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2025/diversity/index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">alphas <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>)</span>
+<span id="cb2-2">index <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sapply</span>(alphas, \(a) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diversity_index</span>(p, a))</span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot</span>(</span>
+<span id="cb2-5">  alphas,</span>
+<span id="cb2-6">  index,</span>
+<span id="cb2-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylim =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb2-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xlab =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"𝛼"</span>,</span>
+<span id="cb2-9">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylab =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Index"</span>,</span>
+<span id="cb2-10">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">main =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Diversity decreases with 𝛼"</span></span>
+<span id="cb2-11">)</span>
+<span id="cb2-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">abline</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(p), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lty =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"dashed"</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2025/diversity/index_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>With a bit of rearranging, we can see that <img src="https://latex.codecogs.com/png.latex?N_%5Calpha"> is the reciprocal of the generalized mean of <img src="https://latex.codecogs.com/png.latex?(p_%7B1%7D,%20%5Cldots,%20p_%7Bn%7D)"> with these same values as weights</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AN_%7B%5Calpha%7D(p_%7B1%7D,%20%5Cldots,%20p_%7Bn%7D)%20=%201%20/%20%5Cleft(%5Csum_%7Bi=1%7D%5E%7Bn%7D%20p_%7Bi%7D%5E%7B%5Calpha%20-%201%7D%20p_%7Bi%7D%5Cright)%5E%7B%5Cfrac%7B1%7D%7B%5Calpha%20-%201%7D%7D.%0A"></p>
+<p>Formulating <img src="https://latex.codecogs.com/png.latex?N_%7B%5Calpha%7D"> as a generalized mean shows a clear link between diversity indexes and concentration indexes, as <img src="https://latex.codecogs.com/png.latex?N_%7B2%7D"> is the reciprocal of the well-known Simpson index (or Herfindahl–Hirschman index if you’re an economist). (It also shows a link with measures of entropy, as <img src="https://latex.codecogs.com/png.latex?%5Clog(N_%7B%5Calpha%7D)"> is a generalization of Shannon entropy.) What makes a diversity index different from a measure of concentration (or entropy) is that it expresses diversity in terms of the effective size of the ecosystem that would give rise to a particular concentration of species if species were all equally abundant. Intuitively, <img src="https://latex.codecogs.com/png.latex?1%20/%20p_%7Bi%7D"> gives the effective size of the ecosystem if all species were as prevalent as species <img src="https://latex.codecogs.com/png.latex?i">. Rather than considering a single species, <img src="https://latex.codecogs.com/png.latex?N_%7Ba%7D"> uses the average abundance across all species to arrive at a measure of diversity.</p>
+</section>
+<section id="decomposing-diversity" class="level2">
+<h2 class="anchored" data-anchor-id="decomposing-diversity">Decomposing diversity</h2>
+<p><span class="citation" data-cites="hill">Hill (1973)</span> notes that different choices for <img src="https://latex.codecogs.com/png.latex?%5Calpha"> imply different sensitivities to rare versus abundant species in an ecosystem. Setting <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%200"> means that diversity depends only on the number of species, no matter how rare some may be, whereas when <img src="https://latex.codecogs.com/png.latex?%5Calpha%20%5Crightarrow%20%5Cinfty"> then only the most prevalent species influences diversity. We can go one step further by decomposing <img src="https://latex.codecogs.com/png.latex?N_%7B%5Calpha%7D"> so that it’s represented as an arithmetic mean of the effective size of each species <img src="https://latex.codecogs.com/png.latex?1%20/%20p_%7Bi%7D"> and we can see the contribution of each species towards total diversity. We’ll do this by borrowing some of the machinery from price and quantity indexes to derive weights <img src="https://latex.codecogs.com/png.latex?(w_%7B1%7D,%20%5Cldots,%20w_%7Bn%7D)"> such that</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AN_%7B%5Calpha%7D(p_%7B1%7D,%20%5Cldots,%20p_%7Bn%7D)%20=%20%5Csum_%7Bi=1%7D%5E%7Bn%7D%20w_%7Bi%7D%20/%20p_%7Bi%7D.%0A"></p>
+<p>The core tool to do with comes from my <a href="https://marberts.github.io/gpindex"><code>{gpindex}</code></a> package.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">diversity_weights <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x, alpha) {</span>
+<span id="cb3-2">  gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transmute_weights</span>(alpha <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)(x, x)</span>
+<span id="cb3-3">}</span></code></pre></div></div>
+</div>
+<p>When <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%200">, each species contributes the same amount to overall diversity.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diversity_weights</span>(p, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> p</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 1 1 1 1 1 1 1 1 1 1</code></pre>
+</div>
+</div>
+<p>Increasing <img src="https://latex.codecogs.com/png.latex?%5Calpha"> to 2, the measure of diversity decreases and more weight is shifted towards more abundant species.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diversity_weights</span>(p, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> p</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0.02204630 0.02298373 0.04003915 0.04733940 0.05467209 0.07962440
+ [7] 0.10013170 0.14336078 0.48334916 1.48242257</code></pre>
+</div>
+</div>
+<p>As alpha becomes larger, rare species get a small weight and contribute little towards overall diversity.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diversity_weights</span>(p, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 4.429620e-05 4.817851e-05 1.481826e-04 2.083463e-04 2.795183e-04
+ [6] 6.049503e-04 9.729488e-04 2.068354e-03 3.261787e-02 9.630074e-01</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diversity_weights</span>(p, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> p</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0.004974804 0.005190128 0.009163420 0.010897035 0.012658720 0.018811300
+ [7] 0.024058228 0.035722328 0.167085953 1.608432485</code></pre>
+</div>
+</div>
+<p>This gives a different way to view the prevalence of a species, not just by their abundance but by how their abundance contributes towards overall diversity in an ecosystem.</p>
+</section>
+<section id="references" class="level2 unnumbered">
+
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-hill" class="csl-entry">
+Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its Consequences.”</span> <em>Ecology</em> 54 (2): 427–32.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
+  author = {Martin, Steve},
+  title = {Decomposing Diversity Indexes},
+  date = {2025-10-19},
+  url = {https://marberts.github.io/blog/posts/2025/diversity/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2025. <span>“Decomposing Diversity Indexes.”</span>
+October 19, 2025. <a href="https://marberts.github.io/blog/posts/2025/diversity/">https://marberts.github.io/blog/posts/2025/diversity/</a>.
+</div></div></section></div> ]]></description>
+  <category>Index numbers</category>
+  <category>R</category>
+  <guid>https://marberts.github.io/blog/posts/2025/diversity/</guid>
+  <pubDate>Sun, 19 Oct 2025 00:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>
