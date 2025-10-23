@@ -10,7 +10,478 @@
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.25</generator>
-<lastBuildDate>Sun, 19 Oct 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 22 Oct 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>What causes inflation?</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2025/inflation/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>What causes inflation in prices over time? Increases in the money supply, of course. Although there are many reasons for increasing prices over time, money supply is one of the few things that can do so and grow without bound. Case closed, right? Not quite.</p>
+<p>In practice we can’t perfectly observe how prices change over time and instead we must measure inflation with an index number. Ignoring all the details that arise in practice, the goal is usually to construct a chained Laspeyres or Fisher index. There’s a nice disclaimer in the CPI manual about potential issues with these formulas when prices bounce or oscillate, rather than grow monotonically <span class="citation" data-cites="cpitheory">(IMF et al. 2025, 24)</span>. What I want to show here is that this can be a source of perpetual inflation. This means that, for example, increases and decreases in market concentration over time, which would result in fluctuating prices, can result a price index measuring inflation, even when prices don’t cumulatively change over time.</p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<p>Let’s start with a simple two-commodity model where a representative consumer has Cobb-Douglas preferences. We’ll make a small class and mixin to make a Laspeyres and Fisher index given prices based on these preferences.</p>
+<div id="62bede12" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"></span>
+<span id="cb1-5"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> IndexMixin:</span>
+<span id="cb1-6">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> laspeyres(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, p1: np.ndarray, p0: np.ndarray) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-7">        q0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.demand(p0)</span>
+<span id="cb1-8">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(p1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(p0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0)</span>
+<span id="cb1-9"></span>
+<span id="cb1-10">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> paasche(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, p1: np.ndarray, p0: np.ndarray) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-11">        q1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.demand(p1)</span>
+<span id="cb1-12">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(p1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(p0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1)</span>
+<span id="cb1-13"></span>
+<span id="cb1-14">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> fisher(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, p1: np.ndarray, p0: np.ndarray) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-15">        laspeyres <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.laspeyres(p1, p0)</span>
+<span id="cb1-16">        paasche <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.paasche(p1, p0)</span>
+<span id="cb1-17">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> np.sqrt(laspeyres <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> paasche)</span>
+<span id="cb1-18"></span>
+<span id="cb1-19"></span>
+<span id="cb1-20"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> CobbDouglas(IndexMixin):</span>
+<span id="cb1-21">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, alpha: np.ndarray, m: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>):</span>
+<span id="cb1-22">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._alpha <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.asarray(alpha, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>np.float64)</span>
+<span id="cb1-23">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._alpha <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/=</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._alpha)</span>
+<span id="cb1-24">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._m <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(m)</span>
+<span id="cb1-25"></span>
+<span id="cb1-26">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> demand(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, p: np.ndarray) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> np.ndarray:</span>
+<span id="cb1-27">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(p) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._alpha):</span>
+<span id="cb1-28">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">ValueError</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"must supply prices for </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._alpha)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> products"</span>)</span>
+<span id="cb1-29">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._alpha <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._m <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> p</span></code></pre></div></div>
+</div>
+<p>We’ll also make a function to oscillate prices. The idea is to form a chain of index values that starts with both products having a price of <code>[1, 1]</code>, switches prices between <code>[1, 1.1]</code> and <code>[1.1, 1]</code> some number of times, and ends with prices back at <code>[1, 1]</code>. As a chained index is just the cumulative product of these index values, we can decompose the chained index into the product of the first and last change in price, and the product of the oscillations. What’s necessary to drive inflation is that the product of the oscillations is greater than 1.</p>
+<p>We’ll also make a second function that does a more complex oscillation that we’ll use later.</p>
+<div id="67525da3" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> bounce(index) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">tuple</span>[np.float64]:</span>
+<span id="cb2-2">    initial <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-3">    p1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.1</span>]</span>
+<span id="cb2-4">    p2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-5">    i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> index(p1, initial) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> index(initial, p1)</span>
+<span id="cb2-6">    b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> index(p2, p1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> index(p1, p2)</span>
+<span id="cb2-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> i, b</span>
+<span id="cb2-8"></span>
+<span id="cb2-9"></span>
+<span id="cb2-10"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> bounce2(index) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">tuple</span>[np.float64]:</span>
+<span id="cb2-11">    initial <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-12">    p1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.1</span>]</span>
+<span id="cb2-13">    p2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-14">    p3 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-15">    i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> index(p1, initial) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> index(initial, p1)</span>
+<span id="cb2-16">    b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> index(p2, p1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> index(p3, p2) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> index(p1, p3)</span>
+<span id="cb2-17">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> i, b</span></code></pre></div></div>
+</div>
+</section>
+<section id="inflation-due-to-measurement" class="level2">
+<h2 class="anchored" data-anchor-id="inflation-due-to-measurement">Inflation due to measurement</h2>
+<p>Let’s start by generating some preferences and giving our representative consumer a fixed income, then simulating how the chained Laspeyres index evolves as prices bounce around.</p>
+<div id="cd9c25b4" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> CobbDouglas([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>], <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)</span>
+<span id="cb3-2"></span>
+<span id="cb3-3">res <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> bounce(u.laspeyres)</span>
+<span id="cb3-4"></span>
+<span id="cb3-5">oscillate <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [res[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> res[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>n <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>)]</span>
+<span id="cb3-6"></span>
+<span id="cb3-7">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots()</span>
+<span id="cb3-8">ax.plot(oscillate)</span>
+<span id="cb3-9">plt.xticks(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))</span>
+<span id="cb3-10">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2025/inflation/index_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here we see that, despite prices starting and ending at the same level, the chained Laspeyres index shows that prices have increased over time. This happens because each oscillation registers an increase in prices (about 0.8%), and these compound to show that prices are increasing over time. Note that the culprit here is the well-known substitution bias in the Laspeyres index; if there was no substitution bias then the index would be transitive with Cobb-Douglas preferences and (correctly) show no change in prices over time.</p>
+<p>We can get the same behavior from the Fisher index, albeit with a more complex form of oscillation. (Using the simple oscillation would show no change in prices over time because the Fisher index satisfies the time-reversal property.)</p>
+<div id="821202ea" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">res <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> bounce2(u.fisher)</span>
+<span id="cb4-2"></span>
+<span id="cb4-3">oscillate <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [res[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> res[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> n <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>)]</span>
+<span id="cb4-4"></span>
+<span id="cb4-5">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots()</span>
+<span id="cb4-6">ax.plot(oscillate)</span>
+<span id="cb4-7">plt.xticks(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))</span>
+<span id="cb4-8">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2025/inflation/index_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Each oscillation registers a 0.02% increase in prices. Note that this behavior from the Fisher index is sensitive to the parameters in the Cobb-Douglas utility function and it’s also possible to get that prices decreases over time.</p>
+<div id="db0b20bd" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> CobbDouglas([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)</span>
+<span id="cb5-2">res <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> bounce2(u.fisher)</span>
+<span id="cb5-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(res)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(np.float64(1.0), np.float64(0.9998308882582081))</code></pre>
+</div>
+</div>
+<p>Overall, this example shows that more than just money supply can drive our measurement of inflation, even if increasing money supply is the only true cause of inflation.</p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-cpitheory" class="csl-entry">
+IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2025. <em>Consumer Price Index Manual: Theory</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781513559605.069">https://doi.org/10.5089/9781513559605.069</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
+  author = {Martin, Steve},
+  title = {What Causes Inflation?},
+  date = {2025-10-22},
+  url = {https://marberts.github.io/blog/posts/2025/inflation/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2025. <span>“What Causes Inflation?”</span> October 22,
+2025. <a href="https://marberts.github.io/blog/posts/2025/inflation/">https://marberts.github.io/blog/posts/2025/inflation/</a>.
+</div></div></section></div> ]]></description>
+  <category>Index numbers</category>
+  <category>Python</category>
+  <guid>https://marberts.github.io/blog/posts/2025/inflation/</guid>
+  <pubDate>Wed, 22 Oct 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Decomposing diversity indexes</title>
   <dc:creator>Steve Martin</dc:creator>
