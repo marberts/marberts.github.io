@@ -1,6 +1,7 @@
 ---
 title: "What causes inflation?"
 date: "2025-10-22"
+date-modified: "2025-10-23"
 categories:
   - Index numbers
   - Python
@@ -87,7 +88,20 @@ plt.xticks(range(0, 20, 2))
 plt.show()
 ```
 
-Here we see that, despite prices starting and ending at the same level, the chained Laspeyres index shows that prices have increased over time. This happens because each oscillation registers an increase in prices (about `{python} round(float(res[1] - 1) * 100, 1)`%), and these compound to show that prices are increasing over time. Note that the culprit here is the well-known substitution bias in the Laspeyres index; if there was no substitution bias then the index would be transitive with Cobb-Douglas preferences and (correctly) show no change in prices over time.
+Here we see that, despite prices starting and ending at the same level, the chained Laspeyres index shows that prices have increased over time. This happens because each oscillation registers an increase in prices (about `{python} round(float(res[1] - 1) * 100, 1)`%), and these compound to show that prices are increasing over time. Note that the culprit here is the well-known substitution bias in the Laspeyres index; if there was no substitution bias then the index would be transitive with Cobb-Douglas preferences and (correctly) show no change in prices over time. Instead, this happens with Leontief preferences.
+
+```{python}
+class Leontief(IndexMixin):
+    def __init__(self, m: float):
+        self._m = float(m)
+
+    def demand(self, p: np.ndarray) -> np.ndarray:
+        return np.repeat(self._m / np.sum(p), len(p))
+
+bounce(Leontief(100).laspeyres)
+```
+
+Both components of the chained index—the first and last change in price and the part due to oscillations—show no change in price.
 
 We can get the same behavior from the Fisher index, albeit with a more complex form of oscillation. (Using the simple oscillation would show no change in prices over time because the Fisher index satisfies the time-reversal property.)
 
