@@ -5,12 +5,539 @@
       xmlns:dc="http://purl.org/dc/elements/1.1/" 
       version="2.0">
 <channel>
-<title>Steve Martin&#39;s blog</title>
+<title>Steve Martin</title>
 <link>https://marberts.github.io/blog/</link>
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.25</generator>
-<lastBuildDate>Wed, 22 Oct 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 27 Oct 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Hedonic imputation with one regression, not two</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2025/hedonics/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Comparing housing prices over time is difficult because of all the heterogeneity in housing that can both affect prices and vary over time. The typical solution to this problem is to use a hedonic price index that attempts to model the relationship between housing characteristics and price, and uses this to control the change in these characteristics over time.</p>
+<p>Although there are several approaches to building a hedonic price index, the double imputation approach is usually seen as the best. Every presentation of this method that I have seen calculates the index by fitting two regression models and combining the fitted values from these models in a geometric index <span class="citation" data-cites="aizcorbe2014 rppi2013 rppi2020">(e.g., Aizcorbe 2014; ILO et al. 2013; IMF 2020)</span>. What I want to show here is that the double imputation index can be recovered from the coefficient in a linear regression. This makes it simpler to calculate the index and provides an easy strategy to estimate conventional standard errors.</p>
+<section id="turning-two-regressions-into-one" class="level2">
+<h2 class="anchored" data-anchor-id="turning-two-regressions-into-one">Turning two regressions into one</h2>
+<p>The hedonic imputation model starts with two linear models, one for transactions in period 0,</p>
+<p><span id="eq-laspeyres"><img src="https://latex.codecogs.com/png.latex?%0A%5Clog(p_%7Bi0%7D)%20=%20%5Calpha_%7B0%7D%20+%20x_%7Bi0%7D%20%5Cbeta_%7B0%7D%20+%20u_%7Bi0%7D,%0A%5Ctag%7B1%7D"></span></p>
+<p>and one for transactions in period 1,</p>
+<p><span id="eq-paasche"><img src="https://latex.codecogs.com/png.latex?%0A%5Clog(p_%7Bi1%7D)%20=%20%5Calpha_%7B1%7D%20+%20x_%7Bi1%7D%20%5Cbeta_%7B1%7D%20+%20e_%7Bi1%7D,%0A%5Ctag%7B2%7D"></span></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?x_%7Bit%7D"> is a vector of characteristics that confound a change in price over time with a change in the composition of housing.</p>
+<p>The Laspeyres hedonic imputation index, <img src="https://latex.codecogs.com/png.latex?I">, compares the predicted prices from Equation&nbsp;2 against those from Equation&nbsp;1 over the distribution of characteristics in period 0</p>
+<p><span id="eq-lhi"><img src="https://latex.codecogs.com/png.latex?%0A%5Clog(I)%20=%20%5Calpha_%7B1%7D%20-%20%5Calpha_%7B0%7D%20+%20%5Cbar%7Bx%7D_%7B0%7D%20(%5Cbeta_%7B1%7D%20-%20%5Cbeta_%7B0%7D),%0A%5Ctag%7B3%7D"></span></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> is the vector of average period 0 characteristics. This is equation 5.19 in <span class="citation" data-cites="rppi2013">ILO et al. (2013)</span>.</p>
+<p>Equation&nbsp;1 and Equation&nbsp;2 can be nested to get a single linear model. Subtracting <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> from the interaction term then gives Equation&nbsp;3 as a coefficient on a time dummy variable</p>
+<img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Balign%7D%0A%5Clog(p_%7Bit%7D)%20&amp;=%20%5Calpha_%7B0%7D%20+%20x_%7Bit%7D%20%5Cbeta_%7B0%7D%20+%20t%20(%5Calpha_%7B1%7D%20-%20%5Calpha_%7B0%7D%20+%20x_%7Bit%7D%20(%5Cbeta_%7B1%7D%20-%20%5Cbeta_%7B0%7D))%20+%20u_%7Bit%7D%20+%20t(e_%7Bit%7D%20-%20u_%7Bit%7D)%5C%5C%0A%0A&amp;=%20%5Calpha_%7B0%7D%20+%20t%20%5Clog(I)%20+%20x_%7Bit%7D%20%5Cbeta_%7B0%7D%20+%20t%20(x_%7Bit%7D%20-%20%5Cbar%7Bx%7D_%7B0%7D)%20(%5Cbeta_%7B1%7D%20-%20%5Cbeta_%7B0%7D)%20+%20%5Cvarepsilon_%7Bit%7D,%0A%5Cend%7Balign%7D">
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cvarepsilon_%7Bit%7D%20=%20u_%7Bit%7D%20+%20t(e_%7Bit%7D%20-%20u_%7Bit%7D)">. The Paasche hedonic imputation index follows along the time lines, replacing <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> with <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B1%7D">. The Fisher hedonic imputation index combines these two, which is the same as replacing <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> with <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D%20/%202%20+%20%5Cbar%7Bx%7D_%7B1%7D%20/%202">. Note that this reduces to the classic time-dummy hedonic index when <img src="https://latex.codecogs.com/png.latex?%5Cbeta_%7B1%7D%20=%20%5Cbeta_%7B0%7D">.<sup>1</sup></p>
+</section>
+<section id="an-example" class="level2">
+<h2 class="anchored" data-anchor-id="an-example">An example</h2>
+<p>Let’s go through an example to see this in action. As the goal is just to give an example, I’ll make up some typical-looking transaction data for property sales with a few characteristics over two periods.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15243</span>)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">sales <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">period =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rep</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">120</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">180</span>)),</span>
+<span id="cb1-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">price =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span>),</span>
+<span id="cb1-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">area =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">800</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2500</span>),</span>
+<span id="cb1-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">age =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">80</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">replace =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb1-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">amenity_score =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">300</span>)</span>
+<span id="cb1-9">)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(sales)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  period     price      area age amenity_score
+1      0 1.8931980 2415.7592  70    0.01447159
+2      0 0.9737266 2244.8349   5    0.59602963
+3      0 0.9860096 1937.4438  80    0.39965375
+4      0 1.4830738  989.7379  66    0.16038727
+5      0 0.3651522 2324.3656  50    0.82509594
+6      0 0.7955844 1930.3795  12    0.38836734</code></pre>
+</div>
+</div>
+<p>We’ll work with the following basic model relating price with characteristics in each period</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Clog(%5Ctext%7Bprice%7D_%7Bit%7D)%20=%20%5Calpha_%7Bt%7D%20+%20%5Cbeta_%7B1t%7D%5Ctext%7Bage%7D_%7Bit%7D%20+%20%5Cbeta_%7B2t%7D%5Ctext%7Barea%7D_%7Bit%7D%20+%20%5Cbeta_%7Bi3%7D%5Ctext%7Barea%7D_%7Bit%7D%5E2%20+%20%5Cbeta_%7Bi4%7D%5Ctext%7Bneighbourhoodscore%7D_%7Bit%7D%20+%20%5Cvarepsilon_%7Bit%7D.%0A"></p>
+<p>The two-regression approach for making the Laspeyres-imputation index fits two separate models for each time period and compares the average ratio of prediceted prices over the distribution of housing characteristics for sales in period 0.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">sales2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">split</span>(sales, <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>period)</span>
+<span id="cb3-2"></span>
+<span id="cb3-3">mdl1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(price) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> age <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> area <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">I</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> amenity_score, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]])</span>
+<span id="cb3-4"></span>
+<span id="cb3-5">mdl2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(price) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> age <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> area <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">I</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> amenity_score, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]])</span>
+<span id="cb3-6"></span>
+<span id="cb3-7">laspeyres <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]])))</span>
+<span id="cb3-8"></span>
+<span id="cb3-9">laspeyres</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9367763</code></pre>
+</div>
+</div>
+<p>The Paasche-imputation index does the same thing, just over the distribution of characteristics for sales in period 1, and the Fisher-imputation index combines the Laspeyres and Paasche indexes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">paasche <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]])))</span>
+<span id="cb5-2"></span>
+<span id="cb5-3">paasche</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9376688</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">fisher <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sqrt</span>(laspeyres <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> paasche)</span>
+<span id="cb7-2"></span>
+<span id="cb7-3">fisher</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9372224</code></pre>
+</div>
+</div>
+<p>To make these indexes with one regression we need to remove the appropriate mean from the characteristics variables and interact them with the time dummy in the linear model. In each case the coefficient on the time dummy variable gives the same index as using two regressions. For simplicitly, I’ll just show the case of the Fisher index.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">dm <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb9-2">  m0 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">substitute</span>(period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parent.frame</span>())])</span>
+<span id="cb9-3">  m1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">substitute</span>(period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parent.frame</span>())])</span>
+<span id="cb9-4">  x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(m0, m1))</span>
+<span id="cb9-5">}</span>
+<span id="cb9-6"></span>
+<span id="cb9-7">mdl_fisher <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(</span>
+<span id="cb9-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(price) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-9">    age <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-10">    area <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-11">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">I</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-12">    amenity_score <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb9-13">    period<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(age) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(area) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(amenity_score)),</span>
+<span id="cb9-14">  sales</span>
+<span id="cb9-15">)</span>
+<span id="cb9-16"></span>
+<span id="cb9-17"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all.equal</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coef</span>(mdl_fisher)[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"period"</span>]), fisher, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">check.attributes =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>Representing the Fisher index as the coefficient in a linear model also makes it easy to get the (delta method) standard error for the index. <sup>2</sup></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coef</span>(mdl_fisher)[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"period"</span>]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sqrt</span>(sandwich<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vcovHC</span>(mdl_fisher)[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>])</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   period 
+0.1009944 </code></pre>
+</div>
+</div>
+</section>
+<section id="why-two-regressions-can-be-better" class="level2">
+<h2 class="anchored" data-anchor-id="why-two-regressions-can-be-better">Why two regressions can be better</h2>
+<p>As noted by <span class="citation" data-cites="aizcorbe2014">Aizcorbe (2014, chap. 3)</span>, constructing the hedonic-imputation index with two regressions is more flexible than recovering an index from a regression coefficient. The trick of doing it with one regression works because the model is linear; using a non-linear regression model (however rare) may require fitting two models separately. Explicitly using the fitted values from two models to make price relatives also allows for the use of other index-number formulas, not just geometric ones.</p>
+<p>One reason that I’ve not seen for the two-regression approach is that it’s also more convenient to calculate product contributions when doing two regressions.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">laspeyres_relatives <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(</span>
+<span id="cb13-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]])</span>
+<span id="cb13-3">)</span>
+<span id="cb13-4">contrib_laspeyres <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geometric_contributions</span>(laspeyres_relatives)</span>
+<span id="cb13-5"></span>
+<span id="cb13-6">paasche_relatives <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(</span>
+<span id="cb13-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]])</span>
+<span id="cb13-8">)</span>
+<span id="cb13-9">contrib_paasche <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geometric_contributions</span>(paasche_relatives)</span>
+<span id="cb13-10"></span>
+<span id="cb13-11">contrib_fisher <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Map</span>(</span>
+<span id="cb13-12">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">*</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>,</span>
+<span id="cb13-13">  gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transmute_weights</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(laspeyres, paasche)),</span>
+<span id="cb13-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(contrib_laspeyres, contrib_paasche)</span>
+<span id="cb13-15">)</span>
+<span id="cb13-16"></span>
+<span id="cb13-17"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot</span>(</span>
+<span id="cb13-18">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">density</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unlist</span>(contrib_fisher)),</span>
+<span id="cb13-19">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">main =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Distribution of sales contributions"</span></span>
+<span id="cb13-20">)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2025/hedonics/index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-aizcorbe2014" class="csl-entry">
+Aizcorbe, Ana M. 2014. <em>A Practical Guide to Price Index and Hedonic Techniques</em>. Oxford University Press.
+</div>
+<div id="ref-rppi2013" class="csl-entry">
+ILO, IMF, OECD, UNECE, and World Bank. 2013. <em>Handbook on Residential Property Prices Indices (RPPIs)</em>. Eurostat. <a href="https://doi.org/10.2785/34007">https://doi.org/10.2785/34007</a>.
+</div>
+<div id="ref-rppi2020" class="csl-entry">
+IMF. 2020. <em>Residential Property Prices Index (RPPI) Practical Compilation Guide</em>. International Monetary Fund. <a href="https://www.imf.org/en/Data/Statistics/RPPI-guide">https://www.imf.org/en/Data/Statistics/RPPI-guide</a>.
+</div>
+<div id="ref-wooldridge2002" class="csl-entry">
+Wooldridge, Jeffrey M. 2002. <em>Econometric Analysis of Cross Section and Panel Data</em>. MIT Press.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This type of regression model comes up in the literature on program evaluation as a way to estimate average treatment effects; see, e.g., <span class="citation" data-cites="wooldridge2002">Wooldridge (2002, sec. 18.3.1)</span>.↩︎</p></li>
+<li id="fn2"><p>These standard error are approximate when the mean of the characteristics is calculated from the sample of data used to the fit the model.↩︎</p></li>
+</ol>
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
+  author = {Martin, Steve},
+  title = {Hedonic Imputation with One Regression, Not Two},
+  date = {2025-10-27},
+  url = {https://marberts.github.io/blog/posts/2025/hedonics/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2025. <span>“Hedonic Imputation with One Regression, Not
+Two.”</span> October 27, 2025. <a href="https://marberts.github.io/blog/posts/2025/hedonics/">https://marberts.github.io/blog/posts/2025/hedonics/</a>.
+</div></div></section></div> ]]></description>
+  <category>Index numbers</category>
+  <category>Econometrics</category>
+  <category>R</category>
+  <guid>https://marberts.github.io/blog/posts/2025/hedonics/</guid>
+  <pubDate>Mon, 27 Oct 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>What causes inflation?</title>
   <dc:creator>Steve Martin</dc:creator>
