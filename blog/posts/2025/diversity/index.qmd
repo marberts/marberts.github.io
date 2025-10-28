@@ -4,6 +4,7 @@ date: "2025-10-19"
 categories:
   - Index numbers
   - R
+doi: 10.59350/dfntc-yfd90
 ---
 
 A diversity index is a way to measure the prevalence species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.
@@ -63,7 +64,7 @@ $$
 N_{\alpha}(p_{1}, \ldots, p_{n}) = \sum_{i=1}^{n} w_{i} / p_{i}.
 $$
 
-The core tool to do with comes from my [`{gpindex}`](https://marberts.github.io/gpindex) package.
+The core tool to do this comes from my [`{gpindex}`](https://marberts.github.io/gpindex) package.
 
 ```{r}
 diversity_weights <- function(x, alpha) {

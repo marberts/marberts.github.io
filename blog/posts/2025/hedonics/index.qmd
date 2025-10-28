@@ -5,6 +5,7 @@ categories:
   - Index numbers
   - Econometrics
   - R
+doi: 10.59350/2f0dq-zvs49
 ---
 
 Comparing housing prices over time is difficult because of all the heterogeneity in housing that can both affect prices and vary over time. The typical solution to this problem is to use a hedonic price index that attempts to model the relationship between housing characteristics and price, and uses this to control the change in these characteristics over time.
@@ -45,7 +46,7 @@ where $\bar{x}_{0}$ is the vector of average period 0 characteristics. This is e
 \end{align}
 ```
 
-where $\varepsilon_{it} = u_{it} + t(e_{it} - u_{it})$. The Paasche hedonic imputation index follows along the time lines, replacing $\bar{x}_{0}$ with $\bar{x}_{1}$. The Fisher hedonic imputation index combines these two, which is the same as replacing $\bar{x}_{0}$ with $\bar{x}_{0} / 2 + \bar{x}_{1} / 2$. Note that this reduces to the classic time-dummy hedonic index when $\beta_{1} = \beta_{0}$.[^1]
+where $\varepsilon_{it} = u_{it} + t(e_{it} - u_{it})$. The Paasche hedonic imputation index follows along the same lines, replacing $\bar{x}_{0}$ with $\bar{x}_{1}$. The Fisher hedonic imputation index combines these two, which is the same as replacing $\bar{x}_{0}$ with $\bar{x}_{0} / 2 + \bar{x}_{1} / 2$. Note that this reduces to the classic time-dummy hedonic index when $\beta_{1} = \beta_{0}$.[^1]
 
 [^1]: This type of regression model comes up in the literature on program evaluation as a way to estimate average treatment effects; see, e.g., @wooldridge2002 [section 18.3.1].
 
