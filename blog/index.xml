@@ -35,7 +35,7 @@
 <p>where <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> is the vector of average period 0 characteristics. This is equation 5.19 in <span class="citation" data-cites="rppi2013">ILO et al. (2013)</span>.</p>
 <p>Equation&nbsp;1 and Equation&nbsp;2 can be nested to get a single linear model. Subtracting <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> from the interaction term then gives Equation&nbsp;3 as a coefficient on a time dummy variable</p>
 <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Balign%7D%0A%5Clog(p_%7Bit%7D)%20&amp;=%20%5Calpha_%7B0%7D%20+%20x_%7Bit%7D%20%5Cbeta_%7B0%7D%20+%20t%20(%5Calpha_%7B1%7D%20-%20%5Calpha_%7B0%7D%20+%20x_%7Bit%7D%20(%5Cbeta_%7B1%7D%20-%20%5Cbeta_%7B0%7D))%20+%20u_%7Bit%7D%20+%20t(e_%7Bit%7D%20-%20u_%7Bit%7D)%5C%5C%0A%0A&amp;=%20%5Calpha_%7B0%7D%20+%20t%20%5Clog(I)%20+%20x_%7Bit%7D%20%5Cbeta_%7B0%7D%20+%20t%20(x_%7Bit%7D%20-%20%5Cbar%7Bx%7D_%7B0%7D)%20(%5Cbeta_%7B1%7D%20-%20%5Cbeta_%7B0%7D)%20+%20%5Cvarepsilon_%7Bit%7D,%0A%5Cend%7Balign%7D">
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cvarepsilon_%7Bit%7D%20=%20u_%7Bit%7D%20+%20t(e_%7Bit%7D%20-%20u_%7Bit%7D)">. The Paasche hedonic imputation index follows along the time lines, replacing <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> with <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B1%7D">. The Fisher hedonic imputation index combines these two, which is the same as replacing <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> with <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D%20/%202%20+%20%5Cbar%7Bx%7D_%7B1%7D%20/%202">. Note that this reduces to the classic time-dummy hedonic index when <img src="https://latex.codecogs.com/png.latex?%5Cbeta_%7B1%7D%20=%20%5Cbeta_%7B0%7D">.<sup>1</sup></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cvarepsilon_%7Bit%7D%20=%20u_%7Bit%7D%20+%20t(e_%7Bit%7D%20-%20u_%7Bit%7D)">. The Paasche hedonic imputation index follows along the same lines, replacing <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> with <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B1%7D">. The Fisher hedonic imputation index combines these two, which is the same as replacing <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D"> with <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D_%7B0%7D%20/%202%20+%20%5Cbar%7Bx%7D_%7B1%7D%20/%202">. Note that this reduces to the classic time-dummy hedonic index when <img src="https://latex.codecogs.com/png.latex?%5Cbeta_%7B1%7D%20=%20%5Cbeta_%7B0%7D">.<sup>1</sup></p>
 </section>
 <section id="an-example" class="level2">
 <h2 class="anchored" data-anchor-id="an-example">An example</h2>
@@ -504,7 +504,7 @@ font-style: inherit;">"Distribution of sales contributions"</span></span>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
 <div id="ref-aizcorbe2014" class="csl-entry">
-Aizcorbe, Ana M. 2014. <em>A Practical Guide to Price Index and Hedonic Techniques</em>. Oxford University Press.
+Aizcorbe, Ana M. 2014. <em>A Practical Guide to Price Index and Hedonic Techniques</em>. Oxford University Press. <a href="https://doi.org/10.1093/acprof:oso/9780198702429.001.0001">https://doi.org/10.1093/acprof:oso/9780198702429.001.0001</a>.
 </div>
 <div id="ref-rppi2013" class="csl-entry">
 ILO, IMF, OECD, UNECE, and World Bank. 2013. <em>Handbook on Residential Property Prices Indices (RPPIs)</em>. Eurostat. <a href="https://doi.org/10.2785/34007">https://doi.org/10.2785/34007</a>.
@@ -526,11 +526,12 @@ Wooldridge, Jeffrey M. 2002. <em>Econometric Analysis of Cross Section and Panel
   title = {Hedonic Imputation with One Regression, Not Two},
   date = {2025-10-27},
   url = {https://marberts.github.io/blog/posts/2025/hedonics/},
+  doi = {10.59350/2f0dq-zvs49},
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2025. <span>“Hedonic Imputation with One Regression, Not
-Two.”</span> October 27, 2025. <a href="https://marberts.github.io/blog/posts/2025/hedonics/">https://marberts.github.io/blog/posts/2025/hedonics/</a>.
+Two.”</span> October 27, 2025. <a href="https://doi.org/10.59350/2f0dq-zvs49">https://doi.org/10.59350/2f0dq-zvs49</a>.
 </div></div></section></div> ]]></description>
   <category>Index numbers</category>
   <category>Econometrics</category>
@@ -553,7 +554,7 @@ Two.”</span> October 27, 2025. <a href="https://marberts.github.io/blog/posts/
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>Let’s start with a simple two-commodity model where a representative consumer has Cobb-Douglas preferences. We’ll make a small class and mixin to make a Laspeyres and Fisher index given prices based on these preferences.</p>
-<div id="9385b496" class="cell" data-execution_count="1">
+<div id="40ce82c5" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
@@ -749,7 +750,7 @@ font-style: inherit;">/</span> p</span></code></pre></div></div>
 </div>
 <p>We’ll also make a function to oscillate prices. The idea is to form a chain of index values that starts with both products having a price of <code>[1, 1]</code>, switches prices between <code>[1, 1.1]</code> and <code>[1.1, 1]</code> some number of times, and ends with prices back at <code>[1, 1]</code>. As a chained index is just the cumulative product of these index values, we can decompose the chained index into the product of the first and last change in price, and the product of the oscillations. What’s necessary to drive inflation is that the product of the oscillations is greater than 1.</p>
 <p>We’ll also make a second function that does a more complex oscillation that we’ll use later.</p>
-<div id="f2c44e66" class="cell" data-execution_count="2">
+<div id="ef0016b2" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -852,7 +853,7 @@ font-style: inherit;">return</span> i, b</span></code></pre></div></div>
 <section id="inflation-due-to-measurement" class="level2">
 <h2 class="anchored" data-anchor-id="inflation-due-to-measurement">Inflation due to measurement</h2>
 <p>Let’s start by generating some preferences and giving our representative consumer a fixed income, then simulating how the chained Laspeyres index evolves as prices bounce around.</p>
-<div id="3d6fc4ef" class="cell" data-execution_count="3">
+<div id="988c9cd8" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">u <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> CobbDouglas([<span class="dv" style="color: #AD0000;
@@ -912,7 +913,7 @@ font-style: inherit;">2</span>))</span>
 </div>
 </div>
 <p>Here we see that, despite prices starting and ending at the same level, the chained Laspeyres index shows that prices have increased over time. This happens because each oscillation registers an increase in prices (about 0.8%), and these compound to show that prices are increasing over time. Note that the culprit here is the well-known substitution bias in the Laspeyres index; if there was no substitution bias then the index would be transitive with Cobb-Douglas preferences and (correctly) show no change in prices over time. Instead, this happens with Leontief preferences.</p>
-<div id="771947f5" class="cell" data-execution_count="4">
+<div id="a6270325" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -965,7 +966,7 @@ font-style: inherit;">100</span>).laspeyres)</span></code></pre></div></div>
 </div>
 <p>Both components of the chained index—the first and last change in price and the part due to oscillations—show no change in price.</p>
 <p>We can get the same behavior from the Fisher index, albeit with a more complex form of oscillation. (Using the simple oscillation would show no change in prices over time because the Fisher index satisfies the time-reversal property.)</p>
-<div id="2b5823e6" class="cell" data-execution_count="5">
+<div id="8b4893cc" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">res <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> bounce2(u.fisher)</span>
@@ -1015,7 +1016,7 @@ font-style: inherit;">2</span>))</span>
 </div>
 </div>
 <p>Each oscillation registers a 0.02% increase in prices. Note that this behavior from the Fisher index is sensitive to the parameters in the Cobb-Douglas utility function and it’s also possible to get that prices decreases over time.</p>
-<div id="4147a323" class="cell" data-execution_count="6">
+<div id="13bdbf84" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">u <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> CobbDouglas([<span class="dv" style="color: #AD0000;
@@ -1050,11 +1051,12 @@ IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2025. <em>Consumer Price Index 
   title = {What Causes Inflation?},
   date = {2025-10-22},
   url = {https://marberts.github.io/blog/posts/2025/inflation/},
+  doi = {10.59350/nag8p-v2n95},
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2025. <span>“What Causes Inflation?”</span> October 22,
-2025. <a href="https://marberts.github.io/blog/posts/2025/inflation/">https://marberts.github.io/blog/posts/2025/inflation/</a>.
+2025. <a href="https://doi.org/10.59350/nag8p-v2n95">https://doi.org/10.59350/nag8p-v2n95</a>.
 </div></div></section></div> ]]></description>
   <category>Index numbers</category>
   <category>Python</category>
@@ -1239,7 +1241,7 @@ font-style: inherit;">"dashed"</span>)</span></code></pre></div></div>
 <h2 class="anchored" data-anchor-id="decomposing-diversity">Decomposing diversity</h2>
 <p><span class="citation" data-cites="hill">Hill (1973)</span> notes that different choices for <img src="https://latex.codecogs.com/png.latex?%5Calpha"> imply different sensitivities to rare versus abundant species in an ecosystem. Setting <img src="https://latex.codecogs.com/png.latex?%5Calpha%20=%200"> means that diversity depends only on the number of species, no matter how rare some may be, whereas when <img src="https://latex.codecogs.com/png.latex?%5Calpha%20%5Crightarrow%20%5Cinfty"> then only the most prevalent species influences diversity. We can go one step further by decomposing <img src="https://latex.codecogs.com/png.latex?N_%7B%5Calpha%7D"> so that it’s represented as an arithmetic mean of the effective size of each species <img src="https://latex.codecogs.com/png.latex?1%20/%20p_%7Bi%7D"> and we can see the contribution of each species towards total diversity. We’ll do this by borrowing some of the machinery from price and quantity indexes to derive weights <img src="https://latex.codecogs.com/png.latex?(w_%7B1%7D,%20%5Cldots,%20w_%7Bn%7D)"> such that</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0AN_%7B%5Calpha%7D(p_%7B1%7D,%20%5Cldots,%20p_%7Bn%7D)%20=%20%5Csum_%7Bi=1%7D%5E%7Bn%7D%20w_%7Bi%7D%20/%20p_%7Bi%7D.%0A"></p>
-<p>The core tool to do with comes from my <a href="https://marberts.github.io/gpindex"><code>{gpindex}</code></a> package.</p>
+<p>The core tool to do this comes from my <a href="https://marberts.github.io/gpindex"><code>{gpindex}</code></a> package.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">diversity_weights <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -1323,18 +1325,19 @@ font-style: inherit;">/</span> p</span></code></pre></div></div>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
 <div id="ref-hill" class="csl-entry">
-Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its Consequences.”</span> <em>Ecology</em> 54 (2): 427–32.
+Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its Consequences.”</span> <em>Ecology</em> 54 (2): 427–32. <a href="https://doi.org/10.2307/1934352">https://doi.org/10.2307/1934352</a>.
 </div>
 </div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
   author = {Martin, Steve},
   title = {Decomposing Diversity Indexes},
   date = {2025-10-19},
   url = {https://marberts.github.io/blog/posts/2025/diversity/},
+  doi = {10.59350/dfntc-yfd90},
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2025. <span>“Decomposing Diversity Indexes.”</span>
-October 19, 2025. <a href="https://marberts.github.io/blog/posts/2025/diversity/">https://marberts.github.io/blog/posts/2025/diversity/</a>.
+October 19, 2025. <a href="https://doi.org/10.59350/dfntc-yfd90">https://doi.org/10.59350/dfntc-yfd90</a>.
 </div></div></section></div> ]]></description>
   <category>Index numbers</category>
   <category>R</category>

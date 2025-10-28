@@ -422,6 +422,14 @@ div.csl-indent {
     </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Doi</div>
+    <div class="quarto-title-meta-contents">
+      <p class="doi">
+        <a href="https://doi.org/10.59350/nag8p-v2n95">10.59350/nag8p-v2n95</a>
+      </p>
+    </div>
+  </div>
   </div>
   
 
@@ -434,7 +442,7 @@ div.csl-indent {
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>Let’s start with a simple two-commodity model where a representative consumer has Cobb-Douglas preferences. We’ll make a small class and mixin to make a Laspeyres and Fisher index given prices based on these preferences.</p>
-<div id="9385b496" class="cell" data-execution_count="1">
+<div id="40ce82c5" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -467,7 +475,7 @@ div.csl-indent {
 </div>
 <p>We’ll also make a function to oscillate prices. The idea is to form a chain of index values that starts with both products having a price of <code>[1, 1]</code>, switches prices between <code>[1, 1.1]</code> and <code>[1.1, 1]</code> some number of times, and ends with prices back at <code>[1, 1]</code>. As a chained index is just the cumulative product of these index values, we can decompose the chained index into the product of the first and last change in price, and the product of the oscillations. What’s necessary to drive inflation is that the product of the oscillations is greater than 1.</p>
 <p>We’ll also make a second function that does a more complex oscillation that we’ll use later.</p>
-<div id="f2c44e66" class="cell" data-execution_count="2">
+<div id="ef0016b2" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bounce(index) <span class="op">-&gt;</span> <span class="bu">tuple</span>[np.float64]:</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    initial <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">1</span>]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    p1 <span class="op">=</span> [<span class="dv">1</span>, <span class="fl">1.1</span>]</span>
@@ -490,7 +498,7 @@ div.csl-indent {
 <section id="inflation-due-to-measurement" class="level2">
 <h2 class="anchored" data-anchor-id="inflation-due-to-measurement">Inflation due to measurement</h2>
 <p>Let’s start by generating some preferences and giving our representative consumer a fixed income, then simulating how the chained Laspeyres index evolves as prices bounce around.</p>
-<div id="3d6fc4ef" class="cell" data-execution_count="3">
+<div id="988c9cd8" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> CobbDouglas([<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">100</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> bounce(u.laspeyres)</span>
@@ -510,7 +518,7 @@ div.csl-indent {
 </div>
 </div>
 <p>Here we see that, despite prices starting and ending at the same level, the chained Laspeyres index shows that prices have increased over time. This happens because each oscillation registers an increase in prices (about 0.8%), and these compound to show that prices are increasing over time. Note that the culprit here is the well-known substitution bias in the Laspeyres index; if there was no substitution bias then the index would be transitive with Cobb-Douglas preferences and (correctly) show no change in prices over time. Instead, this happens with Leontief preferences.</p>
-<div id="771947f5" class="cell" data-execution_count="4">
+<div id="a6270325" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Leontief(IndexMixin):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, m: <span class="bu">float</span>):</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._m <span class="op">=</span> <span class="bu">float</span>(m)</span>
@@ -525,7 +533,7 @@ div.csl-indent {
 </div>
 <p>Both components of the chained index—the first and last change in price and the part due to oscillations—show no change in price.</p>
 <p>We can get the same behavior from the Fisher index, albeit with a more complex form of oscillation. (Using the simple oscillation would show no change in prices over time because the Fisher index satisfies the time-reversal property.)</p>
-<div id="2b5823e6" class="cell" data-execution_count="5">
+<div id="8b4893cc" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> bounce2(u.fisher)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>oscillate <span class="op">=</span> [res[<span class="dv">0</span>] <span class="op">*</span> res[<span class="dv">1</span>] <span class="op">**</span> n <span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">20</span>)]</span>
@@ -543,7 +551,7 @@ div.csl-indent {
 </div>
 </div>
 <p>Each oscillation registers a 0.02% increase in prices. Note that this behavior from the Fisher index is sensitive to the parameters in the Cobb-Douglas utility function and it’s also possible to get that prices decreases over time.</p>
-<div id="4147a323" class="cell" data-execution_count="6">
+<div id="13bdbf84" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> CobbDouglas([<span class="dv">2</span>, <span class="dv">1</span>], <span class="dv">100</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> bounce2(u.fisher)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -566,11 +574,12 @@ IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2025. <em>Consumer Price Index 
   title = {What Causes Inflation?},
   date = {2025-10-22},
   url = {https://marberts.github.io/blog/posts/2025/inflation/},
+  doi = {10.59350/nag8p-v2n95},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas" role="listitem">
 Martin, Steve. 2025. <span>“What Causes Inflation?”</span> October 22,
-2025. <a href="https://marberts.github.io/blog/posts/2025/inflation/">https://marberts.github.io/blog/posts/2025/inflation/</a>.
+2025. <a href="https://doi.org/10.59350/nag8p-v2n95">https://doi.org/10.59350/nag8p-v2n95</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {

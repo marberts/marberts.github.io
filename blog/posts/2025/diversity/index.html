@@ -446,6 +446,14 @@ window.Quarto = {
   </div>
   
     
+    <div>
+    <div class="quarto-title-meta-heading">Doi</div>
+    <div class="quarto-title-meta-contents">
+      <p class="doi">
+        <a href="https://doi.org/10.59350/dfntc-yfd90">10.59350/dfntc-yfd90</a>
+      </p>
+    </div>
+  </div>
   </div>
   
 
@@ -514,7 +522,7 @@ N_{\alpha}(p_{1}, \ldots, p_{n}) = 1 / \left(\sum_{i=1}^{n} p_{i}^{\alpha - 1} p
 <p><span class="math display">\[
 N_{\alpha}(p_{1}, \ldots, p_{n}) = \sum_{i=1}^{n} w_{i} / p_{i}.
 \]</span></p>
-<p>The core tool to do with comes from my <a href="https://marberts.github.io/gpindex"><code>{gpindex}</code></a> package.</p>
+<p>The core tool to do this comes from my <a href="https://marberts.github.io/gpindex"><code>{gpindex}</code></a> package.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diversity_weights <span class="ot">&lt;-</span> <span class="cf">function</span>(x, alpha) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  gpindex<span class="sc">::</span><span class="fu">transmute_weights</span>(alpha <span class="sc">-</span> <span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>)(x, x)</span>
@@ -559,18 +567,19 @@ N_{\alpha}(p_{1}, \ldots, p_{n}) = \sum_{i=1}^{n} w_{i} / p_{i}.
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-hill" class="csl-entry" role="listitem">
-Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its Consequences.”</span> <em>Ecology</em> 54 (2): 427–32.
+Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its Consequences.”</span> <em>Ecology</em> 54 (2): 427–32. <a href="https://doi.org/10.2307/1934352">https://doi.org/10.2307/1934352</a>.
 </div>
 </div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
   author = {Martin, Steve},
   title = {Decomposing Diversity Indexes},
   date = {2025-10-19},
   url = {https://marberts.github.io/blog/posts/2025/diversity/},
+  doi = {10.59350/dfntc-yfd90},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas" role="listitem">
 Martin, Steve. 2025. <span>“Decomposing Diversity Indexes.”</span>
-October 19, 2025. <a href="https://marberts.github.io/blog/posts/2025/diversity/">https://marberts.github.io/blog/posts/2025/diversity/</a>.
+October 19, 2025. <a href="https://doi.org/10.59350/dfntc-yfd90">https://doi.org/10.59350/dfntc-yfd90</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
