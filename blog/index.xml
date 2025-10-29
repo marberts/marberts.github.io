@@ -554,7 +554,7 @@ Two.”</span> October 27, 2025. <a href="https://doi.org/10.59350/2f0dq-zvs49">
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>Let’s start with a simple two-commodity model where a representative consumer has Cobb-Douglas preferences. We’ll make a small class and mixin to make a Laspeyres and Fisher index given prices based on these preferences.</p>
-<div id="40ce82c5" class="cell" data-execution_count="1">
+<div id="9ebff752" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
@@ -750,7 +750,7 @@ font-style: inherit;">/</span> p</span></code></pre></div></div>
 </div>
 <p>We’ll also make a function to oscillate prices. The idea is to form a chain of index values that starts with both products having a price of <code>[1, 1]</code>, switches prices between <code>[1, 1.1]</code> and <code>[1.1, 1]</code> some number of times, and ends with prices back at <code>[1, 1]</code>. As a chained index is just the cumulative product of these index values, we can decompose the chained index into the product of the first and last change in price, and the product of the oscillations. What’s necessary to drive inflation is that the product of the oscillations is greater than 1.</p>
 <p>We’ll also make a second function that does a more complex oscillation that we’ll use later.</p>
-<div id="ef0016b2" class="cell" data-execution_count="2">
+<div id="a0c139e5" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -853,7 +853,7 @@ font-style: inherit;">return</span> i, b</span></code></pre></div></div>
 <section id="inflation-due-to-measurement" class="level2">
 <h2 class="anchored" data-anchor-id="inflation-due-to-measurement">Inflation due to measurement</h2>
 <p>Let’s start by generating some preferences and giving our representative consumer a fixed income, then simulating how the chained Laspeyres index evolves as prices bounce around.</p>
-<div id="988c9cd8" class="cell" data-execution_count="3">
+<div id="696c094c" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">u <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> CobbDouglas([<span class="dv" style="color: #AD0000;
@@ -913,7 +913,7 @@ font-style: inherit;">2</span>))</span>
 </div>
 </div>
 <p>Here we see that, despite prices starting and ending at the same level, the chained Laspeyres index shows that prices have increased over time. This happens because each oscillation registers an increase in prices (about 0.8%), and these compound to show that prices are increasing over time. Note that the culprit here is the well-known substitution bias in the Laspeyres index; if there was no substitution bias then the index would be transitive with Cobb-Douglas preferences and (correctly) show no change in prices over time. Instead, this happens with Leontief preferences.</p>
-<div id="a6270325" class="cell" data-execution_count="4">
+<div id="25f5a889" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -966,7 +966,7 @@ font-style: inherit;">100</span>).laspeyres)</span></code></pre></div></div>
 </div>
 <p>Both components of the chained index—the first and last change in price and the part due to oscillations—show no change in price.</p>
 <p>We can get the same behavior from the Fisher index, albeit with a more complex form of oscillation. (Using the simple oscillation would show no change in prices over time because the Fisher index satisfies the time-reversal property.)</p>
-<div id="8b4893cc" class="cell" data-execution_count="5">
+<div id="6f17e714" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">res <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> bounce2(u.fisher)</span>
@@ -1016,7 +1016,7 @@ font-style: inherit;">2</span>))</span>
 </div>
 </div>
 <p>Each oscillation registers a 0.02% increase in prices. Note that this behavior from the Fisher index is sensitive to the parameters in the Cobb-Douglas utility function and it’s also possible to get that prices decreases over time.</p>
-<div id="13bdbf84" class="cell" data-execution_count="6">
+<div id="d51659d7" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">u <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> CobbDouglas([<span class="dv" style="color: #AD0000;
@@ -1073,7 +1073,7 @@ Martin, Steve. 2025. <span>“What Causes Inflation?”</span> October 22,
 
 
 
-<p>A diversity index is a way to measure the prevalence species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.</p>
+<p>A diversity index is a way to measure the prevalence of different species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.</p>
 <section id="what-is-diversity-anyway" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-diversity-anyway">What is diversity, anyway?</h2>
 <p>Diversity is a tricky concept to formalize. Up until writing this post, I would have said it was just the number of species in an ecosystem. In his seminal paper, <span class="citation" data-cites="hill">Hill (1973)</span> considers a family diversity indexes that give a measure of the effective number of species in an ecosystem—that is, the number of species that would be present in an ecosystem if all species were equally prevalent. Mathemetically, if there are <img src="https://latex.codecogs.com/png.latex?n"> species and the <img src="https://latex.codecogs.com/png.latex?i">-th species appears with probability <img src="https://latex.codecogs.com/png.latex?p_%7Bi%7D">, then the diversity index of order <img src="https://latex.codecogs.com/png.latex?%5Calpha"> is</p>
@@ -1315,9 +1315,6 @@ font-style: inherit;">/</span> p</span></code></pre></div></div>
 </div>
 </div>
 <p>This gives a different way to view the prevalence of a species, not just by their abundance but by how their abundance contributes towards overall diversity in an ecosystem.</p>
-</section>
-<section id="references" class="level2 unnumbered">
-
 
 
 

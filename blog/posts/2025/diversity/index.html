@@ -6,7 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Steve Martin">
 <meta name="dcterms.date" content="2025-10-19">
+<meta name="description" content="A diversity index is a way to measure the prevalence of different species in an ecosystem. I show how methods from the price-index literature can be used to decompose a diversity index into the contribution of each species towards overall diversity.">
 
 <title>Decomposing diversity indexes – Steve Martin</title>
 <style>
@@ -416,7 +418,6 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#what-is-diversity-anyway" id="toc-what-is-diversity-anyway" class="nav-link active" data-scroll-target="#what-is-diversity-anyway">What is diversity, anyway?</a></li>
   <li><a href="#decomposing-diversity" id="toc-decomposing-diversity" class="nav-link" data-scroll-target="#decomposing-diversity">Decomposing diversity</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
@@ -433,10 +434,21 @@ window.Quarto = {
   </div>
   </div>
 
+<div>
+  <div class="description">
+    A diversity index is a way to measure the prevalence of different species in an ecosystem. I show how methods from the price-index literature can be used to decompose a diversity index into the contribution of each species towards overall diversity.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Steve Martin </p>
+          </div>
+  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
@@ -445,6 +457,12 @@ window.Quarto = {
     </div>
   </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">October 28, 2025</p>
+    </div>
+  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Doi</div>
@@ -461,7 +479,7 @@ window.Quarto = {
 </header>
 
 
-<p>A diversity index is a way to measure the prevalence species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.</p>
+<p>A diversity index is a way to measure the prevalence of different species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.</p>
 <section id="what-is-diversity-anyway" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-diversity-anyway">What is diversity, anyway?</h2>
 <p>Diversity is a tricky concept to formalize. Up until writing this post, I would have said it was just the number of species in an ecosystem. In his seminal paper, <span class="citation" data-cites="hill">Hill (<a href="#ref-hill" role="doc-biblioref">1973</a>)</span> considers a family diversity indexes that give a measure of the effective number of species in an ecosystem—that is, the number of species that would be present in an ecosystem if all species were equally prevalent. Mathemetically, if there are <span class="math inline">\(n\)</span> species and the <span class="math inline">\(i\)</span>-th species appears with probability <span class="math inline">\(p_{i}\)</span>, then the diversity index of order <span class="math inline">\(\alpha\)</span> is</p>
@@ -557,9 +575,6 @@ N_{\alpha}(p_{1}, \ldots, p_{n}) = \sum_{i=1}^{n} w_{i} / p_{i}.
 </div>
 </div>
 <p>This gives a different way to view the prevalence of a species, not just by their abundance but by how their abundance contributes towards overall diversity in an ecosystem.</p>
-</section>
-<section id="references" class="level2 unnumbered">
-
 
 
 
@@ -1001,7 +1016,7 @@ October 19, 2025. <a href="https://doi.org/10.59350/dfntc-yfd90">https://doi.org
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>Copyright 2025, Steve Martin.</p>
+<p>Copyright 2025, Steve Martin. All rights reserved.</p>
 </div>
     <div class="nav-footer-right">
       &nbsp;
