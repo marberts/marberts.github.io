@@ -36,7 +36,7 @@ website:
         text: "{{< fa envelope >}}"
   favicon: img/favicon-32x32.png
   site-url: https://marberts.github.io
-  page-footer: "Copyright 2025, Steve Martin." 
+  page-footer: "Copyright 2025, Steve Martin. All rights reserved." 
 
 format:
   html:

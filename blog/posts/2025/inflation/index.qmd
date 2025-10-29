@@ -1,11 +1,12 @@
 ---
 title: "What causes inflation?"
 date: "2025-10-22"
-date-modified: "2025-10-23"
+date-modified: "2025-10-28"
 categories:
   - Index numbers
   - Python
 doi: 10.59350/nag8p-v2n95
+description: Long-term inflation requires something that increase prices and grow without bound (i.e., money supply). I show that the way that inflation is measured can itself be a source of inflation.
 ---
 
 What causes inflation in prices over time? Increases in the money supply, of course. Although there are many reasons for increasing prices over time, money supply is one of the few things that can do so and grow without bound. Case closed, right? Not quite.

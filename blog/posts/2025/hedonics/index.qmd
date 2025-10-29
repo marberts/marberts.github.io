@@ -1,11 +1,13 @@
 ---
 title: "Hedonic imputation with one regression, not two"
 date: "2025-10-27"
+date-modified: "2025-10-28"
 categories:
   - Index numbers
   - Econometrics
   - R
 doi: 10.59350/2f0dq-zvs49
+description: Hedonic imputation is a standard method to compares prices over time when the composition of products also changes. In all cases I've seenm, the method is implemented by using the fitted values from two regression models. I show how it can be done with one regression.
 ---
 
 Comparing housing prices over time is difficult because of all the heterogeneity in housing that can both affect prices and vary over time. The typical solution to this problem is to use a hedonic price index that attempts to model the relationship between housing characteristics and price, and uses this to control the change in these characteristics over time.

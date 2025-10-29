@@ -1,13 +1,15 @@
 ---
 title: "Decomposing diversity indexes"
 date: "2025-10-19"
+date-modified: "2025-10-28"
 categories:
   - Index numbers
   - R
 doi: 10.59350/dfntc-yfd90
+description: A diversity index is a way to measure the prevalence of different species in an ecosystem. I show how methods from the price-index literature can be used to decompose a diversity index into the contribution of each species towards overall diversity.
 ---
 
-A diversity index is a way to measure the prevalence species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.
+A diversity index is a way to measure the prevalence of different species in an ecosystem. Although these arise naturally in ecology, diversity indexes show up elsewhere as well. In economics, for example, we can think of diversity as related to the market concentration of firms (species) in an industry (ecosystem). What I want to show here is how we can use some of the machinery from the world of price and quantity indexes to decompose a diversity index into the contribution of each species towards overall diversity.
 
 ## What is diversity, anyway?
 
@@ -93,5 +95,3 @@ diversity_weights(p, 5) / p
 ```
 
 This gives a different way to view the prevalence of a species, not just by their abundance but by how their abundance contributes towards overall diversity in an ecosystem.
-
-## References {.unnumbered}
