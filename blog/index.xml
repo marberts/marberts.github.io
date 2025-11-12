@@ -10,7 +10,438 @@
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.25</generator>
-<lastBuildDate>Mon, 27 Oct 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 12 Nov 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>How does the difference between the arithmetic and geometric mean depend on variance?</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2025/variance-inequality/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>That the arithmetic mean of a set of number is larger than the geometric mean is a foundational result in the theory of inequalities. This is a useful result for index numbers in particular as it gives that, for the same data, an index based on an arithmetic mean will always be larger than the corresponding index based on the geometric mean.</p>
+<p>The latest edition of the CPI manual says the following about the difference between the arithmetic and geometric mean and how it relates to variance <span class="citation" data-cites="cpi2020">(IMF et al. 2020, 2)</span></p>
+<blockquote class="blockquote">
+<p>It should be noted that an arithmetic average is always greater than or equal to a geometric average and that the difference will be greater, the greater the variance in the price relatives.</p>
+</blockquote>
+<p>This seems like a great result that gives a way to easily think about the relationship between an index that uses an arithmetic mean to aggregate price relatives (Carli index) and one that uses a geometric mean (Jevons index). Unfortunately it’s not true—see <span class="citation" data-cites="lord2002">Lord (2002)</span> for a neat way to generate counter examples. <sup>1</sup></p>
+<p>The issue is that, for a vector of positive numbers <img src="https://latex.codecogs.com/png.latex?x%5Cin%5Cmathbf%7BR%7D_%7Bn%7D%5E%7B++%7D">, the difference between the arithmetic mean <img src="https://latex.codecogs.com/png.latex?%5Cmathfrak%7BA%7D(x)"> and geometric mean <img src="https://latex.codecogs.com/png.latex?%5Cmathfrak%7BG%7D(x)"> is only <em>bounded</em> by the variance <span class="citation" data-cites="bullen2003">(Bullen 2003, 156)</span></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Ctext%7Bvar%7D(x)%7D%7B2%20%5Cmax(x)%7D%20%5Cleq%20%5Cmathfrak%7BA%7D(x)%20-%20%5Cmathfrak%7BG%7D(x)%20%5Cleq%20%5Cfrac%7B%5Ctext%7Bvar%7D(x)%7D%7B2%20%5Cmin(x)%7D.%0A"></p>
+<p>For two vectors <img src="https://latex.codecogs.com/png.latex?x"> and <img src="https://latex.codecogs.com/png.latex?y">, we have that <img src="https://latex.codecogs.com/png.latex?%5Cmathfrak%7BA%7D(y)%20-%20%5Cmathfrak%7BG%7D(y)%20%3E%20%5Cmathfrak%7BA%7D(x)%20-%20%5Cmathfrak%7BG%7D(x)"> if</p>
+<p><span id="eq-ineq1"><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7Bvar%7D(y)%20%3E%20%5Cfrac%7B%5Cmax(y)%7D%7B%5Cmin(x)%7D%5Ctext%7Bvar%7D(x)%0A%5Ctag%7B1%7D"></span></p>
+<p>and the opposite if</p>
+<p><span id="eq-ineq2"><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7Bvar%7D(y)%20%3C%20%5Cfrac%7B%5Cmin(y)%7D%7B%5Cmax(x)%7D%5Ctext%7Bvar%7D(x)%0A%5Ctag%7B2%7D"></span></p>
+<p>If <img src="https://latex.codecogs.com/png.latex?%5Cmax(y)%20%3E%20%5Cmin(x)"> (what we should expect) then the difference between the arithmetic and geometric mean increases with a sufficiently large increase in variance. Similarly, if <img src="https://latex.codecogs.com/png.latex?%5Cmin(y)%20%3C%20%5Cmax(x)"> then the difference between the arithmetic and geometric mean decreases with a sufficiently large decrease in variance. If the support of the distribution is sufficiently narrow then the difference between the arithmetic and geometric mean will follow closely with the variance, and this is similar to the argument that generates the claim in the CPI manual <span class="citation" data-cites="cpitheory">(IMF et al. 2025, 131)</span>.</p>
+<p>What I want to understand is how the difference between the arithmetic and geometric mean changes for <em>smaller</em> changes in variance without placing restrictions on the support of the distribution. Let’s consider drawing a collection of samples from a fixed probability distribution to see how the difference between the arithmetic and geometric mean relates to variance among samples from that distribution. We’ll make a few helper functions for this.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">var_ineq <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb1-2">  m <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(x)</span>
+<span id="cb1-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(</span>
+<span id="cb1-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">var =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>((x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> m)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>),</span>
+<span id="cb1-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">diff =</span> m <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(x))),</span>
+<span id="cb1-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">min =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(x),</span>
+<span id="cb1-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">max =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(x)</span>
+<span id="cb1-8">  )</span>
+<span id="cb1-9">}</span>
+<span id="cb1-10"></span>
+<span id="cb1-11">simulate_var_ineq <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(n, sim, dist) {</span>
+<span id="cb1-12">  res <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">apply</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dist</span>(n <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> sim), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nrow =</span> n), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, var_ineq)</span>
+<span id="cb1-13">  res[, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">order</span>(res[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>, ])]</span>
+<span id="cb1-14">}</span>
+<span id="cb1-15"></span>
+<span id="cb1-16">prob_decrease <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb1-17">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">apply</span>(</span>
+<span id="cb1-18">    x,</span>
+<span id="cb1-19">    <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb1-20">    \(z) {</span>
+<span id="cb1-21">      cond <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"max"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"min"</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span></span>
+<span id="cb1-22">        x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"min"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"max"</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>]</span>
+<span id="cb1-23">      x <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> x[, cond]</span>
+<span id="cb1-24">      decrease <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"diff"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"diff"</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>]</span>
+<span id="cb1-25">      increase <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"diff"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"diff"</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>, ] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> z[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"var"</span>]</span>
+<span id="cb1-26"></span>
+<span id="cb1-27">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(decrease <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> increase) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span></span>
+<span id="cb1-28">    }</span>
+<span id="cb1-29">  )</span>
+<span id="cb1-30">}</span></code></pre></div></div>
+</div>
+<p>The scatter plot of the difference between the arithmetic and geometric mean and variance for a sample of size 10 shows that, although the difference tends to increase with variance, there are several instances where the opposite occurs.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15243</span>)</span>
+<span id="cb2-2"></span>
+<span id="cb2-3">sim <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">simulate_var_ineq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>, \(n) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(n, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sdlog =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>))</span>
+<span id="cb2-4"></span>
+<span id="cb2-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(sim), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylab =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"arithmetic mean - geometric mean"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xlab =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"variance"</span>)</span>
+<span id="cb2-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">symbols</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.13</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">circles =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.015</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">inches =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">add =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lty =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb2-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">symbols</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.065</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.03</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">circles =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">inches =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">add =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lty =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2025/variance-inequality/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To better understand this, let’s simulate the probability that the difference between the arithmetic and geometric mean decreases with variance, conditional on Equation&nbsp;1 and Equation&nbsp;2 not holding.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">res <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">simulate_var_ineq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5000</span>, \(n) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(n, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sdlog =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prob_decrease</span>()</span>
+<span id="cb3-3"></span>
+<span id="cb3-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summary</span>(res)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   4.400   6.340   6.562   8.020  35.160 </code></pre>
+</div>
+</div>
+<p>Overall, the median of the conditional probability that the difference between the arithmetic and geometric mean decreases with variance is about 6.3%. This is a fairly small probability for the difference between the means to decrease when variance increases, although it depends on the underlying population from which samples are drawn. Drawing samples from a distribution with a wider support makes it more likely to see the the difference between the arithmetic and geometric mean decreases with variance.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">res <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">simulate_var_ineq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5000</span>, \(n) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(n, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prob_decrease</span>()</span>
+<span id="cb5-3"></span>
+<span id="cb5-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summary</span>(res)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.020   8.515  13.400  13.579  17.100  50.580 </code></pre>
+</div>
+</div>
+<p>As the support of the distribution shrinks, the difference between the arithmetic and geometric mean follows the variance more closely and the probabiltity that the difference in means decreases as variance increases becomes small.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">res <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">simulate_var_ineq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5000</span>, \(n) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(n, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prob_decrease</span>()</span>
+<span id="cb7-3"></span>
+<span id="cb7-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summary</span>(res)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   0.800   1.140   1.194   1.500   4.560 </code></pre>
+</div>
+</div>
+
+
+
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-bullen2003" class="csl-entry">
+Bullen, P. S. 2003. <em>Handbook of Means and Their Inequalities</em>. Springer Science+Business Media. <a href="https://doi.org/10.1007/978-94-017-0399-4">https://doi.org/10.1007/978-94-017-0399-4</a>.
+</div>
+<div id="ref-cpi2020" class="csl-entry">
+IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2020. <em>Consumer Price Index Manual: Concepts and Methods</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781484354841.069 ">https://doi.org/10.5089/9781484354841.069 </a>.
+</div>
+<div id="ref-cpitheory" class="csl-entry">
+———. 2025. <em>Consumer Price Index Manual: Theory</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781513559605.069">https://doi.org/10.5089/9781513559605.069</a>.
+</div>
+<div id="ref-lord2002" class="csl-entry">
+Lord, N. 2002. <span>“Does Smaller Spread Always Mean Larger Product?”</span> <em>The Mathematical Gazette</em>, no. 506, 86: 273–74. <a href="https://doi.org/10.2307/3621857">https://doi.org/10.2307/3621857</a>.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This can also apply to the difference between the arithmetic mean and harmonic mean, where it is often suggested that the difference between these means increases with variance <span class="citation" data-cites="cpitheory">(IMF et al. 2025, 131)</span>.↩︎</p></li>
+</ol>
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
+  author = {Martin, Steve},
+  title = {How Does the Difference Between the Arithmetic and Geometric
+    Mean Depend on Variance?},
+  date = {2025-11-12},
+  url = {https://marberts.github.io/blog/posts/2025/variance-inequality/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2025. <span>“How Does the Difference Between the
+Arithmetic and Geometric Mean Depend on Variance?”</span> November 12,
+2025. <a href="https://marberts.github.io/blog/posts/2025/variance-inequality/">https://marberts.github.io/blog/posts/2025/variance-inequality/</a>.
+</div></div></section></div> ]]></description>
+  <category>Inequalities</category>
+  <category>Index numbers</category>
+  <category>R</category>
+  <guid>https://marberts.github.io/blog/posts/2025/variance-inequality/</guid>
+  <pubDate>Wed, 12 Nov 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Hedonic imputation with one regression, not two</title>
   <dc:creator>Steve Martin</dc:creator>

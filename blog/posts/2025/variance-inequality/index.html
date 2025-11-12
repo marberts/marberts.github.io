@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Steve Martin">
+<meta name="dcterms.date" content="2025-11-12">
+<meta name="description" content="It’s well known that the arithmetic mean is larger than the geometric mean, but how does the difference between these means relate to variance?">
 
-<title>Inflationary Tendencies – Steve Martin</title>
+<title>How does the difference between the arithmetic and geometric mean depend on variance? – Steve Martin</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,36 +23,89 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../img/favicon-32x32.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<link href="../../../../img/favicon-32x32.png" rel="icon" type="image/png">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -77,35 +133,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -137,8 +164,8 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="../styles.css">
-<link rel="alternate" type="application/rss+xml" title="Steve Martin" href="index.xml" data-external="1"></head>
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
@@ -309,9 +336,9 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../../../../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Steve Martin</span>
     </a>
   </div>
@@ -322,28 +349,28 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
+    <a class="nav-link" href="../../../../about.html"> 
 <span class="menu-text">About me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../software.html"> 
+    <a class="nav-link" href="../../../../software.html"> 
 <span class="menu-text">Software</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../publications.html"> 
+    <a class="nav-link" href="../../../../publications.html"> 
 <span class="menu-text">Research and publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../cv.pdf"> <i class="bi bi-pdf" role="img">
+    <a class="nav-link" href="../../../../cv.pdf"> <i class="bi bi-pdf" role="img">
 </i> 
 <span class="menu-text">cv</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../blog/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -384,23 +411,45 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="RWNvbm9tZXRyaWNz">Econometrics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SW5kZXglMjBudW1iZXJz">Index numbers <span class="quarto-category-count">(4)</span></div><div class="category" data-category="SW5lcXVhbGl0aWVz">Inequalities <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UHl0aG9u">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Ug==">R <span class="quarto-category-count">(3)</span></div></div></div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Inflationary Tendencies</h1>
-</div>
+<h1 class="title">How does the difference between the arithmetic and geometric mean depend on variance?</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Inequalities</div>
+    <div class="quarto-category">Index numbers</div>
+    <div class="quarto-category">R</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    It’s well known that the arithmetic mean is larger than the geometric mean, but how does the difference between these means relate to variance?
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Steve Martin <a href="https://orcid.org/0000-0003-2544-9480" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 12, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -410,148 +459,144 @@ window.Quarto = {
 </header>
 
 
-<p>Welcome to my blog. I write about topics in economics, statistics, and open source software (mostly so I don’t forget about it). All views expressed here are my own and do not necessarily reflect those of my employer or any affiliated organizations.</p>
-
-
-
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="SW5lcXVhbGl0aWVzJTJDSW5kZXglMjBudW1iZXJzJTJDUg==" data-listing-date-sort="1762905600000" data-listing-file-modified-sort="1762923798861" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="843">
-<div class="thumbnail"><a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">
-
-<p class="card-img-top"><img src="posts/2025/variance-inequality/index_files/figure-html/unnamed-chunk-2-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">How does the difference between the arithmetic and geometric mean depend on variance?</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5lcXVhbGl0aWVz'); return false;">Inequalities</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
+<p>That the arithmetic mean of a set of number is larger than the geometric mean is a foundational result in the theory of inequalities. This is a useful result for index numbers in particular as it gives that, for the same data, an index based on an arithmetic mean will always be larger than the corresponding index based on the geometric mean.</p>
+<p>The latest edition of the CPI manual says the following about the difference between the arithmetic and geometric mean and how it relates to variance <span class="citation" data-cites="cpi2020">(<a href="#ref-cpi2020" role="doc-biblioref">IMF et al. 2020, 2</a>)</span></p>
+<blockquote class="blockquote">
+<p>It should be noted that an arithmetic average is always greater than or equal to a geometric average and that the difference will be greater, the greater the variance in the price relatives.</p>
+</blockquote>
+<p>This seems like a great result that gives a way to easily think about the relationship between an index that uses an arithmetic mean to aggregate price relatives (Carli index) and one that uses a geometric mean (Jevons index). Unfortunately it’s not true—see <span class="citation" data-cites="lord2002">Lord (<a href="#ref-lord2002" role="doc-biblioref">2002</a>)</span> for a neat way to generate counter examples. <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>The issue is that, for a vector of positive numbers <span class="math inline">\(x\in\mathbf{R}_{n}^{++}\)</span>, the difference between the arithmetic mean <span class="math inline">\(\mathfrak{A}(x)\)</span> and geometric mean <span class="math inline">\(\mathfrak{G}(x)\)</span> is only <em>bounded</em> by the variance <span class="citation" data-cites="bullen2003">(<a href="#ref-bullen2003" role="doc-biblioref">Bullen 2003, 156</a>)</span></p>
+<p><span class="math display">\[
+\frac{\text{var}(x)}{2 \max(x)} \leq \mathfrak{A}(x) - \mathfrak{G}(x) \leq \frac{\text{var}(x)}{2 \min(x)}.
+\]</span></p>
+<p>For two vectors <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, we have that <span class="math inline">\(\mathfrak{A}(y) - \mathfrak{G}(y) &gt; \mathfrak{A}(x) - \mathfrak{G}(x)\)</span> if</p>
+<p><span id="eq-ineq1"><span class="math display">\[
+\text{var}(y) &gt; \frac{\max(y)}{\min(x)}\text{var}(x)
+\tag{1}\]</span></span></p>
+<p>and the opposite if</p>
+<p><span id="eq-ineq2"><span class="math display">\[
+\text{var}(y) &lt; \frac{\min(y)}{\max(x)}\text{var}(x)
+\tag{2}\]</span></span></p>
+<p>If <span class="math inline">\(\max(y) &gt; \min(x)\)</span> (what we should expect) then the difference between the arithmetic and geometric mean increases with a sufficiently large increase in variance. Similarly, if <span class="math inline">\(\min(y) &lt; \max(x)\)</span> then the difference between the arithmetic and geometric mean decreases with a sufficiently large decrease in variance. If the support of the distribution is sufficiently narrow then the difference between the arithmetic and geometric mean will follow closely with the variance, and this is similar to the argument that generates the claim in the CPI manual <span class="citation" data-cites="cpitheory">(<a href="#ref-cpitheory" role="doc-biblioref">IMF et al. 2025, 131</a>)</span>.</p>
+<p>What I want to understand is how the difference between the arithmetic and geometric mean changes for <em>smaller</em> changes in variance without placing restrictions on the support of the distribution. Let’s consider drawing a collection of samples from a fixed probability distribution to see how the difference between the arithmetic and geometric mean relates to variance among samples from that distribution. We’ll make a few helper functions for this.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>var_ineq <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">var =</span> <span class="fu">mean</span>((x <span class="sc">-</span> m)<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">diff =</span> m <span class="sc">-</span> <span class="fu">exp</span>(<span class="fu">mean</span>(<span class="fu">log</span>(x))),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">min =</span> <span class="fu">min</span>(x),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">max =</span> <span class="fu">max</span>(x)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>simulate_var_ineq <span class="ot">&lt;-</span> <span class="cf">function</span>(n, sim, dist) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">apply</span>(<span class="fu">matrix</span>(<span class="fu">dist</span>(n <span class="sc">*</span> sim), <span class="at">nrow =</span> n), <span class="dv">2</span>, var_ineq)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  res[, <span class="fu">order</span>(res[<span class="st">"var"</span>, ])]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>prob_decrease <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apply</span>(</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    x,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    \(z) {</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      cond <span class="ot">&lt;-</span> x[<span class="st">"var"</span>, ] <span class="sc">&lt;=</span> x[<span class="st">"max"</span>, ] <span class="sc">/</span> z[<span class="st">"min"</span>] <span class="sc">*</span> z[<span class="st">"var"</span>] <span class="sc">|</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        x[<span class="st">"var"</span>, ] <span class="sc">&gt;=</span> x[<span class="st">"min"</span>, ] <span class="sc">/</span> z[<span class="st">"max"</span>] <span class="sc">*</span> z[<span class="st">"var"</span>]</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      x <span class="ot">&lt;-</span> x[, cond]</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      decrease <span class="ot">&lt;-</span> x[<span class="st">"diff"</span>, ] <span class="sc">&lt;</span> z[<span class="st">"diff"</span>] <span class="sc">&amp;</span> x[<span class="st">"var"</span>, ] <span class="sc">&gt;</span> z[<span class="st">"var"</span>]</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      increase <span class="ot">&lt;-</span> x[<span class="st">"diff"</span>, ] <span class="sc">&gt;</span> z[<span class="st">"diff"</span>] <span class="sc">&amp;</span> x[<span class="st">"var"</span>, ] <span class="sc">&lt;</span> z[<span class="st">"var"</span>]</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mean</span>(decrease <span class="sc">|</span> increase) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div class="delink listing-description"><a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">
-<p>It’s well known that the arithmetic mean is larger than the geometric mean, but how does the difference between these means relate to variance?</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">
-<div class="listing-date">
-Nov 12, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="SW5kZXglMjBudW1iZXJzJTJDRWNvbm9tZXRyaWNzJTJDUg==" data-listing-date-sort="1761523200000" data-listing-file-modified-sort="1762923798861" data-listing-date-modified-sort="1761609600000" data-listing-reading-time-sort="5" data-listing-word-count-sort="919">
-<div class="thumbnail"><a href="../blog/posts/2025/hedonics/index.html" class="no-external">
-
-<p class="card-img-top"><img src="posts/2025/hedonics/index_files/figure-html/unnamed-chunk-6-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/hedonics/index.html" class="no-external">Hedonic imputation with one regression, not two</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('RWNvbm9tZXRyaWNz'); return false;">Econometrics</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/hedonics/index.html" class="no-external">
-<p>Hedonic imputation is a standard method to compares prices over time when the composition of products also changes. In all cases I’ve seen, the method is implemented by using the fitted values from two regression models. I show how it can be done with one regression.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/hedonics/index.html" class="no-external">
-<div class="listing-date">
-Oct 27, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="SW5kZXglMjBudW1iZXJzJTJDUHl0aG9u" data-listing-date-sort="1761091200000" data-listing-file-modified-sort="1762923798861" data-listing-date-modified-sort="1761609600000" data-listing-reading-time-sort="5" data-listing-word-count-sort="967">
-<div class="thumbnail"><a href="../blog/posts/2025/inflation/index.html" class="no-external">
-
-<p class="card-img-top"><img src="posts/2025/inflation/index_files/figure-html/cell-4-output-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/inflation/index.html" class="no-external">What causes inflation?</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">Python</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/inflation/index.html" class="no-external">
-<p>Long-term inflation requires something that increase prices and grow without bound (i.e., money supply). I show that the way that inflation is measured can itself be a source of inflation.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/inflation/index.html" class="no-external">
-<div class="listing-date">
-Oct 22, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="SW5kZXglMjBudW1iZXJzJTJDUg==" data-listing-date-sort="1760832000000" data-listing-file-modified-sort="1762923798861" data-listing-date-modified-sort="1761609600000" data-listing-reading-time-sort="4" data-listing-word-count-sort="718">
-<div class="thumbnail"><a href="../blog/posts/2025/diversity/index.html" class="no-external">
-
-<p class="card-img-top"><img src="posts/2025/diversity/index_files/figure-html/unnamed-chunk-1-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/diversity/index.html" class="no-external">Decomposing diversity indexes</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/diversity/index.html" class="no-external">
-<p>A diversity index is a way to measure the prevalence of different species in an ecosystem. I show how methods from the price-index literature can be used to decompose a diversity index into the contribution of each species towards overall diversity.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/diversity/index.html" class="no-external">
-<div class="listing-date">
-Oct 19, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
+<p>The scatter plot of the difference between the arithmetic and geometric mean and variance for a sample of size 10 shows that, although the difference tends to increase with variance, there are several instances where the opposite occurs.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">15243</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">simulate_var_ineq</span>(<span class="dv">10</span>, <span class="dv">100</span>, \(n) <span class="fu">rlnorm</span>(n, <span class="at">sdlog =</span> <span class="fl">0.25</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">t</span>(sim), <span class="at">ylab =</span> <span class="st">"arithmetic mean - geometric mean"</span>, <span class="at">xlab =</span> <span class="st">"variance"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">symbols</span>(<span class="fl">0.13</span>, <span class="fl">0.05</span>, <span class="at">circles =</span> <span class="fl">0.015</span>, <span class="at">inches =</span> <span class="cn">FALSE</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">symbols</span>(<span class="fl">0.065</span>, <span class="fl">0.03</span>, <span class="at">circles =</span> <span class="fl">0.01</span>, <span class="at">inches =</span> <span class="cn">FALSE</span>, <span class="at">add =</span> <span class="cn">TRUE</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
 </div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+<p>To better understand this, let’s simulate the probability that the difference between the arithmetic and geometric mean decreases with variance, conditional on <a href="#eq-ineq1" class="quarto-xref">Equation&nbsp;1</a> and <a href="#eq-ineq2" class="quarto-xref">Equation&nbsp;2</a> not holding.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">simulate_var_ineq</span>(<span class="dv">10</span>, <span class="dv">5000</span>, \(n) <span class="fu">rlnorm</span>(n, <span class="at">sdlog =</span> <span class="fl">0.25</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prob_decrease</span>()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   4.400   6.340   6.562   8.020  35.160 </code></pre>
+</div>
+</div>
+<p>Overall, the median of the conditional probability that the difference between the arithmetic and geometric mean decreases with variance is about 6.3%. This is a fairly small probability for the difference between the means to decrease when variance increases, although it depends on the underlying population from which samples are drawn. Drawing samples from a distribution with a wider support makes it more likely to see the the difference between the arithmetic and geometric mean decreases with variance.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">simulate_var_ineq</span>(<span class="dv">10</span>, <span class="dv">5000</span>, \(n) <span class="fu">runif</span>(n, <span class="fl">0.25</span>, <span class="dv">4</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prob_decrease</span>()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.020   8.515  13.400  13.579  17.100  50.580 </code></pre>
+</div>
+</div>
+<p>As the support of the distribution shrinks, the difference between the arithmetic and geometric mean follows the variance more closely and the probabiltity that the difference in means decreases as variance increases becomes small.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">simulate_var_ineq</span>(<span class="dv">10</span>, <span class="dv">5000</span>, \(n) <span class="fu">runif</span>(n, <span class="fl">0.9</span>, <span class="dv">1</span> <span class="sc">/</span> <span class="fl">0.9</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prob_decrease</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   0.800   1.140   1.194   1.500   4.560 </code></pre>
+</div>
+</div>
+
+
+
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-bullen2003" class="csl-entry" role="listitem">
+Bullen, P. S. 2003. <em>Handbook of Means and Their Inequalities</em>. Springer Science+Business Media. <a href="https://doi.org/10.1007/978-94-017-0399-4">https://doi.org/10.1007/978-94-017-0399-4</a>.
+</div>
+<div id="ref-cpi2020" class="csl-entry" role="listitem">
+IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2020. <em>Consumer Price Index Manual: Concepts and Methods</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781484354841.069 ">https://doi.org/10.5089/9781484354841.069 </a>.
+</div>
+<div id="ref-cpitheory" class="csl-entry" role="listitem">
+———. 2025. <em>Consumer Price Index Manual: Theory</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781513559605.069">https://doi.org/10.5089/9781513559605.069</a>.
+</div>
+<div id="ref-lord2002" class="csl-entry" role="listitem">
+Lord, N. 2002. <span>“Does Smaller Spread Always Mean Larger Product?”</span> <em>The Mathematical Gazette</em>, no. 506, 86: 273–74. <a href="https://doi.org/10.2307/3621857">https://doi.org/10.2307/3621857</a>.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This can also apply to the difference between the arithmetic mean and harmonic mean, where it is often suggested that the difference between these means increases with variance <span class="citation" data-cites="cpitheory">(<a href="#ref-cpitheory" role="doc-biblioref">IMF et al. 2025, 131</a>)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
+  author = {Martin, Steve},
+  title = {How Does the Difference Between the Arithmetic and Geometric
+    Mean Depend on Variance?},
+  date = {2025-11-12},
+  url = {https://marberts.github.io/blog/posts/2025/variance-inequality/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas" role="listitem">
+Martin, Steve. 2025. <span>“How Does the Difference Between the
+Arithmetic and Geometric Mean Depend on Variance?”</span> November 12,
+2025. <a href="https://marberts.github.io/blog/posts/2025/variance-inequality/">https://marberts.github.io/blog/posts/2025/variance-inequality/</a>.
+</div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
