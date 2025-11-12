@@ -6,6 +6,7 @@ categories:
   - Index numbers
   - R
 description: It's well known that the arithmetic mean is larger than the geometric mean, but how does the difference between these means relate to variance?
+doi: 10.59350/rpvm0-57912
 ---
 
 That the arithmetic mean of a set of number is larger than the geometric mean is a foundational result in the theory of inequalities. This is a useful result for index numbers in particular as it gives that, for the same data, an index based on an arithmetic mean will always be larger than the corresponding index based on the geometric mean.
