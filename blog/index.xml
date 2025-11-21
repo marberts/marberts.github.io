@@ -9,7 +9,7 @@
 <link>https://marberts.github.io/blog/</link>
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.8.25</generator>
+<generator>quarto-1.8.26</generator>
 <lastBuildDate>Wed, 12 Nov 2025 00:00:00 GMT</lastBuildDate>
 <item>
   <title>How does the difference between the arithmetic and geometric mean depend on variance?</title>

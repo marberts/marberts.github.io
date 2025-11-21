@@ -109,7 +109,7 @@
     "href": "software.html#contributed-to",
     "title": "Software",
     "section": "Contributed to",
-    "text": "Contributed to\n\n\n\n{accumulate}\n\n\n{bootstrapFP}\n\n\n{concstats}\n\n\n\n\nDVC\n\n\n{goodpractice}\n\n\n{gseries}\n\n\n\n\n{lintr}\n\n\nR (base and stats)\n\n\n{sampling}\n\n\n\n\n{tabulapdf}\n\n\n{tempodisco}"
+    "text": "Contributed to\nI’ve made several (usually) small contributions to various open source projects.\n\n\n\n{accumulate}\n\n\n{bootstrapFP}\n\n\n{concstats}\n\n\n\n\nDVC\n\n\n{goodpractice}\n\n\n{gseries}\n\n\n\n\n{httr2}\n\n\n{lintr}\n\n\nR (base and stats)\n\n\n\n\n{sampling}\n\n\n{tabulapdf}\n\n\n{tempodisco}"
   },
   {
     "objectID": "about.html",
