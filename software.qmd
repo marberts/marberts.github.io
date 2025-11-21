@@ -77,6 +77,8 @@ Python implementation of the [{sps}](https://cran.r-project.org/package=sps) R p
 
 ## Contributed to
 
+I've made several (usually) small contributions to various open source projects.
+
 ::: {layout-ncol=3}
 [{accumulate}](https://cran.r-project.org/package=accumulate)
 
@@ -89,6 +91,8 @@ Python implementation of the [{sps}](https://cran.r-project.org/package=sps) R p
 [{goodpractice}](https://cran.r-project.org/package=goodpractice)
 
 [{gseries}](https://cran.r-project.org/package=gseries)
+
+[{httr2}](https://cran.r-project.org/package=httr2)
 
 [{lintr}](https://cran.r-project.org/package=lintr)
 
