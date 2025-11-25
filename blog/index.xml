@@ -10,7 +10,1055 @@
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Wed, 12 Nov 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 24 Nov 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Making big multilateral indexes fast</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2025/multilaterals/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Multilateral price indexes are often used to measure the evolution of prices over time when there are large volumes of transaction data, such as retail scanner data or housing data. The main challenge with computing multilateral indexes with large amounts of data is that these indexes often depend on a matrix where the dimensions are at least as large as the number of products. Lots of data means lots of different products, which in turns means making quite large matrices. Indeed, assuming these matrices are stored as 64-bit floats (more on that below), <em>at least</em> <img src="https://latex.codecogs.com/png.latex?8n%5E2"> bytes of memory are needed just to store one of these matrices—with, say, 100,000 products, that’s <em>at least</em> 80 GB of memory before doing any computations. Effectively computing these indexes requires a way to reduce the dimensions of these matrices.</p>
+<section id="weighted-time-product-dummy" class="level2">
+<h2 class="anchored" data-anchor-id="weighted-time-product-dummy">Weighted time product dummy</h2>
+<p>Let’s start with the WTPD index. This index is recovered from the coefficient on a set of time-dummy variables in a weighted log-linear regression model with a dummy variable for each product <span class="citation" data-cites="diewert2022">(e.g., Diewert and Fox 2022, eq. 9)</span>. Fitting this model is impractical with many products—with <img src="https://latex.codecogs.com/png.latex?n"> observations for <img src="https://latex.codecogs.com/png.latex?k"> products over <img src="https://latex.codecogs.com/png.latex?t"> time periods, the design matrix is a <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20(k%20+%20t%20-%201)"> matrix and will consume at least <img src="https://latex.codecogs.com/png.latex?8(n%20+%20t%20-%201)%5E2"> bytes of memory. Fortunately, only the coefficients on the time-dummy variables are required to make the index and so the product-dummy variables can be removed by treating them as fixed effects and demeaning the regression equation <span class="citation" data-cites="wooldridge2002">(Wooldridge 2002, sec. 10.5)</span>. Now the design matrix has only <img src="https://latex.codecogs.com/png.latex?t%20-%201"> columns and, as <img src="https://latex.codecogs.com/png.latex?t"> is usually much smaller than <img src="https://latex.codecogs.com/png.latex?k">, will consume far less memory.</p>
+<p>Let’s consider a example. We’ll start with a function to make (unbalanced) transaction data for a collection of products over time.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1552443</span>)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">make_prices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(products, periods, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">frac =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>) {</span>
+<span id="cb1-4">  res <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">product =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.factor</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq_len</span>(products)),</span>
+<span id="cb1-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">time =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.factor</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rep</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq_len</span>(periods), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">each =</span> products)),</span>
+<span id="cb1-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">price =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(products <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> periods),</span>
+<span id="cb1-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">quantity =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(products <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> periods)</span>
+<span id="cb1-9">  )</span>
+<span id="cb1-10">  res[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nrow</span>(res), frac <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nrow</span>(res)), ]</span>
+<span id="cb1-11">}</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">make_prices</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">13</span>))</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  product time     price  quantity
+2       2    1 1.4944618 0.2978414
+3       3    1 0.6778284 0.9263743
+5       5    1 1.2611687 0.3008513
+7       7    1 0.7996127 0.9532272
+8       8    1 0.2138277 0.4409094
+9       9    1 1.9830544 0.9422246</code></pre>
+</div>
+</div>
+<p>We’ll also make a function to take these data and construct the WTPD index from a fixed-effects model with the <code>{fixest}</code> package.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">wtpd_index <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(prices) {</span>
+<span id="cb3-2">  prices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-3">    dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(time) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-4">    dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">w =</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_weights</span>(price <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> quantity))</span>
+<span id="cb3-5"></span>
+<span id="cb3-6">  mdl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> fixest<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">feols</span>(</span>
+<span id="cb3-7">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(price) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> time <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> product,</span>
+<span id="cb3-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> prices,</span>
+<span id="cb3-9">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">weights =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>w</span>
+<span id="cb3-10">  )</span>
+<span id="cb3-11"></span>
+<span id="cb3-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coef</span>(mdl))</span>
+<span id="cb3-13">}</span></code></pre></div></div>
+</div>
+<p>Now let’s build a WTPD index with data for 100,000 products over 25 time periods. Doing this with a regular linear model, where each product has its own dummy variable, would require 1.8 TB of memory to just store the design matrix, making it impractical to calculate. Using a fixed-effects model to recover the WTPD index can be done without issue on any decent laptop.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">price_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">make_prices</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e5</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span>
+<span id="cb4-2"></span>
+<span id="cb4-3">bench<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mark</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fixest =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">wtpd_index</span>(price_data))</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  expression      min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 fixest        4.08s    4.08s     0.245    2.77GB    0.980</code></pre>
+</div>
+</div>
+<p>Note that this is generally much faster than the routine for making the WTPD index in the excellent <code>{IndexNumR}</code> package.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">wtpd_index2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(prices, window) {</span>
+<span id="cb6-2">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># IndexNumR expects these to be integers.</span></span>
+<span id="cb6-3">  prices[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"time"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"product"</span>)] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(</span>
+<span id="cb6-4">    prices[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"time"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"product"</span>)],</span>
+<span id="cb6-5">    as.integer</span>
+<span id="cb6-6">  )</span>
+<span id="cb6-7">  res <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> IndexNumR<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">WTPDIndex</span>(</span>
+<span id="cb6-8">    prices,</span>
+<span id="cb6-9">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"price"</span>,</span>
+<span id="cb6-10">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"quantity"</span>,</span>
+<span id="cb6-11">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"time"</span>,</span>
+<span id="cb6-12">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"product"</span>,</span>
+<span id="cb6-13">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">window =</span> window</span>
+<span id="cb6-14">  )</span>
+<span id="cb6-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.numeric</span>(res[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>])</span>
+<span id="cb6-16">}</span>
+<span id="cb6-17"></span>
+<span id="cb6-18">price_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">make_prices</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span>
+<span id="cb6-19"></span>
+<span id="cb6-20">bench<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mark</span>(</span>
+<span id="cb6-21">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fixest =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unname</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">wtpd_index</span>(price_data)),</span>
+<span id="cb6-22">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">IndexNumR =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">wtpd_index2</span>(price_data, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span>
+<span id="cb6-23">)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  expression      min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 fixest       10.6ms  13.05ms    74.3      1.51MB     1.96
+2 IndexNumR     4.25s    4.25s     0.235  102.15MB     7.05</code></pre>
+</div>
+</div>
+</section>
+<section id="geary-khamis-index" class="level2">
+<h2 class="anchored" data-anchor-id="geary-khamis-index">Geary-Khamis index</h2>
+<p>The GK index is another multilateral index that’s often written as a function of a large matrix. Following <span class="citation" data-cites="diewert2022">Diewert and Fox (2022)</span>, the GK index can be written as a function of two <img src="https://latex.codecogs.com/png.latex?k%20%5Ctimes%20k"> matrices. One of these matrices is diagonal, so it can be handled efficiently, but the other is usually dense (unless product imbalanced is really bad) and is impractical to store in memory. Using the same data as with the WTPD index, it would require 80 GB of memory to just store this matrix.</p>
+<p>An alternative approach <span class="citation" data-cites="balk2008">(Balk 2008, 245–46)</span> expresses the GK index as a function of three <img src="https://latex.codecogs.com/png.latex?t%20%5Ctimes%20t"> matrices. With the same data as before, this now requires only 15 KB of memory. Here is relatively fast function to implement this approach.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' Intertemporal Geary-Khamis index</span></span>
+<span id="cb8-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'</span></span>
+<span id="cb8-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' Make a multilateral Geary-Khamis price index.</span></span>
+<span id="cb8-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'</span></span>
+<span id="cb8-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param p A numeric vector of prices.</span></span>
+<span id="cb8-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param q A numeric vector of quantities.</span></span>
+<span id="cb8-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param period A factor, or something that can be coerced into one, that</span></span>
+<span id="cb8-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'   gives the corresponding time period for each element in `p` and</span></span>
+<span id="cb8-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'   `q`. The ordering of time periods follows the levels of `period`</span></span>
+<span id="cb8-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'   to agree with [`cut()`][cut.Date].</span></span>
+<span id="cb8-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param product A factor, or something that can be coerced into one, that</span></span>
+<span id="cb8-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'   gives the corresponding product identifier for each element in `p` and</span></span>
+<span id="cb8-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'   `q`.</span></span>
+<span id="cb8-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param na.rm Should missing values be removed? By default they are not.</span></span>
+<span id="cb8-15"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'</span></span>
+<span id="cb8-16"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @returns</span></span>
+<span id="cb8-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' A numeric vector of period-over-period price indexes.</span></span>
+<span id="cb8-18"></span>
+<span id="cb8-19">fast_gk <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(p, q, period, product, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>) {</span>
+<span id="cb8-20">  period <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.factor</span>(period)</span>
+<span id="cb8-21">  product <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.factor</span>(product)</span>
+<span id="cb8-22"></span>
+<span id="cb8-23">  qs <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unsplit</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">split</span>(q, product), gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span>scale_weights), product)</span>
+<span id="cb8-24">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">attributes</span>(product) <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># faster to match on numeric codes</span></span>
+<span id="cb8-25">  ux <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unique</span>(product)</span>
+<span id="cb8-26">  product <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(</span>
+<span id="cb8-27">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">split</span>(product, period),</span>
+<span id="cb8-28">    \(x) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">match</span>(ux, x, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">incomparables =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>)</span>
+<span id="cb8-29">  )</span>
+<span id="cb8-30"></span>
+<span id="cb8-31">  v <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Map</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">[</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">split</span>(p <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q, period), product)</span>
+<span id="cb8-32">  qs <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Map</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">[</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">split</span>(qs, period), product)</span>
+<span id="cb8-33"></span>
+<span id="cb8-34">  n <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nlevels</span>(period)</span>
+<span id="cb8-35">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Make the matrices from pp. 245-246 of Balk (2008) to build the quantity</span></span>
+<span id="cb8-36">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># index, then deflate.</span></span>
+<span id="cb8-37">  m <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vector</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"list"</span>, n)</span>
+<span id="cb8-38">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> (i <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq_along</span>(m)) {</span>
+<span id="cb8-39">    m[[i]] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vapply</span>(</span>
+<span id="cb8-40">      qs,</span>
+<span id="cb8-41">      \(qs) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(qs <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_weights</span>(v[[i]]), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> na.rm),</span>
+<span id="cb8-42">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L)</span>
+<span id="cb8-43">    )</span>
+<span id="cb8-44">  }</span>
+<span id="cb8-45">  e <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diag</span>(n)</span>
+<span id="cb8-46">  r <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cbind</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rep.int</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, n), <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, n, n <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb8-47">  q <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">solve</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">do.call</span>(rbind, m) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> e <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> r)[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L, ]</span>
+<span id="cb8-48">  v <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vapply</span>(v, sum, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">numeric</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> na.rm)</span>
+<span id="cb8-49">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Return the period-over-period index.</span></span>
+<span id="cb8-50">  v[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> v[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(v)] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (q[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>L] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> q[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(q)])</span>
+<span id="cb8-51">}</span></code></pre></div></div>
+</div>
+<p>As with the WTPD index, any decent laptop can compute this index.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">gk_index <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(prices) {</span>
+<span id="cb9-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fast_gk</span>(</span>
+<span id="cb9-3">    prices<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>price,</span>
+<span id="cb9-4">    prices<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>quantity,</span>
+<span id="cb9-5">    prices<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>time,</span>
+<span id="cb9-6">    prices<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>product,</span>
+<span id="cb9-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span></span>
+<span id="cb9-8">  )</span>
+<span id="cb9-9">}</span>
+<span id="cb9-10"></span>
+<span id="cb9-11">price_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">make_prices</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e5</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span>
+<span id="cb9-12"></span>
+<span id="cb9-13">bench<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mark</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fast_gk =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">gk_index</span>(price_data))</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  expression      min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 fast_gk       1.32s    1.32s     0.755     819MB     2.26</code></pre>
+</div>
+</div>
+<p>It is similarly non-trivial to make an index of this size with <code>{IndexNumR}</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">gk_index2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(prices, window) {</span>
+<span id="cb11-2">  prices[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"time"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"product"</span>)] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(</span>
+<span id="cb11-3">    prices[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"time"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"product"</span>)],</span>
+<span id="cb11-4">    as.integer</span>
+<span id="cb11-5">  )</span>
+<span id="cb11-6">  res <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> IndexNumR<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">GKIndex</span>(</span>
+<span id="cb11-7">    prices,</span>
+<span id="cb11-8">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"price"</span>,</span>
+<span id="cb11-9">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"quantity"</span>,</span>
+<span id="cb11-10">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"time"</span>,</span>
+<span id="cb11-11">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"product"</span>,</span>
+<span id="cb11-12">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">window =</span> window</span>
+<span id="cb11-13">  )</span>
+<span id="cb11-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.numeric</span>(res[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> res[<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(res)])</span>
+<span id="cb11-15">}</span>
+<span id="cb11-16"></span>
+<span id="cb11-17">price_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">make_prices</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span>
+<span id="cb11-18"></span>
+<span id="cb11-19">bench<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mark</span>(</span>
+<span id="cb11-20">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fast_gk =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unname</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">gk_index</span>(price_data)),</span>
+<span id="cb11-21">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">IndexNumR =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">gk_index2</span>(price_data, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>)</span>
+<span id="cb11-22">)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 6
+  expression      min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 fast_gk      8.03ms   8.56ms   109.       8.15MB    5.93 
+2 IndexNumR      1.7s     1.7s     0.587  332.21MB    0.587</code></pre>
+</div>
+</div>
+</section>
+<section id="repeat-sales" class="level2">
+<h2 class="anchored" data-anchor-id="repeat-sales">Repeat sales</h2>
+<p>The repeat-sales indexes listed by <span class="citation" data-cites="shiller1991">Shiller (1991)</span> are a type of multilateral index usually found in the housing economics literature. Like the WTPD index, they come from linear models and suffer from the same large design matrices. The geometric repeat-sales index is like the WTPD index, although usually with a much longer time horizon, except that it uses the first-difference transformation to sweep out the product fixed effects instead of the within-group transformation. The arithmetic repeat-sales index is more complicated as it comes from an IV estimator and its not obvious, at least to me, how the matrices for this index can be made smaller.</p>
+<p>Instead of reducing the dimensionality of the repeat-sales matrices, these matrices are naturally sparse when products sell infrequently (like housing) and can be stored as sparse matrices. Let’s adapt the vignette from my <code>{rsmatrix}</code> package to see this in action with some data for 5 million house sales over 30 years.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">periods <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.Date</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2000-01-01"</span>), <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.Date</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2029-12-31"</span>), <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"day"</span>)</span>
+<span id="cb13-2"></span>
+<span id="cb13-3">prices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb13-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sale =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(periods, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5e6</span>, <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>),</span>
+<span id="cb13-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">property =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sprintf</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"%06d"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e6</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5e6</span>, <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>))),</span>
+<span id="cb13-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">price =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5e6</span>)</span>
+<span id="cb13-7">) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb13-8">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">period =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cut</span>(sale, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"month"</span>))</span>
+<span id="cb13-9"></span>
+<span id="cb13-10">sales_pairs <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> rsmatrix<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rs_pairs</span>(prices<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>sale, prices<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>property)</span>
+<span id="cb13-11">prices[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"price_prev"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"period_prev"</span>)] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> prices[</span>
+<span id="cb13-12">  sales_pairs,</span>
+<span id="cb13-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"price"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"period"</span>)</span>
+<span id="cb13-14">]</span>
+<span id="cb13-15"></span>
+<span id="cb13-16">prices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb13-17">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb13-18">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">holding_period =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.numeric</span>(period) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.numeric</span>(period_prev)</span>
+<span id="cb13-19">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb13-20">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(holding_period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb13-21"></span>
+<span id="cb13-22"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(prices)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        sale property     price     period price_prev period_prev
+1 2016-05-11   627686 0.7705151 2016-05-01  0.1878927  2014-06-01
+2 2029-07-22   992771 0.2366689 2029-07-01  0.4822262  2026-10-01
+3 2011-07-17   925847 0.1712451 2011-07-01  0.5992709  2003-05-01
+4 2013-03-28   337973 0.1540939 2013-03-01  0.9106525  2002-11-01
+5 2008-04-22   295262 0.3274417 2008-04-01  0.2760829  2003-10-01
+6 2015-12-27   038822 2.2174534 2015-12-01  1.7673652  2010-11-01
+  holding_period
+1             23
+2             33
+3             98
+4            124
+5             54
+6             61</code></pre>
+</div>
+</div>
+<p>We can now build a generator to make the sparse repeat-sales matrices. If these were dense matrices they would consume 22.1 GB of memory. This isn’t nearly as bad as the WTPD or GK indexes, but still enough to make computing these indexes cumbersome. With sparse matrices, however, it is easy to make the repeat-sales index.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1">matrices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">with</span>(</span>
+<span id="cb15-2">  prices,</span>
+<span id="cb15-3">  rsmatrix<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rs_matrix</span>(period, period_prev, price, price_prev, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sparse =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb15-4">)</span>
+<span id="cb15-5"></span>
+<span id="cb15-6">Z <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrices</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Z"</span>)</span>
+<span id="cb15-7">X <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrices</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"X"</span>)</span>
+<span id="cb15-8">Y <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrices</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Y"</span>)</span>
+<span id="cb15-9"></span>
+<span id="cb15-10">bench<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mark</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ars =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> Matrix<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">solve</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">crossprod</span>(Z, X), <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">crossprod</span>(Z, Y)))</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 6
+  expression      min   median `itr/sec` mem_alloc `gc/sec`
+  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
+1 ars           1.59s    1.59s     0.627       3MB        0</code></pre>
+</div>
+</div>
+</section>
+<section id="geks" class="level2">
+<h2 class="anchored" data-anchor-id="geks">GEKS</h2>
+<p>Let’s conclude by briefly mentioned the GEKS family of multilateral indexes. As with the others, the GEKS depends on a matrix, but it is only a <img src="https://latex.codecogs.com/png.latex?t%20%5Ctimes%20t"> matrix and will require very little memory. This makes GEKS indexes somewhat more straightforward to compute than the other popular multilateral indexes.</p>
+<details>
+<summary>
+Session Info
+</summary>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>R version 4.5.2 (2025-10-31)
+Platform: x86_64-pc-linux-gnu
+Running under: Ubuntu 24.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.0 
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0  LAPACK version 3.12.0
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+time zone: America/Toronto
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] Matrix_1.7-4        jsonlite_2.0.0      dplyr_1.1.4        
+ [4] compiler_4.5.2      rsmatrix_0.2.9      tidyselect_1.2.1   
+ [7] Rcpp_1.1.0          yaml_2.3.10         fastmap_1.2.0      
+[10] lattice_0.22-7      R6_2.6.1            generics_0.1.4     
+[13] Formula_1.2-5       knitr_1.50          htmlwidgets_1.6.4  
+[16] tibble_3.3.0        pillar_1.11.1       rlang_1.1.6        
+[19] utf8_1.2.6          xfun_0.54           stringmagic_1.2.0  
+[22] fixest_0.13.2       cli_3.6.5           magrittr_2.0.4     
+[25] digest_0.6.38       grid_4.5.2          IndexNumR_0.6.0    
+[28] sandwich_3.1-1      gpindex_0.6.3       lifecycle_1.0.4    
+[31] nlme_3.1-168        vctrs_0.6.5         bench_1.1.4        
+[34] evaluate_1.0.5      glue_1.8.0          data.table_1.17.8  
+[37] numDeriv_2016.8-1.1 zoo_1.8-14          profmem_0.7.0      
+[40] dreamerr_1.5.0      rmarkdown_2.30      tools_4.5.2        
+[43] pkgconfig_2.0.3     htmltools_0.5.8.1  </code></pre>
+</div>
+</div>
+</details>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-balk2008" class="csl-entry">
+Balk, Bert M. 2008. <em>Price and Quantity Index Numbers: Models for Measuring Aggregate Change and Difference</em>. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511720758">https://doi.org/10.1017/CBO9780511720758</a>.
+</div>
+<div id="ref-diewert2022" class="csl-entry">
+Diewert, W Erwin, and Kevin J Fox. 2022. <span>“Substitution Bias in Multilateral Methods for Cpi Construction.”</span> <em>Journal of Business &amp; Economic Statistics</em> 40 (1): 355–69. <a href="https://doi.org/10.1080/07350015.2020.1816176">https://doi.org/10.1080/07350015.2020.1816176</a>.
+</div>
+<div id="ref-shiller1991" class="csl-entry">
+Shiller, Robert J. 1991. <span>“Arithmetic Repeat Sales Price Estimators.”</span> <em>Journal of Housing Economics</em> 1 (1): 110–26. <a href="https://doi.org/10.1016/S1051-1377(05)80028-2">https://doi.org/10.1016/S1051-1377(05)80028-2</a>.
+</div>
+<div id="ref-wooldridge2002" class="csl-entry">
+Wooldridge, Jeffrey M. 2002. <em>Econometric Analysis of Cross Section and Panel Data</em>. MIT Press.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
+  author = {Martin, Steve},
+  title = {Making Big Multilateral Indexes Fast},
+  date = {2025-11-24},
+  url = {https://marberts.github.io/blog/posts/2025/multilaterals/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2025. <span>“Making Big Multilateral Indexes
+Fast.”</span> November 24, 2025. <a href="https://marberts.github.io/blog/posts/2025/multilaterals/">https://marberts.github.io/blog/posts/2025/multilaterals/</a>.
+</div></div></section></div> ]]></description>
+  <category>Performance</category>
+  <category>Index numbers</category>
+  <category>R</category>
+  <guid>https://marberts.github.io/blog/posts/2025/multilaterals/</guid>
+  <pubDate>Mon, 24 Nov 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>How does the difference between the arithmetic and geometric mean depend on variance?</title>
   <dc:creator>Steve Martin</dc:creator>
@@ -26,7 +1074,7 @@
 <blockquote class="blockquote">
 <p>It should be noted that an arithmetic average is always greater than or equal to a geometric average and that the difference will be greater, the greater the variance in the price relatives.</p>
 </blockquote>
-<p>This seems like a great result that gives a way to easily think about the relationship between an index that uses an arithmetic mean to aggregate price relatives (Carli index) and one that uses a geometric mean (Jevons index). Unfortunately it’s not true—see <span class="citation" data-cites="lord2002">Lord (2002)</span> for a neat way to generate counter examples. <sup>1</sup></p>
+<p>This seems like a great result that gives a way to easily think about the relationship between an index that uses an arithmetic mean to aggregate price relatives (Carli index) and one that uses a geometric mean (Jevons index). <sup>1</sup> Unfortunately it’s not true—see <span class="citation" data-cites="lord2002">Lord (2002)</span> for a neat way to generate counter examples. <sup>2</sup></p>
 <p>The issue is that, for a vector of positive numbers <img src="https://latex.codecogs.com/png.latex?x%5Cin%5Cmathbf%7BR%7D_%7Bn%7D%5E%7B++%7D">, the difference between the arithmetic mean <img src="https://latex.codecogs.com/png.latex?%5Cmathfrak%7BA%7D(x)"> and geometric mean <img src="https://latex.codecogs.com/png.latex?%5Cmathfrak%7BG%7D(x)"> is only <em>bounded</em> by the variance <span class="citation" data-cites="bullen2003">(Bullen 2003, 156)</span></p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Ctext%7Bvar%7D(x)%7D%7B2%20%5Cmax(x)%7D%20%5Cleq%20%5Cmathfrak%7BA%7D(x)%20-%20%5Cmathfrak%7BG%7D(x)%20%5Cleq%20%5Cfrac%7B%5Ctext%7Bvar%7D(x)%7D%7B2%20%5Cmin(x)%7D.%0A"></p>
 <p>For two vectors <img src="https://latex.codecogs.com/png.latex?x"> and <img src="https://latex.codecogs.com/png.latex?y">, we have that <img src="https://latex.codecogs.com/png.latex?%5Cmathfrak%7BA%7D(y)%20-%20%5Cmathfrak%7BG%7D(y)%20%3E%20%5Cmathfrak%7BA%7D(x)%20-%20%5Cmathfrak%7BG%7D(x)"> if</p>
@@ -334,7 +1382,7 @@ font-style: inherit;">summary</span>(res)</span></code></pre></div></div>
   0.000   4.400   6.340   6.562   8.020  35.160 </code></pre>
 </div>
 </div>
-<p>Overall, the median of the conditional probability that the difference between the arithmetic and geometric mean decreases with variance is about 6.3%. This is a fairly small probability for the difference between the means to decrease when variance increases, although it depends on the underlying population from which samples are drawn. Drawing samples from a distribution with a wider support makes it more likely to see the the difference between the arithmetic and geometric mean decreases with variance.</p>
+<p>Overall, the median of the conditional probability that the difference between the arithmetic and geometric mean decreases with variance is about 6.3%. This is a fairly small probability for the difference between the means to decrease when variance increases, although it depends on the underlying population from which samples are drawn. Drawing samples from a distribution with a wider support makes it more likely to see the difference between the arithmetic and geometric mean decreases with variance.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">res <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -421,7 +1469,8 @@ Lord, N. 2002. <span>“Does Smaller Spread Always Mean Larger Product?”</span
 </div></section><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>This can also apply to the difference between the arithmetic mean and harmonic mean, where it is often suggested that the difference between these means increases with variance <span class="citation" data-cites="cpitheory">(IMF et al. 2025, 131)</span>.↩︎</p></li>
+<li id="fn1"><p>The CPI manual is more precise on page 179 and notes that the difference between the arithmetic and geometric mean <em>tends</em> to increase with variance.↩︎</p></li>
+<li id="fn2"><p>This can also apply to the difference between the arithmetic mean and harmonic mean, where it is often suggested that the difference between these means increases with variance <span class="citation" data-cites="cpitheory">(IMF et al. 2025, 131)</span>.↩︎</p></li>
 </ol>
 </section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2025,
   author = {Martin, Steve},
