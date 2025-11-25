@@ -6,6 +6,7 @@ categories:
   - Index numbers
   - R
 description: Multilateral price indexes that use large volumes of transaction data can be challening to compute. I show some tricks to calculate big indexes fast.
+doi: 10.59350/c2v2f-rnj27
 ---
 
 Multilateral price indexes are often used to measure the evolution of prices over time when there are large volumes of transaction data, such as retail scanner data or housing data. The main challenge with computing multilateral indexes with large amounts of data is that these indexes often depend on a matrix where the dimensions are at least as large as the number of products. Lots of data means lots of different products, which in turns means making quite large matrices. Indeed, assuming these matrices are stored as 64-bit floats (more on that below), *at least* $8n^2$ bytes of memory are needed just to store one of these matrices---with, say, 100,000 products, that's *at least* `r 8* 1e5^2 / 1e9` GB of memory before doing any computations. Effectively computing these indexes requires a way to reduce the dimensions of these matrices.
