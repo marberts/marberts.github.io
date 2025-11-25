@@ -1,0 +1,253 @@
+---
+title: "Making big multilateral indexes fast"
+date: "2025-11-24"
+categories:
+  - Performance
+  - Index numbers
+  - R
+description: Multilateral price indexes that use large volumes of transaction data can be challening to compute. I show some tricks to calculate big indexes fast.
+---
+
+Multilateral price indexes are often used to measure the evolution of prices over time when there are large volumes of transaction data, such as retail scanner data or housing data. The main challenge with computing multilateral indexes with large amounts of data is that these indexes often depend on a matrix where the dimensions are at least as large as the number of products. Lots of data means lots of different products, which in turns means making quite large matrices. Indeed, assuming these matrices are stored as 64-bit floats (more on that below), *at least* $8n^2$ bytes of memory are needed just to store one of these matrices---with, say, 100,000 products, that's *at least* `r 8* 1e5^2 / 1e9` GB of memory before doing any computations. Effectively computing these indexes requires a way to reduce the dimensions of these matrices.
+
+## Weighted time product dummy
+
+Let's start with the WTPD index. This index is recovered from the coefficient on a set of time-dummy variables in a weighted log-linear regression model with a dummy variable for each product [e.g., @diewert2022, eq. 9]. Fitting this model is impractical with many products---with $n$ observations for $k$ products over $t$ time periods, the design matrix is a $n \times (k + t - 1)$ matrix and will consume at least $8(n + t - 1)^2$ bytes of memory. Fortunately, only the coefficients on the time-dummy variables are required to make the index and so the product-dummy variables can be removed by treating them as fixed effects and demeaning the regression equation [@wooldridge2002, section 10.5]. Now the design matrix has only $t - 1$ columns and, as $t$ is usually much smaller than $k$, will consume far less memory.
+
+Let's consider a example. We'll start with a function to make (unbalanced) transaction data for a collection of products over time.
+
+```{r}
+set.seed(1552443)
+
+make_prices <- function(products, periods, frac = 0.1) {
+  res <- data.frame(
+    product = as.factor(seq_len(products)),
+    time = as.factor(rep(seq_len(periods), each = products)),
+    price = rlnorm(products * periods),
+    quantity = runif(products * periods)
+  )
+  res[-sample(nrow(res), frac * nrow(res)), ]
+}
+
+head(make_prices(10, 13))
+```
+
+We'll also make a function to take these data and construct the WTPD index from a fixed-effects model with the `{fixest}` package.
+
+```{r}
+wtpd_index <- function(prices) {
+  prices <- prices |>
+    dplyr::group_by(time) |>
+    dplyr::mutate(w = gpindex::scale_weights(price * quantity))
+
+  mdl <- fixest::feols(
+    log(price) ~ time | product,
+    data = prices,
+    weights = ~w
+  )
+
+  exp(coef(mdl))
+}
+```
+
+Now let's build a WTPD index with data for 100,000 products over 25 time periods. Doing this with a regular linear model, where each product has its own dummy variable, would require `r round(8 * (25 * 1e5 * 0.9) * (1e5 + 25 - 1) / 1e12, 2)` TB of memory to just store the design matrix, making it impractical to calculate. Using a fixed-effects model to recover the WTPD index can be done without issue on any decent laptop.
+
+```{r}
+#| warning: false
+price_data <- make_prices(1e5, 25)
+
+bench::mark(fixest = wtpd_index(price_data))
+```
+
+Note that this is generally much faster than the routine for making the WTPD index in the excellent `{IndexNumR}` package.
+
+```{r}
+#| warning: false
+wtpd_index2 <- function(prices, window) {
+  # IndexNumR expects these to be integers.
+  prices[c("time", "product")] <- lapply(
+    prices[c("time", "product")],
+    as.integer
+  )
+  res <- IndexNumR::WTPDIndex(
+    prices,
+    "price",
+    "quantity",
+    "time",
+    "product",
+    window = window
+  )
+  as.numeric(res[-1])
+}
+
+price_data <- make_prices(50, 25)
+
+bench::mark(
+  fixest = unname(wtpd_index(price_data)),
+  IndexNumR = wtpd_index2(price_data, 25)
+)
+```
+
+## Geary-Khamis index
+
+The GK index is another multilateral index that's often written as a function of a large matrix. Following @diewert2022, the GK index can be written as a function of two $k \times k$ matrices. One of these matrices is diagonal, so it can be handled efficiently, but the other is usually dense (unless product imbalanced is really bad) and is impractical to store in memory. Using the same data as with the WTPD index, it would require `r 8 * 1e5^2 / 1e9` GB of memory to just store this matrix.
+
+An alternative approach [@balk2008, pp. 245-246] expresses the GK index as a function of three $t \times t$ matrices. With the same data as before, this now requires only `r 8 * 25^2 * 3 / 1e3` KB of memory. Here is relatively fast function to implement this approach.
+
+```{r}
+#' Intertemporal Geary-Khamis index
+#'
+#' Make a multilateral Geary-Khamis price index.
+#'
+#' @param p A numeric vector of prices.
+#' @param q A numeric vector of quantities.
+#' @param period A factor, or something that can be coerced into one, that
+#'   gives the corresponding time period for each element in `p` and
+#'   `q`. The ordering of time periods follows the levels of `period`
+#'   to agree with [`cut()`][cut.Date].
+#' @param product A factor, or something that can be coerced into one, that
+#'   gives the corresponding product identifier for each element in `p` and
+#'   `q`.
+#' @param na.rm Should missing values be removed? By default they are not.
+#'
+#' @returns
+#' A numeric vector of period-over-period price indexes.
+
+fast_gk <- function(p, q, period, product, na.rm = FALSE) {
+  period <- as.factor(period)
+  product <- as.factor(product)
+
+  qs <- unsplit(lapply(split(q, product), gpindex::scale_weights), product)
+  attributes(product) <- NULL # faster to match on numeric codes
+  ux <- unique(product)
+  product <- lapply(
+    split(product, period),
+    \(x) match(ux, x, incomparables = NA)
+  )
+
+  v <- Map(`[`, split(p * q, period), product)
+  qs <- Map(`[`, split(qs, period), product)
+
+  n <- nlevels(period)
+  # Make the matrices from pp. 245-246 of Balk (2008) to build the quantity
+  # index, then deflate.
+  m <- vector("list", n)
+  for (i in seq_along(m)) {
+    m[[i]] <- vapply(
+      qs,
+      \(qs) sum(qs * gpindex::scale_weights(v[[i]]), na.rm = na.rm),
+      numeric(1L)
+    )
+  }
+  e <- diag(n)
+  r <- cbind(rep.int(1, n), matrix(0, n, n - 1))
+  q <- solve(do.call(rbind, m) - e + r)[1L, ]
+  v <- vapply(v, sum, numeric(1L), na.rm = na.rm)
+  # Return the period-over-period index.
+  v[-1L] / v[-length(v)] / (q[-1L] / q[-length(q)])
+}
+```
+
+As with the WTPD index, any decent laptop can compute this index.
+
+```{r}
+#| warning: false
+gk_index <- function(prices) {
+  fast_gk(
+    prices$price,
+    prices$quantity,
+    prices$time,
+    prices$product,
+    na.rm = TRUE
+  )
+}
+
+price_data <- make_prices(1e5, 25)
+
+bench::mark(fast_gk = gk_index(price_data))
+```
+
+It is similarly non-trivial to make an index of this size with `{IndexNumR}`.
+
+```{r}
+#| warning: false
+gk_index2 <- function(prices, window) {
+  prices[c("time", "product")] <- lapply(
+    prices[c("time", "product")],
+    as.integer
+  )
+  res <- IndexNumR::GKIndex(
+    prices,
+    "price",
+    "quantity",
+    "time",
+    "product",
+    window = window
+  )
+  as.numeric(res[-1] / res[-length(res)])
+}
+
+price_data <- make_prices(1000, 25)
+
+bench::mark(
+  fast_gk = unname(gk_index(price_data)),
+  IndexNumR = gk_index2(price_data, 25)
+)
+```
+
+## Repeat sales
+
+The repeat-sales indexes listed by @shiller1991 are a type of multilateral index usually found in the housing economics literature. Like the WTPD index, they come from linear models and suffer from the same large design matrices. The geometric repeat-sales index is like the WTPD index, although usually with a much longer time horizon, except that it uses the first-difference transformation to sweep out the product fixed effects instead of the within-group transformation. The arithmetic repeat-sales index is more complicated as it comes from an IV estimator and its not obvious, at least to me, how the matrices for this index can be made smaller.
+
+Instead of reducing the dimensionality of the repeat-sales matrices, these matrices are naturally sparse when products sell infrequently (like housing) and can be stored as sparse matrices. Let's adapt the vignette from my `{rsmatrix}` package to see this in action with some data for 5 million house sales over 30 years.
+
+```{r}
+periods <- seq(as.Date("2000-01-01"), as.Date("2029-12-31"), "day")
+
+prices <- data.frame(
+  sale = sample(periods, 5e6, TRUE),
+  property = factor(sprintf("%06d", sample(1:1e6, 5e6, TRUE))),
+  price = rlnorm(5e6)
+) |>
+  dplyr::mutate(period = cut(sale, "month"))
+
+sales_pairs <- rsmatrix::rs_pairs(prices$sale, prices$property)
+prices[c("price_prev", "period_prev")] <- prices[
+  sales_pairs,
+  c("price", "period")
+]
+
+prices <- prices |>
+  dplyr::mutate(
+    holding_period = as.numeric(period) - as.numeric(period_prev)
+  ) |>
+  dplyr::filter(holding_period > 2)
+
+head(prices)
+```
+
+We can now build a generator to make the sparse repeat-sales matrices. If these were dense matrices they would consume `r round(2 * 8 * nrow(prices) * nlevels(prices$period) / 1e9, 2)` GB of memory. This isn't nearly as bad as the WTPD or GK indexes, but still enough to make computing these indexes cumbersome. With sparse matrices, however, it is easy to make the repeat-sales index.
+
+```{r}
+#| warning: false
+matrices <- with(
+  prices,
+  rsmatrix::rs_matrix(period, period_prev, price, price_prev, sparse = TRUE)
+)
+
+Z <- matrices("Z")
+X <- matrices("X")
+Y <- matrices("Y")
+
+bench::mark(ars = 1 / Matrix::solve(crossprod(Z, X), crossprod(Z, Y)))
+```
+
+## GEKS
+
+Let's conclude by briefly mentioned the GEKS family of multilateral indexes. As with the others, the GEKS depends on a matrix, but it is only a $t \times t$ matrix and will require very little memory. This makes GEKS indexes somewhat more straightforward to compute than the other popular multilateral indexes.
+
+<details><summary>Session Info</summary>
+```{r, echo = FALSE}
+sessionInfo()
+```
+</details>

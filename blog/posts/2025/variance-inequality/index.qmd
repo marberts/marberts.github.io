@@ -15,9 +15,11 @@ The latest edition of the CPI manual says the following about the difference bet
 
 > It should be noted that an arithmetic average is always greater than or equal to a geometric average and that the difference will be greater, the greater the variance in the price relatives.
 
-This seems like a great result that gives a way to easily think about the relationship between an index that uses an arithmetic mean to aggregate price relatives (Carli index) and one that uses a geometric mean (Jevons index). Unfortunately it's not true---see @lord2002 for a neat way to generate counter examples. [^1]
+This seems like a great result that gives a way to easily think about the relationship between an index that uses an arithmetic mean to aggregate price relatives (Carli index) and one that uses a geometric mean (Jevons index). [^1] Unfortunately it's not true---see @lord2002 for a neat way to generate counter examples. [^2]
 
-[^1]: This can also apply to the difference between the arithmetic mean and harmonic mean, where it is often suggested that the difference between these means increases with variance [@cpitheory, p. 131].
+[^1]: The CPI manual is more precise on page 179 and notes that the difference between the arithmetic and geometric mean _tends_ to increase with variance.
+
+[^2]: This can also apply to the difference between the arithmetic mean and harmonic mean, where it is often suggested that the difference between these means increases with variance [@cpitheory, p. 131].
 
 The issue is that, for a vector of positive numbers $x\in\mathbf{R}_{n}^{++}$, the difference between the arithmetic mean $\mathfrak{A}(x)$ and geometric mean $\mathfrak{G}(x)$ is only *bounded* by the variance [@bullen2003, p. 156]
 
@@ -95,7 +97,7 @@ res <- simulate_var_ineq(10, 5000, \(n) rlnorm(n, sdlog = 0.25)) |>
 summary(res)
 ```
 
-Overall, the median of the conditional probability that the difference between the arithmetic and geometric mean decreases with variance is about `r round(median(res), 1)`%. This is a fairly small probability for the difference between the means to decrease when variance increases, although it depends on the underlying population from which samples are drawn. Drawing samples from a distribution with a wider support makes it more likely to see the the difference between the arithmetic and geometric mean decreases with variance.
+Overall, the median of the conditional probability that the difference between the arithmetic and geometric mean decreases with variance is about `r round(median(res), 1)`%. This is a fairly small probability for the difference between the means to decrease when variance increases, although it depends on the underlying population from which samples are drawn. Drawing samples from a distribution with a wider support makes it more likely to see the difference between the arithmetic and geometric mean decreases with variance.
 
 ```{r}
 res <- simulate_var_ineq(10, 5000, \(n) runif(n, 0.25, 4)) |>
