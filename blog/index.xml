@@ -21,10 +21,10 @@
 
 
 
-<p>Multilateral price indexes are often used to measure the evolution of prices over time when there are large volumes of transaction data, such as retail scanner data or housing data. The main challenge with computing multilateral indexes with large amounts of data is that these indexes often depend on a matrix where the dimensions are at least as large as the number of products. Lots of data means lots of different products, which in turns means making quite large matrices. Indeed, assuming these matrices are stored as 64-bit floats (more on that below), <em>at least</em> <img src="https://latex.codecogs.com/png.latex?8n%5E2"> bytes of memory are needed just to store one of these matrices—with, say, 100,000 products, that’s <em>at least</em> 80 GB of memory before doing any computations. Effectively computing these indexes requires a way to reduce the dimensions of these matrices.</p>
+<p>Multilateral price indexes are often used to measure the evolution of prices over time when there are large volumes of transaction data, such as retail scanner data or housing data. The main challenge with computing multilateral indexes with large amounts of data is that these indexes often depend on a matrix where the dimensions are at least as large as the number of products. Lots of data means lots of different products, which in turns means making quite large matrices. Indeed, assuming these matrices are stored as 64-bit floats (more on that below), <em>at least</em> <img src="https://latex.codecogs.com/png.latex?8k%5E2"> bytes of memory are needed just to store one of these matrices with <img src="https://latex.codecogs.com/png.latex?k"> products—with, say, 100,000 products, that’s <em>at least</em> 80 GB of memory before doing any computations. Effectively computing these indexes requires a way to reduce the dimensions of these matrices.</p>
 <section id="weighted-time-product-dummy" class="level2">
 <h2 class="anchored" data-anchor-id="weighted-time-product-dummy">Weighted time product dummy</h2>
-<p>Let’s start with the WTPD index. This index is recovered from the coefficient on a set of time-dummy variables in a weighted log-linear regression model with a dummy variable for each product <span class="citation" data-cites="diewert2022">(e.g., Diewert and Fox 2022, eq. 9)</span>. Fitting this model is impractical with many products—with <img src="https://latex.codecogs.com/png.latex?n"> observations for <img src="https://latex.codecogs.com/png.latex?k"> products over <img src="https://latex.codecogs.com/png.latex?t"> time periods, the design matrix is a <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20(k%20+%20t%20-%201)"> matrix and will consume at least <img src="https://latex.codecogs.com/png.latex?8(n%20+%20t%20-%201)%5E2"> bytes of memory. Fortunately, only the coefficients on the time-dummy variables are required to make the index and so the product-dummy variables can be removed by treating them as fixed effects and demeaning the regression equation <span class="citation" data-cites="wooldridge2002">(Wooldridge 2002, sec. 10.5)</span>. Now the design matrix has only <img src="https://latex.codecogs.com/png.latex?t%20-%201"> columns and, as <img src="https://latex.codecogs.com/png.latex?t"> is usually much smaller than <img src="https://latex.codecogs.com/png.latex?k">, will consume far less memory.</p>
+<p>Let’s start with the WTPD index. This index is recovered from the coefficient on a set of time-dummy variables in a weighted log-linear regression model with a dummy variable for each product <span class="citation" data-cites="diewert2022">(e.g., Diewert and Fox 2022, eq. 9)</span>. Fitting this model is impractical with many products—with <img src="https://latex.codecogs.com/png.latex?n"> observations for <img src="https://latex.codecogs.com/png.latex?k"> products over <img src="https://latex.codecogs.com/png.latex?t"> time periods, the design matrix is a <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20(k%20+%20t%20-%201)"> matrix and will consume at least <img src="https://latex.codecogs.com/png.latex?8(k%20+%20t%20-%201)%5E2"> bytes of memory. Fortunately, only the coefficients on the time-dummy variables are required to make the index and so the product-dummy variables can be removed by treating them as fixed effects and demeaning the regression equation <span class="citation" data-cites="wooldridge2002">(Wooldridge 2002, sec. 10.5)</span>. Now the design matrix has only <img src="https://latex.codecogs.com/png.latex?t%20-%201"> columns and, as <img src="https://latex.codecogs.com/png.latex?t"> is usually much smaller than <img src="https://latex.codecogs.com/png.latex?k">, will consume far less memory.</p>
 <p>Let’s consider a example. We’ll start with a function to make (unbalanced) transaction data for a collection of products over time.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
@@ -304,8 +304,8 @@ font-style: inherit;">25</span>)</span>
 <pre><code># A tibble: 2 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 fixest       10.6ms  13.05ms    74.3      1.51MB     1.96
-2 IndexNumR     4.25s    4.25s     0.235  102.15MB     7.05</code></pre>
+1 fixest        9.4ms  10.31ms    94.5      1.51MB     3.94
+2 IndexNumR     3.81s    3.81s     0.263  102.15MB     7.62</code></pre>
 </div>
 </div>
 </section>
@@ -637,7 +637,7 @@ font-style: inherit;">gk_index</span>(price_data))</span></code></pre></div></di
 <pre><code># A tibble: 1 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 fast_gk       1.32s    1.32s     0.755     819MB     2.26</code></pre>
+1 fast_gk       1.39s    1.39s     0.717     819MB    0.717</code></pre>
 </div>
 </div>
 <p>It is similarly non-trivial to make an index of this size with <code>{IndexNumR}</code>.</p>
@@ -741,8 +741,8 @@ font-style: inherit;">25</span>)</span>
 <pre><code># A tibble: 2 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 fast_gk      8.03ms   8.56ms   109.       8.15MB    5.93 
-2 IndexNumR      1.7s     1.7s     0.587  332.21MB    0.587</code></pre>
+1 fast_gk      7.24ms   7.66ms   124.       8.15MB    2.00 
+2 IndexNumR     1.33s    1.33s     0.751  332.21MB    0.751</code></pre>
 </div>
 </div>
 </section>
@@ -970,7 +970,7 @@ font-style: inherit;">crossprod</span>(Z, Y)))</span></code></pre></div></div>
 <pre><code># A tibble: 1 × 6
   expression      min   median `itr/sec` mem_alloc `gc/sec`
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 ars           1.59s    1.59s     0.627       3MB        0</code></pre>
+1 ars           1.55s    1.55s     0.646       3MB        0</code></pre>
 </div>
 </div>
 </section>
