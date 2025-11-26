@@ -11,8 +11,7 @@ Hi there, I'm Steve 👋. Welcome to my personal website.
 I'm a principal researcher at Statistics Canada where I use economics and data science
 to measure the economy.
 
-I work on several side projects in my spare time building open source software to make better
-official statistics, particularly in the area of price statistics and inflation.
+I work on several side projects in my spare time building open source statistical software, particularly in the area of price statistics.
 Checkout [software](software.qmd) for more information.
 
 Prior to working at Statistics Canada, I completed my PhD in economics where I
