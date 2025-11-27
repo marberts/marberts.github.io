@@ -106,7 +106,7 @@ res <- simulate_var_ineq(10, 5000, \(n) runif(n, 0.25, 4)) |>
 summary(res)
 ```
 
-As the support of the distribution shrinks, the difference between the arithmetic and geometric mean follows the variance more closely and the probabiltity that the difference in means decreases as variance increases becomes small.
+As the support of the distribution shrinks, the difference between the arithmetic and geometric mean follows the variance more closely and the probability that the difference in means decreases as variance increases becomes small.
 
 ```{r}
 res <- simulate_var_ineq(10, 5000, \(n) runif(n, 0.9, 1 / 0.9)) |>

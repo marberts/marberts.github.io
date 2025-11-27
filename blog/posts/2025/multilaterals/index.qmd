@@ -5,7 +5,7 @@ categories:
   - Performance
   - Index numbers
   - R
-description: Multilateral price indexes that use large volumes of transaction data can be challening to compute. I show some tricks to calculate big indexes fast.
+description: Multilateral price indexes that use large volumes of transaction data can be challenging to compute. I show some tricks to calculate big indexes fast.
 doi: 10.59350/c2v2f-rnj27
 ---
 
