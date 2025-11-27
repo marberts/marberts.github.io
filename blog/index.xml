@@ -1610,7 +1610,7 @@ font-style: inherit;">head</span>(sales)</span></code></pre></div></div>
 </div>
 <p>We’ll work with the following basic model relating price with characteristics in each period</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Clog(%5Ctext%7Bprice%7D_%7Bit%7D)%20=%20%5Calpha_%7Bt%7D%20+%20%5Cbeta_%7B1t%7D%5Ctext%7Bage%7D_%7Bit%7D%20+%20%5Cbeta_%7B2t%7D%5Ctext%7Barea%7D_%7Bit%7D%20+%20%5Cbeta_%7Bi3%7D%5Ctext%7Barea%7D_%7Bit%7D%5E2%20+%20%5Cbeta_%7Bi4%7D%5Ctext%7Bneighbourhoodscore%7D_%7Bit%7D%20+%20%5Cvarepsilon_%7Bit%7D.%0A"></p>
-<p>The two-regression approach for making the Laspeyres-imputation index fits two separate models for each time period and compares the average ratio of prediceted prices over the distribution of housing characteristics for sales in period 0.</p>
+<p>The two-regression approach for making the Laspeyres-imputation index fits two separate models for each time period and compares the average ratio of predicted prices over the distribution of housing characteristics for sales in period 0.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">sales2 <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -1728,7 +1728,7 @@ font-style: inherit;">*</span> paasche)</span>
 <pre><code>[1] 0.9372224</code></pre>
 </div>
 </div>
-<p>To make these indexes with one regression we need to remove the appropriate mean from the characteristics variables and interact them with the time dummy in the linear model. In each case the coefficient on the time dummy variable gives the same index as using two regressions. For simplicitly, I’ll just show the case of the Fisher index.</p>
+<p>To make these indexes with one regression we need to remove the appropriate mean from the characteristics variables and interact them with the time dummy in the linear model. In each case the coefficient on the time dummy variable gives the same index as using two regressions. For simplicity, I’ll just show the case of the Fisher index.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">dm <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -1872,18 +1872,277 @@ font-style: inherit;">2</span>])</span></code></pre></div></div>
 0.1009944 </code></pre>
 </div>
 </div>
+<p>Adding weights to both the regression model and the index-number formulas is a simple extension. Continuing with the above example, suppose we want to weight by house price so that more expensive houses received a larger weight.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">mdl1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(</span>
+<span id="cb13-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(price) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> age <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> area <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">I</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> amenity_score,</span>
+<span id="cb13-3">  sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]],</span>
+<span id="cb13-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">weights =</span> price</span>
+<span id="cb13-5">)</span>
+<span id="cb13-6"></span>
+<span id="cb13-7">mdl2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(</span>
+<span id="cb13-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(price) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> age <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> area <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">I</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> amenity_score,</span>
+<span id="cb13-9">  sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]],</span>
+<span id="cb13-10">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">weights =</span> price</span>
+<span id="cb13-11">)</span>
+<span id="cb13-12"></span>
+<span id="cb13-13">laspeyres <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(</span>
+<span id="cb13-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">weighted.mean</span>(</span>
+<span id="cb13-15">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]]),</span>
+<span id="cb13-16">    sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>price</span>
+<span id="cb13-17">  )</span>
+<span id="cb13-18">)</span>
+<span id="cb13-19"></span>
+<span id="cb13-20">paasche <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(</span>
+<span id="cb13-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">weighted.mean</span>(</span>
+<span id="cb13-22">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]]) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]]),</span>
+<span id="cb13-23">    sales2[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>price</span>
+<span id="cb13-24">  )</span>
+<span id="cb13-25">)</span>
+<span id="cb13-26"></span>
+<span id="cb13-27">fisher <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sqrt</span>(laspeyres <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> paasche)</span></code></pre></div></div>
+</div>
+<p>Making the Fisher index with one regression just requires removing the weighted mean from the characteristics variables in the interaction term.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1">dm <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb14-2">  m0 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval</span>(</span>
+<span id="cb14-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">substitute</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">weighted.mean</span>(x[period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], price[period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])),</span>
+<span id="cb14-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parent.frame</span>()</span>
+<span id="cb14-5">  )</span>
+<span id="cb14-6">  m1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval</span>(</span>
+<span id="cb14-7">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">substitute</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">weighted.mean</span>(x[period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], price[period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>])),</span>
+<span id="cb14-8">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parent.frame</span>()</span>
+<span id="cb14-9">  )</span>
+<span id="cb14-10">  x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(m0, m1))</span>
+<span id="cb14-11">}</span>
+<span id="cb14-12"></span>
+<span id="cb14-13">mdl_fisher <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lm</span>(</span>
+<span id="cb14-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(price) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> period <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb14-15">    age <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb14-16">    area <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb14-17">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">I</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb14-18">    amenity_score <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb14-19">    period<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(age) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(area) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(area<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dm</span>(amenity_score)),</span>
+<span id="cb14-20">  sales,</span>
+<span id="cb14-21">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">weights =</span> price</span>
+<span id="cb14-22">)</span>
+<span id="cb14-23"></span>
+<span id="cb14-24"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all.equal</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coef</span>(mdl_fisher)[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"period"</span>]), fisher, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">check.attributes =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
 </section>
 <section id="why-two-regressions-can-be-better" class="level2">
 <h2 class="anchored" data-anchor-id="why-two-regressions-can-be-better">Why two regressions can be better</h2>
 <p>As noted by <span class="citation" data-cites="aizcorbe2014">Aizcorbe (2014, chap. 3)</span>, constructing the hedonic-imputation index with two regressions is more flexible than recovering an index from a regression coefficient. The trick of doing it with one regression works because the model is linear; using a non-linear regression model (however rare) may require fitting two models separately. Explicitly using the fitted values from two models to make price relatives also allows for the use of other index-number formulas, not just geometric ones.</p>
 <p>One reason that I’ve not seen for the two-regression approach is that it’s also more convenient to calculate product contributions when doing two regressions.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">laspeyres_relatives <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1">laspeyres_relatives <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">exp</span>(</span>
-<span id="cb13-2">  <span class="fu" style="color: #4758AB;
+<span id="cb16-2">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1894,21 +2153,21 @@ background-color: null;
 font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>]])</span>
-<span id="cb13-3">)</span>
-<span id="cb13-4">contrib_laspeyres <span class="ot" style="color: #003B4F;
+<span id="cb16-3">)</span>
+<span id="cb16-4">contrib_laspeyres <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> gpindex<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">geometric_contributions</span>(laspeyres_relatives)</span>
-<span id="cb13-5"></span>
-<span id="cb13-6">paasche_relatives <span class="ot" style="color: #003B4F;
+<span id="cb16-5"></span>
+<span id="cb16-6">paasche_relatives <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">exp</span>(</span>
-<span id="cb13-7">  <span class="fu" style="color: #4758AB;
+<span id="cb16-7">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">predict</span>(mdl2, sales2[[<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1919,28 +2178,28 @@ background-color: null;
 font-style: inherit;">predict</span>(mdl1, sales2[[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>]])</span>
-<span id="cb13-8">)</span>
-<span id="cb13-9">contrib_paasche <span class="ot" style="color: #003B4F;
+<span id="cb16-8">)</span>
+<span id="cb16-9">contrib_paasche <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> gpindex<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">geometric_contributions</span>(paasche_relatives)</span>
-<span id="cb13-10"></span>
-<span id="cb13-11">contrib_fisher <span class="ot" style="color: #003B4F;
+<span id="cb16-10"></span>
+<span id="cb16-11">contrib_fisher <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">Map</span>(</span>
-<span id="cb13-12">  <span class="st" style="color: #20794D;
+<span id="cb16-12">  <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">`</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">*</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">`</span>,</span>
-<span id="cb13-13">  gpindex<span class="sc" style="color: #5E5E5E;
+<span id="cb16-13">  gpindex<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1951,29 +2210,29 @@ background-color: null;
 font-style: inherit;">1</span>)(<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">c</span>(laspeyres, paasche)),</span>
-<span id="cb13-14">  <span class="fu" style="color: #4758AB;
+<span id="cb16-14">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">list</span>(contrib_laspeyres, contrib_paasche)</span>
-<span id="cb13-15">)</span>
-<span id="cb13-16"></span>
-<span id="cb13-17"><span class="fu" style="color: #4758AB;
+<span id="cb16-15">)</span>
+<span id="cb16-16"></span>
+<span id="cb16-17"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">plot</span>(</span>
-<span id="cb13-18">  <span class="fu" style="color: #4758AB;
+<span id="cb16-18">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">density</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">unlist</span>(contrib_fisher)),</span>
-<span id="cb13-19">  <span class="at" style="color: #657422;
+<span id="cb16-19">  <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">main =</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Distribution of sales contributions"</span></span>
-<span id="cb13-20">)</span></code></pre></div></div>
+<span id="cb16-20">)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://marberts.github.io/blog/posts/2025/hedonics/index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="https://marberts.github.io/blog/posts/2025/hedonics/index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

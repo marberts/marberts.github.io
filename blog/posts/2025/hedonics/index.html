@@ -8,7 +8,7 @@
 
 <meta name="author" content="Steve Martin">
 <meta name="dcterms.date" content="2025-10-27">
-<meta name="description" content="Hedonic imputation is a standard method to compares prices over time when the composition of products also changes. In all cases I’ve seen, the method is implemented by using the fitted values from two regression models. I show how it can be done with one regression.">
+<meta name="description" content="Hedonic imputation is a standard method to compare prices over time when the composition of products also changes. In all cases I’ve seen, the method is implemented by using the fitted values from two regression models. I show how it can be done with one regression.">
 
 <title>Hedonic imputation with one regression, not two – Steve Martin</title>
 <style>
@@ -436,7 +436,7 @@ window.Quarto = {
 
 <div>
   <div class="description">
-    Hedonic imputation is a standard method to compares prices over time when the composition of products also changes. In all cases I’ve seen, the method is implemented by using the fitted values from two regression models. I show how it can be done with one regression.
+    Hedonic imputation is a standard method to compare prices over time when the composition of products also changes. In all cases I’ve seen, the method is implemented by using the fitted values from two regression models. I show how it can be done with one regression.
   </div>
 </div>
 
@@ -460,7 +460,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 28, 2025</p>
+      <p class="date-modified">November 26, 2025</p>
     </div>
   </div>
     
@@ -534,7 +534,7 @@ window.Quarto = {
 <p><span class="math display">\[
 \log(\text{price}_{it}) = \alpha_{t} + \beta_{1t}\text{age}_{it} + \beta_{2t}\text{area}_{it} + \beta_{i3}\text{area}_{it}^2 + \beta_{i4}\text{neighbourhoodscore}_{it} + \varepsilon_{it}.
 \]</span></p>
-<p>The two-regression approach for making the Laspeyres-imputation index fits two separate models for each time period and compares the average ratio of prediceted prices over the distribution of housing characteristics for sales in period 0.</p>
+<p>The two-regression approach for making the Laspeyres-imputation index fits two separate models for each time period and compares the average ratio of predicted prices over the distribution of housing characteristics for sales in period 0.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sales2 <span class="ot">&lt;-</span> <span class="fu">split</span>(sales, <span class="sc">~</span>period)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -564,7 +564,7 @@ window.Quarto = {
 <pre><code>[1] 0.9372224</code></pre>
 </div>
 </div>
-<p>To make these indexes with one regression we need to remove the appropriate mean from the characteristics variables and interact them with the time dummy in the linear model. In each case the coefficient on the time dummy variable gives the same index as using two regressions. For simplicitly, I’ll just show the case of the Fisher index.</p>
+<p>To make these indexes with one regression we need to remove the appropriate mean from the characteristics variables and interact them with the time dummy in the linear model. In each case the coefficient on the time dummy variable gives the same index as using two regressions. For simplicity, I’ll just show the case of the Fisher index.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dm <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  m0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(x[<span class="fu">eval</span>(<span class="fu">substitute</span>(period <span class="sc">==</span> <span class="dv">0</span>), <span class="fu">parent.frame</span>())])</span>
@@ -595,36 +595,96 @@ window.Quarto = {
 0.1009944 </code></pre>
 </div>
 </div>
+<p>Adding weights to both the regression model and the index-number formulas is a simple extension. Continuing with the above example, suppose we want to weight by house price so that more expensive houses received a larger weight.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mdl1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(price) <span class="sc">~</span> age <span class="sc">+</span> area <span class="sc">+</span> <span class="fu">I</span>(area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> amenity_score,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  sales2[[<span class="dv">1</span>]],</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> price</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>mdl2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(price) <span class="sc">~</span> age <span class="sc">+</span> area <span class="sc">+</span> <span class="fu">I</span>(area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> amenity_score,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  sales2[[<span class="dv">2</span>]],</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> price</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>laspeyres <span class="ot">&lt;-</span> <span class="fu">exp</span>(</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">weighted.mean</span>(</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">predict</span>(mdl2, sales2[[<span class="dv">1</span>]]) <span class="sc">-</span> <span class="fu">predict</span>(mdl1, sales2[[<span class="dv">1</span>]]),</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    sales2[[<span class="dv">1</span>]]<span class="sc">$</span>price</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>paasche <span class="ot">&lt;-</span> <span class="fu">exp</span>(</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">weighted.mean</span>(</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">predict</span>(mdl2, sales2[[<span class="dv">2</span>]]) <span class="sc">-</span> <span class="fu">predict</span>(mdl1, sales2[[<span class="dv">2</span>]]),</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    sales2[[<span class="dv">2</span>]]<span class="sc">$</span>price</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>fisher <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(laspeyres <span class="sc">*</span> paasche)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Making the Fisher index with one regression just requires removing the weighted mean from the characteristics variables in the interaction term.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dm <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  m0 <span class="ot">&lt;-</span> <span class="fu">eval</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">substitute</span>(<span class="fu">weighted.mean</span>(x[period <span class="sc">==</span> <span class="dv">0</span>], price[period <span class="sc">==</span> <span class="dv">0</span>])),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parent.frame</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  m1 <span class="ot">&lt;-</span> <span class="fu">eval</span>(</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">substitute</span>(<span class="fu">weighted.mean</span>(x[period <span class="sc">==</span> <span class="dv">1</span>], price[period <span class="sc">==</span> <span class="dv">1</span>])),</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parent.frame</span>()</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">-</span> <span class="fu">mean</span>(<span class="fu">c</span>(m0, m1))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>mdl_fisher <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">log</span>(price) <span class="sc">~</span> period <span class="sc">+</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    age <span class="sc">+</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    area <span class="sc">+</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">I</span>(area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    amenity_score <span class="sc">+</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    period<span class="sc">:</span>(<span class="fu">dm</span>(age) <span class="sc">+</span> <span class="fu">dm</span>(area) <span class="sc">+</span> <span class="fu">dm</span>(area<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">dm</span>(amenity_score)),</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  sales,</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">weights =</span> price</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">exp</span>(<span class="fu">coef</span>(mdl_fisher)[<span class="st">"period"</span>]), fisher, <span class="at">check.attributes =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
 </section>
 <section id="why-two-regressions-can-be-better" class="level2">
 <h2 class="anchored" data-anchor-id="why-two-regressions-can-be-better">Why two regressions can be better</h2>
 <p>As noted by <span class="citation" data-cites="aizcorbe2014">Aizcorbe (<a href="#ref-aizcorbe2014" role="doc-biblioref">2014, chap. 3</a>)</span>, constructing the hedonic-imputation index with two regressions is more flexible than recovering an index from a regression coefficient. The trick of doing it with one regression works because the model is linear; using a non-linear regression model (however rare) may require fitting two models separately. Explicitly using the fitted values from two models to make price relatives also allows for the use of other index-number formulas, not just geometric ones.</p>
 <p>One reason that I’ve not seen for the two-regression approach is that it’s also more convenient to calculate product contributions when doing two regressions.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>laspeyres_relatives <span class="ot">&lt;-</span> <span class="fu">exp</span>(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(mdl2, sales2[[<span class="dv">1</span>]]) <span class="sc">-</span> <span class="fu">predict</span>(mdl1, sales2[[<span class="dv">1</span>]])</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>contrib_laspeyres <span class="ot">&lt;-</span> gpindex<span class="sc">::</span><span class="fu">geometric_contributions</span>(laspeyres_relatives)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>paasche_relatives <span class="ot">&lt;-</span> <span class="fu">exp</span>(</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(mdl2, sales2[[<span class="dv">2</span>]]) <span class="sc">-</span> <span class="fu">predict</span>(mdl1, sales2[[<span class="dv">2</span>]])</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>contrib_paasche <span class="ot">&lt;-</span> gpindex<span class="sc">::</span><span class="fu">geometric_contributions</span>(paasche_relatives)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>contrib_fisher <span class="ot">&lt;-</span> <span class="fu">Map</span>(</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">*</span><span class="st">`</span>,</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  gpindex<span class="sc">::</span><span class="fu">transmute_weights</span>(<span class="dv">0</span>, <span class="dv">1</span>)(<span class="fu">c</span>(laspeyres, paasche)),</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(contrib_laspeyres, contrib_paasche)</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">density</span>(<span class="fu">unlist</span>(contrib_fisher)),</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Distribution of sales contributions"</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>laspeyres_relatives <span class="ot">&lt;-</span> <span class="fu">exp</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(mdl2, sales2[[<span class="dv">1</span>]]) <span class="sc">-</span> <span class="fu">predict</span>(mdl1, sales2[[<span class="dv">1</span>]])</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>contrib_laspeyres <span class="ot">&lt;-</span> gpindex<span class="sc">::</span><span class="fu">geometric_contributions</span>(laspeyres_relatives)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>paasche_relatives <span class="ot">&lt;-</span> <span class="fu">exp</span>(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(mdl2, sales2[[<span class="dv">2</span>]]) <span class="sc">-</span> <span class="fu">predict</span>(mdl1, sales2[[<span class="dv">2</span>]])</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>contrib_paasche <span class="ot">&lt;-</span> gpindex<span class="sc">::</span><span class="fu">geometric_contributions</span>(paasche_relatives)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>contrib_fisher <span class="ot">&lt;-</span> <span class="fu">Map</span>(</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">*</span><span class="st">`</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  gpindex<span class="sc">::</span><span class="fu">transmute_weights</span>(<span class="dv">0</span>, <span class="dv">1</span>)(<span class="fu">c</span>(laspeyres, paasche)),</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(contrib_laspeyres, contrib_paasche)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">density</span>(<span class="fu">unlist</span>(contrib_fisher)),</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">main =</span> <span class="st">"Distribution of sales contributions"</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
