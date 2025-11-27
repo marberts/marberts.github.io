@@ -1,7 +1,7 @@
 ---
 title: "Hedonic imputation with one regression, not two"
 date: "2025-10-27"
-date-modified: "2025-10-28"
+date-modified: "2025-11-26"
 categories:
   - Index numbers
   - Econometrics
@@ -131,6 +131,67 @@ exp(coef(mdl_fisher)["period"]) * sqrt(sandwich::vcovHC(mdl_fisher)[2, 2])
 ```
 
 [^2]: These standard error are approximate when the mean of the characteristics is calculated from the sample of data used to the fit the model.
+
+Adding weights to both the regression model and the index-number formulas is a simple extension. Continuing with the above example, suppose we want to weight by house price so that more expensive houses received a larger weight.
+
+```{r}
+mdl1 <- lm(
+  log(price) ~ age + area + I(area^2) + amenity_score,
+  sales2[[1]],
+  weights = price
+)
+
+mdl2 <- lm(
+  log(price) ~ age + area + I(area^2) + amenity_score,
+  sales2[[2]],
+  weights = price
+)
+
+laspeyres <- exp(
+  weighted.mean(
+    predict(mdl2, sales2[[1]]) - predict(mdl1, sales2[[1]]),
+    sales2[[1]]$price
+  )
+)
+
+paasche <- exp(
+  weighted.mean(
+    predict(mdl2, sales2[[2]]) - predict(mdl1, sales2[[2]]),
+    sales2[[2]]$price
+  )
+)
+
+fisher <- sqrt(laspeyres * paasche)
+```
+
+Making the Fisher index with one regression just requires removing the weighted mean from the characteristics variables in the interaction term.
+
+```{r}
+dm <- function(x) {
+  m0 <- eval(
+    substitute(weighted.mean(x[period == 0], price[period == 0])),
+    parent.frame()
+  )
+  m1 <- eval(
+    substitute(weighted.mean(x[period == 1], price[period == 1])),
+    parent.frame()
+  )
+  x - mean(c(m0, m1))
+}
+
+mdl_fisher <- lm(
+  log(price) ~ period +
+    age +
+    area +
+    I(area^2) +
+    amenity_score +
+    period:(dm(age) + dm(area) + dm(area^2) + dm(amenity_score)),
+  sales,
+  weights = price
+)
+
+all.equal(exp(coef(mdl_fisher)["period"]), fisher, check.attributes = FALSE)
+```
 
 ## Why two regressions can be better
 
