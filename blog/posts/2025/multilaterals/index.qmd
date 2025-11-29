@@ -200,7 +200,9 @@ bench::mark(
 
 The repeat-sales indexes listed by @shiller1991 are a type of multilateral index usually found in the housing economics literature. Like the WTPD index, they come from linear models and suffer from the same large design matrices. The geometric repeat-sales index is like the WTPD index, although usually with a much longer time horizon, except that it uses the first-difference transformation to sweep out the product fixed effects instead of the within-group transformation. The arithmetic repeat-sales index is more complicated as it comes from an IV estimator and its not obvious, at least to me, how the matrices for this index can be made smaller.
 
-Instead of reducing the dimensionality of the repeat-sales matrices, these matrices are naturally sparse when products sell infrequently (like housing) and can be stored as sparse matrices. Let's adapt the vignette from my `{rsmatrix}` package to see this in action with some data for 5 million house sales over 30 years.
+Instead of reducing the dimensionality of the repeat-sales matrices, these matrices are naturally sparse when products sell infrequently (like housing) and can be stored as sparse matrices. [^1] Let's adapt the vignette from my `{rsmatrix}` package to see this in action with some data for 5 million house sales over 30 years.
+
+[^1]: See @langsrud2023 for another example of using sparse matrices for aggregation.
 
 ```{r}
 periods <- seq(as.Date("2000-01-01"), as.Date("2029-12-31"), "day")
