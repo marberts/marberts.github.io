@@ -6,6 +6,7 @@ categories:
   - Index numbers
   - Python
 description: What would happen to prices if firms started internalizing the social impact of their behavior?
+doi: 10.59350/dyzbr-nde66
 ---
 
 What would happen to prices if firms started internalizing the social impact of their behavior? A few years ago I published a model of moral management in competitive markets [@martin2019] and I thought it would be an interesting exercise to take the price and quantity functions from this model to make a price index. This is my first attempt to take a model where firms are not price takers and consumers aren't standard utility maximizers and derive a price index as a function of how some deeper parameter changes over time.
