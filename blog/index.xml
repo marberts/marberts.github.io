@@ -10,7 +10,1030 @@
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Mon, 24 Nov 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 05 Jan 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>The price of morality</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2026/morality/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>What would happen to prices if firms started internalizing the social impact of their behavior? A few years ago I published a model of moral management in competitive markets <span class="citation" data-cites="martin2019">(Martin 2019)</span> and I thought it would be an interesting exercise to take the price and quantity functions from this model to make a price index. This is my first attempt to take a model where firms are not price takers and consumers aren’t standard utility maximizers and derive a price index as a function of how some deeper parameter changes over time.</p>
+<section id="the-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-model">The model</h2>
+<p>The model has two identical firms selling differentiated products to socially-conscientious consumers with heterogeneous preferences. Firms are able to engage in socially responsible behavior (e.g., voluntarily abating harmful emissions), with the twist that their motivation for doing so can be both for the usual strategic reasons and due to the preferences of the firm’s management—a moral manager. A greater degree of moral management means that a firm places more weight on pro-social behavior relative to profit, whereas a profit-maximizing manager places no weight on pro-social behavior and only considers profit. An increase in the degree of moral management for a firm affects the amount of pro-social behavior by both firms in the market, and consequently affects prices and expenditure/revenue shares for both products.</p>
+<p>Part of the solution for the model is a pair of price and quantity functions that give the prices and market shares as a function of the degree of morality for each firm’s manager. These can be plugged into a price index to give a measure of the change in price from a change in managers’ preferences over time. In particular, comparing prices when managers are profit maximizers to prices with moral managers give a measure of the change in price due to moral managers.</p>
+</section>
+<section id="impact-of-morality-on-price" class="level2">
+<h2 class="anchored" data-anchor-id="impact-of-morality-on-price">Impact of morality on price</h2>
+<p>Let’s start with the simplest case: the two firms each have the same type of manager. In this case prices will be the same for both firms’ outputs (which do not change over time), so any price index that satisfies the proportionality axiom will simply be the change in price over time. Equations (2) and (3) in the paper can be used to establish that this change in price over time is a linear function of the degree to which managers value the social impact of their firm’s behavior, <img src="https://latex.codecogs.com/png.latex?1%20+%20%5Calpha%20%5Cmu">, where <img src="https://latex.codecogs.com/png.latex?%5Calpha"> is a complex function of the parameters of the model and <img src="https://latex.codecogs.com/png.latex?%5Cmu"> is the degree to which the manager values the social conduct of the their firm (relative to profits). Therefore, an increase in the morality of managers in the market will translate into an increase in any reasonable price index over time.</p>
+<p>The more interesting case is when firms have different types of managers. In this case, an increase in the morality of one firm’s management will lead to an increase in price and quantity for that firm’s product and a (smaller) decrease in price and quantity for the competitor’s product. The increase in price for one product and decrease in price for the other work against each other to dampen the increase in price when firms are run by the same type of manager. Note that the expenditure/revenue share increases for the product with the increasing price, the opposite of what’s usually expected, and this means that the Paasche index is larger than the Laspeyres index.</p>
+<p>Rather than try to get a closed-form expression for a price index as a function of the degree of moral management in the market, let’s work through some numerical examples to see how it compares to the case when both managers have the same type. We’ll start by making a class to generate price relatives and expenditure shares for a pair of types, relative to profit-maximizing managers.</p>
+<div id="71403887" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Callable</span>
+<span id="cb1-4"></span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> ConstraintError(<span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">Exception</span>):</span>
+<span id="cb1-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">pass</span></span>
+<span id="cb1-8"></span>
+<span id="cb1-9"></span>
+<span id="cb1-10"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> MoralManagers:</span>
+<span id="cb1-11">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, t: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, v: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, c: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, k: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, F: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>:</span>
+<span id="cb1-12">        t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(t)</span>
+<span id="cb1-13">        v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(v)</span>
+<span id="cb1-14">        c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(c)</span>
+<span id="cb1-15">        k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(k)</span>
+<span id="cb1-16">        F <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>(F)</span>
+<span id="cb1-17">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> F):</span>
+<span id="cb1-18">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> ConstraintError(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"t is too small"</span>)</span>
+<span id="cb1-19"></span>
+<span id="cb1-20">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.phi <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> F <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> F <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb1-21">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rho <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> F <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb1-22">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> t</span>
+<span id="cb1-23">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v</span>
+<span id="cb1-24">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> c</span>
+<span id="cb1-25">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> k</span>
+<span id="cb1-26">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.F <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> F</span>
+<span id="cb1-27"></span>
+<span id="cb1-28">        base_s <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.F)</span>
+<span id="cb1-29">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.base_p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.p0(base_s, base_s)</span>
+<span id="cb1-30"></span>
+<span id="cb1-31">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> p0(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, s0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, s1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-32">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (</span>
+<span id="cb1-33">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.t</span>
+<span id="cb1-34">            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.c</span>
+<span id="cb1-35">            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s0</span>
+<span id="cb1-36">            <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s1</span>
+<span id="cb1-37">        )</span>
+<span id="cb1-38"></span>
+<span id="cb1-39">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> p1(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, s0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, s1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-40">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.p0(s1, s0)</span>
+<span id="cb1-41"></span>
+<span id="cb1-42">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> q0(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, p0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, p1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, s0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, s1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-43">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (s0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> s1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> p0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> p1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.t)</span>
+<span id="cb1-44"></span>
+<span id="cb1-45">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> q1(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, p0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, p1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, s0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, s1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-46">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.q0(p1, p0, s1, s0)</span>
+<span id="cb1-47"></span>
+<span id="cb1-48">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> s0(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, mu0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, mu1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-49">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.k) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.F) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.phi <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.F <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (</span>
+<span id="cb1-50">            mu0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rho <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> mu1</span>
+<span id="cb1-51">        )</span>
+<span id="cb1-52"></span>
+<span id="cb1-53">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> s1(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, mu0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, mu1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-54">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.s0(mu1, mu0)</span>
+<span id="cb1-55"></span>
+<span id="cb1-56">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> pi(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, p: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, q: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, s: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-57">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.F <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb1-58"></span>
+<span id="cb1-59">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> pqs(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, mu0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, mu1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>:</span>
+<span id="cb1-60">        s0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.s0(mu0, mu1)</span>
+<span id="cb1-61">        s1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.s1(mu0, mu1)</span>
+<span id="cb1-62">        p0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.p0(s0, s1)</span>
+<span id="cb1-63">        p1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.p1(s0, s1)</span>
+<span id="cb1-64">        q0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.q0(p0, p1, s0, s1)</span>
+<span id="cb1-65">        q1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.q1(p0, p1, s0, s1)</span>
+<span id="cb1-66">        pi0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.pi(p0, q0, s0)</span>
+<span id="cb1-67">        pi1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.pi(p1, q1, s1)</span>
+<span id="cb1-68">        share0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> p0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (p0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> p1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1)</span>
+<span id="cb1-69">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> pi0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb1-70">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> ConstraintError(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"negative profit for firm 0"</span>)</span>
+<span id="cb1-71">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">elif</span> pi1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb1-72">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">raise</span> ConstraintError(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"negative profit for firm 1"</span>)</span>
+<span id="cb1-73">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span>:</span>
+<span id="cb1-74">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> {</span>
+<span id="cb1-75">                <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rel0"</span>: p0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.base_p,</span>
+<span id="cb1-76">                <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rel1"</span>: p1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.base_p,</span>
+<span id="cb1-77">                <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"share0"</span>: share0,</span>
+<span id="cb1-78">            }</span>
+<span id="cb1-79"></span>
+<span id="cb1-80"></span>
+<span id="cb1-81"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> laspeyres_index(rel0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, rel1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, share0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-82">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> rel0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> rel1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span></span>
+<span id="cb1-83"></span>
+<span id="cb1-84"></span>
+<span id="cb1-85"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> paasche_index(rel0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, rel1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, share0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-86">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (share0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> rel0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> share0) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> rel1)</span>
+<span id="cb1-87"></span>
+<span id="cb1-88"></span>
+<span id="cb1-89"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> fisher_index(rel0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, rel1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, share0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-90">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> (laspeyres_index(rel0, rel1, share0) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> paasche_index(rel0, rel1, share0))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span></span>
+<span id="cb1-91"></span>
+<span id="cb1-92"></span>
+<span id="cb1-93"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> tornqvist_index(rel0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, rel1: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, share0: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>:</span>
+<span id="cb1-94">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> rel0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> (<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> share0) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> rel1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span> (<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> share0))</span>
+<span id="cb1-95"></span>
+<span id="cb1-96"></span>
+<span id="cb1-97"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> make_index(data: pd.DataFrame, index: Callable) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pd.Series:</span>
+<span id="cb1-98">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> data.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">apply</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: index(x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rel0"</span>], x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rel1"</span>], x[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"share0"</span>]), axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div></div>
+</div>
+<p>We can now simulate the impact of an increase in morality for one firm on a Fisher index under three scenarios: managers are entirely uncorrelated, so that the other firm is always a profit maximizes; managers are somewhat correlated; and managers are perfectly correlated and have the same type. In order to respect the constraint that firms must make positive profit, we’ll only consider a change in morality up to the point at which the manager places equal value on profitability and social conduct.</p>
+<div id="1dccb4c5" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> simulate(corr: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>, model: MoralManagers) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pd.DataFrame:</span>
+<span id="cb2-2">    df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb2-3">        pd.DataFrame(model.pqs(m, corr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> m), index<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[m]) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.05</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>)</span>
+<span id="cb2-4">    ]</span>
+<span id="cb2-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> pd.concat(df)</span>
+<span id="cb2-6"></span>
+<span id="cb2-7"></span>
+<span id="cb2-8">mm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> MoralManagers(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-9"></span>
+<span id="cb2-10">simulation <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {corr: simulate(corr, mm) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> corr <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]}</span>
+<span id="cb2-11"></span>
+<span id="cb2-12">fisher <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.concat(</span>
+<span id="cb2-13">    {<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"corr=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>corr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>: make_index(s, fisher_index) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> corr, s <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> simulation.items()},</span>
+<span id="cb2-14">    axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb2-15">)</span>
+<span id="cb2-16">fisher.plot(ylabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fisher index"</span>, xlabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Degree of morality"</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2026/morality/index_files/figure-html/cell-3-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The top line shows the linear effect of morality on price when both firms have the same type of manager. Introducing heterogeneity in the types of managers results in a smaller increase in price, although the Fisher index is now a convex function of the degree of morality, with the curvature becoming more pronounced as managers’ types become less correlated. This is driven by the Paasche index, as the Laspeyres index is a linear function of the degree of morality.</p>
+<div id="7954ed4a" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame(</span>
+<span id="cb3-2">    {</span>
+<span id="cb3-3">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Laspeyres index"</span>: make_index(simulation[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], laspeyres_index),</span>
+<span id="cb3-4">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Paasche index"</span>: make_index(simulation[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], paasche_index),</span>
+<span id="cb3-5">    }</span>
+<span id="cb3-6">)</span>
+<span id="cb3-7"></span>
+<span id="cb3-8">df.plot(ylabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Index"</span>, xlabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Degree of morality"</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2026/morality/index_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Using a Törnqvist index instead of a Fisher index gives the same general result.</p>
+<div id="08d7958a" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">tornqvist <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.concat(</span>
+<span id="cb4-2">    {<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"corr=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>corr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>: make_index(s, tornqvist_index) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> corr, s <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> simulation.items()},</span>
+<span id="cb4-3">    axis<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb4-4">)</span>
+<span id="cb4-5">tornqvist.plot(ylabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Törnqvist index"</span>, xlabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Degree of morality"</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://marberts.github.io/blog/posts/2026/morality/index_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I find this to be an interesting result. Despite coming from a model in which both firms and consumers are making optimal decisions, an increase in the degree of morality from one firm in the market results in price indexes that behave quite differently than expected.</p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-martin2019" class="csl-entry">
+Martin, Steve. 2019. <span>“Moral Management in Competitive Markets.”</span> <em>Journal of Economics &amp; Management Strategy</em> 28 (3): 541–60. <a href="https://doi.org/10.1111/jems.12283">https://doi.org/10.1111/jems.12283</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2026,
+  author = {Martin, Steve},
+  title = {The Price of Morality},
+  date = {2026-01-05},
+  url = {https://marberts.github.io/blog/posts/2026/morality/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2026. <span>“The Price of Morality.”</span> January 5,
+2026. <a href="https://marberts.github.io/blog/posts/2026/morality/">https://marberts.github.io/blog/posts/2026/morality/</a>.
+</div></div></section></div> ]]></description>
+  <category>Corporate social responsibility</category>
+  <category>Index numbers</category>
+  <category>Python</category>
+  <guid>https://marberts.github.io/blog/posts/2026/morality/</guid>
+  <pubDate>Mon, 05 Jan 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Making big multilateral indexes fast</title>
   <dc:creator>Steve Martin</dc:creator>
