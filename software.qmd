@@ -82,6 +82,8 @@ I've made several (usually) small contributions to various open source projects.
 ::: {layout-ncol=3}
 [{accumulate}](https://cran.r-project.org/package=accumulate)
 
+[{arrow}](https://CRAN.R-project.org/package=arrow)
+
 [{bootstrapFP}](https://cran.r-project.org/package=bootstrapFP)
 
 [{concstats}](https://cran.r-project.org/package=concstats)
