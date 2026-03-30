@@ -9,8 +9,368 @@
 <link>https://marberts.github.io/blog/</link>
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.8.27</generator>
-<lastBuildDate>Mon, 05 Jan 2026 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.9.36</generator>
+<lastBuildDate>Sat, 28 Mar 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Reproduction-resistant file formats</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2026/formats/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>I’ve been spending more time structuring projects as reproducible analytical pipelines and using tools like <code>dvc</code> <span class="citation" data-cites="dvc">(<span class="nocase">Kuprieiev et al.</span> 2026)</span> and <code>{targets}</code> <span class="citation" data-cites="targets">(Landau 2021)</span> to make analytical workflows reproducible. The idea is to represent the interaction between code and data as a directed acyclic graph (DAG) and keep track of the hashes of the data and code nodes in this graph. In this way, it is possible to know exactly the inputs, steps, and outputs of an analytical workflow, and to have a relatively automated way to reconstruct the graph that represents the pipeline.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">graph TD
+    df1["`data1.parquet
+    _89d903b_`"]
+    df2["`data2.parquet
+    _ff9cf2d_`"]
+    df3["`data3.parquet
+    _79369f7_`"]
+    
+    df1 --&gt; step1["`step1.R
+    _2e957eb_`"]
+    df2 --&gt; step1
+    df3 --&gt; step2["`step2.R
+    _9b782e4_`"]
+    step1 --&gt; df4["`data4.parquet
+    _7321608_`"]
+    step2 --&gt; df5["`data5.parquet
+    _9bb597c_`"]
+    df4 --&gt; step3["`step3.R
+    _cd8e177_`"]
+    df5 --&gt; step3
+    step3 --&gt; res["`result.parquet
+    _b4a8841_`"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>Implicit in this formulation of a pipeline is the notion that the hash of an output for a step only depends on the hash of the code for that step and the hashes of its inputs. This implies that that knowing the hashes of all the data and code nodes in the DAG for a pipeline is sufficient to establish that you’ve successfully reproduced it.</p>
+<p>In some cases using the hash is too sensitive a measure of change, at least for the purpose of reproducibility. For example, using a formatter like <code>air</code> or <code>black</code> can change the hash of a script even though the AST for that script, and therefore the output from that stage for the pipeline, remains the same. A tool like <code>dvc</code> would erroneously mark all stages of the pipeline that depend on this script as out of date, even though it will produce all the same outputs. It would be better to have a way to hash the AST of the script, but taking the hash of the file is simpler and will always detect a change in the AST of the script, even if it may falsely detect a change when the AST doesn’t.</p>
+<p>What would, however, be problematic is if the same inputs and code produced an output with a variable hash due to the way the data are stored. I don’t mean doing something inherently non-reproducible like working with random numbers and not using a fixed seed, but rather data formats that resist hashing as a way to identify change. This would mean that knowing the hashes of all the inputs, code, and outputs would not be sufficient to reproduce the pipeline, at least from the point of view of a tool like <code>dvc</code> or <code>{targets}</code>, because executing the pipeline again can give a different collection of hashes—so much for reproducibility.</p>
+<p>Unlike the code-formatter example, this is not a theoretical concern and I recently spent more time than I’d like to admit diagnosing why I couldn’t reproduce two separate pipelines despite the inputs and code remaining unchanged.</p>
+<p>The first issue was with a pipeline that stored data as an excel spreadsheet. This shouldn’t be surprising, but I didn’t realize that writing a data frame as an xlsx, and then writing the same data frame as an xlsx again, produces two files with different hashes.<sup>1</sup></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">openxlsx2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write_xlsx</span>(mtcars, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/mtcars1.xlsx"</span>)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Sys.sleep</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb1-3">openxlsx2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write_xlsx</span>(mtcars, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/mtcars2.xlsx"</span>)</span></code></pre></div></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">md5sum</span> data/mtcars<span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">*</span>.xlsx</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>089cdcf4ee0d6efadc94de9f004ed119  data/mtcars1.xlsx
+a5b8eda1b7dacb1b05e380d233e9969c  data/mtcars2.xlsx</code></pre>
+</div>
+</div>
+<p>I expect this is a well-known property of excel files, but it was new to me so I decided to explore why. Let’s start by unpacking the archives of both excel files containing the mtcars data frame.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unzip</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-qo</span> data/mtcars1.xlsx <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-d</span> data/mtcars1</span>
+<span id="cb4-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unzip</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-qo</span> data/mtcars2.xlsx <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-d</span> data/mtcars2</span>
+<span id="cb4-3"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">tree</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-n</span> data/mtcars1</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data/mtcars1
+├── [Content_Types].xml
+├── docProps
+│&nbsp;&nbsp; ├── app.xml
+│&nbsp;&nbsp; └── core.xml
+├── _rels
+└── xl
+    ├── _rels
+    │&nbsp;&nbsp; └── workbook.xml.rels
+    ├── styles.xml
+    ├── theme
+    │&nbsp;&nbsp; └── theme1.xml
+    ├── workbook.xml
+    └── worksheets
+        └── sheet1.xml
+
+7 directories, 8 files</code></pre>
+</div>
+</div>
+<p>And then finding which files have different hashes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">md5deep</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-r</span> data/mtcars1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> data/md5s</span>
+<span id="cb6-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">echo</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">$(</span><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">md5deep</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-rl</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-x</span> data/md5s data/mtcars2<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">)</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>data/mtcars2/docProps/core.xml</code></pre>
+</div>
+</div>
+<p>Except for <code>core.xml</code>, these two archives contain the same files. The reason <code>core.xml</code> differs is because it contains a timestamp. This makes excel a difficult format to work with for reproducibility because it depends on hidden global state (i.e., time) that is always mutating. Doing the same exercise with csv or parquet yields a stable hash that makes it possible to establish that the data frame we’re writing to disk is unchanged.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write.csv</span>(mtcars, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/mtcars1.csv"</span>)</span>
+<span id="cb8-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Sys.sleep</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb8-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write.csv</span>(mtcars, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/mtcars2.csv"</span>)</span></code></pre></div></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">md5sum</span> data/mtcars<span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">*</span>.csv</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>6463474bfe6973a81dc7cbc4a71e8dd1  data/mtcars1.csv
+6463474bfe6973a81dc7cbc4a71e8dd1  data/mtcars2.csv</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write_parquet</span>(mtcars, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/mtcars1.parquet"</span>)</span>
+<span id="cb11-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Sys.sleep</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb11-3">arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write_parquet</span>(mtcars, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/mtcars2.parquet"</span>)</span></code></pre></div></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">md5sum</span> data/mtcars<span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">*</span>.parquet</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ed20929d8fd97c202c34fd600dad7403  data/mtcars1.parquet
+ed20929d8fd97c202c34fd600dad7403  data/mtcars2.parquet</code></pre>
+</div>
+</div>
+<p>The second issue was with a pipeline that was writing data as a partitioned parquet dataset. With sufficiently many rows, writing an arrow dataset doesn’t produce a stable hash for the individual partitions.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5e6</span>)</span>
+<span id="cb14-2"></span>
+<span id="cb14-3">arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write_dataset</span>(df, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/df1"</span>)</span>
+<span id="cb14-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Sys.sleep</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb14-5">arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">write_dataset</span>(df, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/df2"</span>)</span></code></pre></div></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">md5sum</span> data/df<span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">*</span>/<span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">*</span></span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>cb7ce4ff15aca43a45582255793f92b9  data/df1/part-0.parquet
+cb7ce4ff15aca43a45582255793f92b9  data/df2/part-0.parquet</code></pre>
+</div>
+</div>
+<p>Unlike with excel, the issue here is that <code>{arrow}</code> is trying to speed things up by working in parallel and consequently the ordering of the rows is not guaranteed when writing the dataset (even with no partitions).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1">df1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">open_dataset</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/df1"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb17-2">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">collect</span>()</span>
+<span id="cb17-3"></span>
+<span id="cb17-4">df2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">open_dataset</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"data/df2"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb17-5">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">collect</span>()</span>
+<span id="cb17-6"></span>
+<span id="cb17-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">setequal</span>(df1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>x, df<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>x) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">setequal</span>(df2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>x, df<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>x)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all</span>(df1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>x <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> df<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>x)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+</div>
+<p>A new feature was added to the underlying arrow library last year to preserve the row ordering within partitions, and I recently contributed the bindings to this feature for the <code>{arrow}</code> R package (it’s already in <code>pyarrow</code>). With this feature enabled, the example of writing the partitioned dataset above results in identical hashes.</p>
+<p>I suspect there are other file formats that also resistant reproducible workflows (maybe .RData or .Rds). In the case of arrow datasets, the fix was straightforward and it should soon go away; for excel, the format is inherently non-reproducible because it includes a timestamp.</p>
+
+
+
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-dvc" class="csl-entry">
+<span class="nocase">Kuprieiev, Ruslan, skshetry, (변기호)Peter Rowlands, et al.</span> 2026. <em>DVC: Data Version Control - Git for Data &amp; Models</em>. V. 3.67.0. Zenodo, released March. <a href="https://doi.org/10.5281/zenodo.19022483">https://doi.org/10.5281/zenodo.19022483</a>.
+</div>
+<div id="ref-targets" class="csl-entry">
+Landau, William Michael. 2021. <span>“The Targets r Package: A Dynamic Make-Like Function-Oriented Pipeline Toolkit for Reproducibility and High-Performance Computing.”</span> <em>Journal of Open Source Software</em> 6 (57): 2959. <a href="https://doi.org/10.21105/joss.02959">https://doi.org/10.21105/joss.02959</a>.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>I’m using <code>{openxlsx2}</code>, but the results are the same with both <code>{openxlsx}</code> and <code>pandas</code>.↩︎</p></li>
+</ol>
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2026,
+  author = {Martin, Steve},
+  title = {Reproduction-Resistant File Formats},
+  date = {2026-03-28},
+  url = {https://marberts.github.io/blog/posts/2026/formats/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2026. <span>“Reproduction-Resistant File Formats.”</span>
+March 28. <a href="https://marberts.github.io/blog/posts/2026/formats/">https://marberts.github.io/blog/posts/2026/formats/</a>.
+</div></div></section></div> ]]></description>
+  <category>RAPs</category>
+  <category>R</category>
+  <guid>https://marberts.github.io/blog/posts/2026/formats/</guid>
+  <pubDate>Sat, 28 Mar 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>The price of morality</title>
   <dc:creator>Steve Martin</dc:creator>
@@ -1013,7 +1373,7 @@ font-style: inherit;">"Degree of morality"</span>)</span></code></pre></div></di
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-martin2019" class="csl-entry">
 Martin, Steve. 2019. <span>“Moral Management in Competitive Markets.”</span> <em>Journal of Economics &amp; Management Strategy</em> 28 (3): 541–60. <a href="https://doi.org/10.1111/jems.12283">https://doi.org/10.1111/jems.12283</a>.
 </div>
@@ -1026,8 +1386,7 @@ Martin, Steve. 2019. <span>“Moral Management in Competitive Markets.”</span>
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas">
-Martin, Steve. 2026. <span>“The Price of Morality.”</span> January 5,
-2026. <a href="https://doi.org/10.59350/dyzbr-nde66">https://doi.org/10.59350/dyzbr-nde66</a>.
+Martin, Steve. 2026. <span>“The Price of Morality.”</span> January 5. <a href="https://doi.org/10.59350/dyzbr-nde66">https://doi.org/10.59350/dyzbr-nde66</a>.
 </div></div></section></div> ]]></description>
   <category>Corporate social responsibility</category>
   <category>Index numbers</category>
@@ -2054,7 +2413,7 @@ loaded via a namespace (and not attached):
 </section>
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-balk2008" class="csl-entry">
 Balk, Bert M. 2008. <em>Price and Quantity Index Numbers: Models for Measuring Aggregate Change and Difference</em>. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511720758">https://doi.org/10.1017/CBO9780511720758</a>.
 </div>
@@ -2085,7 +2444,7 @@ Wooldridge, Jeffrey M. 2002. <em>Econometric Analysis of Cross Section and Panel
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2025. <span>“Making Big Multilateral Indexes
-Fast.”</span> November 24, 2025. <a href="https://doi.org/10.59350/c2v2f-rnj27">https://doi.org/10.59350/c2v2f-rnj27</a>.
+Fast.”</span> November 24. <a href="https://doi.org/10.59350/c2v2f-rnj27">https://doi.org/10.59350/c2v2f-rnj27</a>.
 </div></div></section></div> ]]></description>
   <category>Performance</category>
   <category>Index numbers</category>
@@ -2487,7 +2846,7 @@ font-style: inherit;">summary</span>(res)</span></code></pre></div></div>
 
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-bullen2003" class="csl-entry">
 Bullen, P. S. 2003. <em>Handbook of Means and Their Inequalities</em>. Springer Science+Business Media. <a href="https://doi.org/10.1007/978-94-017-0399-4">https://doi.org/10.1007/978-94-017-0399-4</a>.
 </div>
@@ -2495,10 +2854,10 @@ Bullen, P. S. 2003. <em>Handbook of Means and Their Inequalities</em>. Springer 
 IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2020. <em>Consumer Price Index Manual: Concepts and Methods</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781484354841.069 ">https://doi.org/10.5089/9781484354841.069 </a>.
 </div>
 <div id="ref-cpitheory" class="csl-entry">
-———. 2025. <em>Consumer Price Index Manual: Theory</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781513559605.069">https://doi.org/10.5089/9781513559605.069</a>.
+IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2025. <em>Consumer Price Index Manual: Theory</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781513559605.069">https://doi.org/10.5089/9781513559605.069</a>.
 </div>
 <div id="ref-lord2002" class="csl-entry">
-Lord, N. 2002. <span>“Does Smaller Spread Always Mean Larger Product?”</span> <em>The Mathematical Gazette</em>, no. 506, 86: 273–74. <a href="https://doi.org/10.2307/3621857">https://doi.org/10.2307/3621857</a>.
+Lord, N. 2002. <span>“Does Smaller Spread Always Mean Larger Product?”</span> <em>The Mathematical Gazette</em>, nos. 506, 86: 273–74. <a href="https://doi.org/10.2307/3621857">https://doi.org/10.2307/3621857</a>.
 </div>
 </div></section><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
@@ -2517,8 +2876,8 @@ Lord, N. 2002. <span>“Does Smaller Spread Always Mean Larger Product?”</span
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2025. <span>“How Does the Difference Between the
-Arithmetic and Geometric Mean Depend on Variance?”</span> November 12,
-2025. <a href="https://doi.org/10.59350/rpvm0-57912">https://doi.org/10.59350/rpvm0-57912</a>.
+Arithmetic and Geometric Mean Depend on Variance?”</span> November 12.
+<a href="https://doi.org/10.59350/rpvm0-57912">https://doi.org/10.59350/rpvm0-57912</a>.
 </div></div></section></div> ]]></description>
   <category>Inequalities</category>
   <category>Index numbers</category>
@@ -3276,7 +3635,7 @@ font-style: inherit;">"Distribution of sales contributions"</span></span>
 </section>
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-aizcorbe2014" class="csl-entry">
 Aizcorbe, Ana M. 2014. <em>A Practical Guide to Price Index and Hedonic Techniques</em>. Oxford University Press. <a href="https://doi.org/10.1093/acprof:oso/9780198702429.001.0001">https://doi.org/10.1093/acprof:oso/9780198702429.001.0001</a>.
 </div>
@@ -3305,7 +3664,7 @@ Wooldridge, Jeffrey M. 2002. <em>Econometric Analysis of Cross Section and Panel
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2025. <span>“Hedonic Imputation with One Regression, Not
-Two.”</span> October 27, 2025. <a href="https://doi.org/10.59350/2f0dq-zvs49">https://doi.org/10.59350/2f0dq-zvs49</a>.
+Two.”</span> October 27. <a href="https://doi.org/10.59350/2f0dq-zvs49">https://doi.org/10.59350/2f0dq-zvs49</a>.
 </div></div></section></div> ]]></description>
   <category>Index numbers</category>
   <category>Econometrics</category>
@@ -3816,7 +4175,7 @@ font-style: inherit;">print</span>(res)</span></code></pre></div></div>
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-cpitheory" class="csl-entry">
 IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2025. <em>Consumer Price Index Manual: Theory</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781513559605.069">https://doi.org/10.5089/9781513559605.069</a>.
 </div>
@@ -3829,8 +4188,8 @@ IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2025. <em>Consumer Price Index 
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
-Martin, Steve. 2025. <span>“What Causes Inflation?”</span> October 22,
-2025. <a href="https://doi.org/10.59350/nag8p-v2n95">https://doi.org/10.59350/nag8p-v2n95</a>.
+Martin, Steve. 2025. <span>“What Causes Inflation?”</span> October 22.
+<a href="https://doi.org/10.59350/nag8p-v2n95">https://doi.org/10.59350/nag8p-v2n95</a>.
 </div></div></section></div> ]]></description>
   <category>Index numbers</category>
   <category>Python</category>
@@ -4094,7 +4453,7 @@ font-style: inherit;">/</span> p</span></code></pre></div></div>
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-hill" class="csl-entry">
 Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its Consequences.”</span> <em>Ecology</em> 54 (2): 427–32. <a href="https://doi.org/10.2307/1934352">https://doi.org/10.2307/1934352</a>.
 </div>
@@ -4108,7 +4467,7 @@ Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2025" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2025. <span>“Decomposing Diversity Indexes.”</span>
-October 19, 2025. <a href="https://doi.org/10.59350/dfntc-yfd90">https://doi.org/10.59350/dfntc-yfd90</a>.
+October 19. <a href="https://doi.org/10.59350/dfntc-yfd90">https://doi.org/10.59350/dfntc-yfd90</a>.
 </div></div></section></div> ]]></description>
   <category>Index numbers</category>
   <category>R</category>
