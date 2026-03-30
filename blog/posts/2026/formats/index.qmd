@@ -1,0 +1,127 @@
+---
+title: "Reproduction-resistant file formats"
+date: "2026-03-28"
+categories:
+  - RAPs
+  - R
+description: Why do certain file formats resist reproducible workflows?
+engine: knitr
+---
+
+I've been spending more time structuring projects as reproducible analytical pipelines and using tools like `dvc` [@dvc] and `{targets}` [@targets] to make analytical workflows reproducible. The idea is to represent the interaction between code and data as a directed acyclic graph (DAG) and keep track of the hashes of the data and code nodes in this graph. In this way, it is possible to know exactly the inputs, steps, and outputs of an analytical workflow, and to have a relatively automated way to reconstruct the graph that represents the pipeline.
+
+```{mermaid}
+graph TD
+    df1["`data1.parquet
+    _89d903b_`"]
+    df2["`data2.parquet
+    _ff9cf2d_`"]
+    df3["`data3.parquet
+    _79369f7_`"]
+    
+    df1 --> step1["`step1.R
+    _2e957eb_`"]
+    df2 --> step1
+    df3 --> step2["`step2.R
+    _9b782e4_`"]
+    step1 --> df4["`data4.parquet
+    _7321608_`"]
+    step2 --> df5["`data5.parquet
+    _9bb597c_`"]
+    df4 --> step3["`step3.R
+    _cd8e177_`"]
+    df5 --> step3
+    step3 --> res["`result.parquet
+    _b4a8841_`"]
+```
+
+Implicit in this formulation of a pipeline is the notion that the hash of an output for a step only depends on the hash of the code for that step and the hashes of its inputs. This implies that that knowing the hashes of all the data and code nodes in the DAG for a pipeline is sufficient to establish that you've successfully reproduced it.
+
+In some cases using the hash is too sensitive a measure of change, at least for the purpose of reproducibility. For example, using a formatter like `air` or `black` can change the hash of a script even though the AST for that script, and therefore the output from that stage for the pipeline, remains the same. A tool like `dvc` would erroneously mark all stages of the pipeline that depend on this script as out of date, even though it will produce all the same outputs. It would be better to have a way to hash the AST of the script, but taking the hash of the file is simpler and will always detect a change in the AST of the script, even if it may falsely detect a change when the AST doesn't.
+
+What would, however, be problematic is if the same inputs and code produced an output with a variable hash due to the way the data are stored. I don't mean doing something inherently non-reproducible like working with random numbers and not using a fixed seed, but rather data formats that resist hashing as a way to identify change. This would mean that knowing the hashes of all the inputs, code, and outputs would not be sufficient to reproduce the pipeline, at least from the point of view of a tool like `dvc` or `{targets}`, because executing the pipeline again can give a different collection of hashes---so much for reproducibility.
+
+Unlike the code-formatter example, this is not a theoretical concern and I recently spent more time than I'd like to admit diagnosing why I couldn't reproduce two separate pipelines despite the inputs and code remaining unchanged.
+
+The first issue was with a pipeline that stored data as an excel spreadsheet. This shouldn't be surprising, but I didn't realize that writing a data frame as an xlsx, and then writing the same data frame as an xlsx again, produces two files with different hashes.[^1]
+
+[^1]: I'm using `{openxlsx2}`, but the results are the same with both `{openxlsx}` and `pandas`.
+
+```{r}
+openxlsx2::write_xlsx(mtcars, "data/mtcars1.xlsx")
+Sys.sleep(1)
+openxlsx2::write_xlsx(mtcars, "data/mtcars2.xlsx")
+```
+
+```{bash}
+md5sum data/mtcars*.xlsx
+```
+
+I expect this is a well-known property of excel files, but it was new to me so I decided to explore why. Let's start by unpacking the archives of both excel files containing the mtcars data frame.
+
+```{bash}
+unzip -qo data/mtcars1.xlsx -d data/mtcars1
+unzip -qo data/mtcars2.xlsx -d data/mtcars2
+tree -n data/mtcars1
+```
+
+And then finding which files have different hashes.
+
+```{bash}
+md5deep -r data/mtcars1 > data/md5s
+echo $(md5deep -rl -x data/md5s data/mtcars2)
+```
+
+Except for `core.xml`, these two archives contain the same files. The reason `core.xml` differs is because it contains a timestamp. This makes excel a difficult format to work with for reproducibility because it depends on hidden global state (i.e., time) that is always mutating. Doing the same exercise with csv or parquet yields a stable hash that makes it possible to establish that the data frame we're writing to disk is unchanged.
+
+```{r}
+write.csv(mtcars, "data/mtcars1.csv")
+Sys.sleep(1)
+write.csv(mtcars, "data/mtcars2.csv")
+```
+
+```{bash}
+md5sum data/mtcars*.csv
+```
+
+```{r}
+arrow::write_parquet(mtcars, "data/mtcars1.parquet")
+Sys.sleep(1)
+arrow::write_parquet(mtcars, "data/mtcars2.parquet")
+```
+
+```{bash}
+md5sum data/mtcars*.parquet
+```
+
+The second issue was with a pipeline that was writing data as a partitioned parquet dataset. With sufficiently many rows, writing an arrow dataset doesn't produce a stable hash for the individual partitions.
+
+```{r}
+df <- data.frame(x = 1:1.5e6)
+
+arrow::write_dataset(df, "data/df1")
+Sys.sleep(1)
+arrow::write_dataset(df, "data/df2")
+```
+
+```{bash}
+md5sum data/df*/*
+```
+
+Unlike with excel, the issue here is that `{arrow}` is trying to speed things up by working in parallel and consequently the ordering of the rows is not guaranteed when writing the dataset (even with no partitions).
+
+```{r}
+df1 <- arrow::open_dataset("data/df1") |>
+  dplyr::collect()
+
+df2 <- arrow::open_dataset("data/df2") |>
+  dplyr::collect()
+
+setequal(df1$x, df$x) && setequal(df2$x, df$x)
+
+all(df1$x == df$x)
+```
+
+A new feature was added to the underlying arrow library last year to preserve the row ordering within partitions, and I recently contributed the bindings to this feature for the `{arrow}` R package (it's already in `pyarrow`). With this feature enabled, the example of writing the partitioned dataset above results in identical hashes.
+
+I suspect there are other file formats that also resistant reproducible workflows (maybe .RData or .Rds). In the case of arrow datasets, the fix was straightforward and it should soon go away; for excel, the format is inherently non-reproducible because it includes a timestamp.
