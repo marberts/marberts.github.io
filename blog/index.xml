@@ -10,7 +10,7 @@
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.9.36</generator>
-<lastBuildDate>Sat, 28 Mar 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 29 Mar 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Reproduction-resistant file formats</title>
   <dc:creator>Steve Martin</dc:creator>
@@ -88,8 +88,8 @@ font-style: inherit;">md5sum</span> data/mtcars<span class="pp" style="color: #A
 background-color: null;
 font-style: inherit;">*</span>.xlsx</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>089cdcf4ee0d6efadc94de9f004ed119  data/mtcars1.xlsx
-a5b8eda1b7dacb1b05e380d233e9969c  data/mtcars2.xlsx</code></pre>
+<pre><code>827d4ca8f14f39fa7862df53032890b5  data/mtcars1.xlsx
+e3094e11d6ed1abcf9e767eeca72a0c1  data/mtcars2.xlsx</code></pre>
 </div>
 </div>
 <p>I expect this is a well-known property of excel files, but it was new to me so I decided to explore why. Let’s start by unpacking the archives of both excel files containing the mtcars data frame.</p>
@@ -234,7 +234,7 @@ font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">:</span><span class="fl" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1.5e6</span>)</span>
+font-style: inherit;">2e6</span>)</span>
 <span id="cb14-2"></span>
 <span id="cb14-3">arrow<span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -265,8 +265,8 @@ font-style: inherit;">*</span>/<span class="pp" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">*</span></span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>cb7ce4ff15aca43a45582255793f92b9  data/df1/part-0.parquet
-cb7ce4ff15aca43a45582255793f92b9  data/df2/part-0.parquet</code></pre>
+<pre><code>f9829be365805a7bb34afcb97f3d510e  data/df1/part-0.parquet
+173a94d10e8e00e9809ede831e3469d8  data/df2/part-0.parquet</code></pre>
 </div>
 </div>
 <p>Unlike with excel, the issue here is that <code>{arrow}</code> is trying to speed things up by working in parallel and consequently the ordering of the rows is not guaranteed when writing the dataset (even with no partitions).</p>
@@ -358,18 +358,18 @@ Landau, William Michael. 2021. <span>“The Targets r Package: A Dynamic Make-Li
 </section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2026,
   author = {Martin, Steve},
   title = {Reproduction-Resistant File Formats},
-  date = {2026-03-28},
+  date = {2026-03-29},
   url = {https://marberts.github.io/blog/posts/2026/formats/},
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2026. <span>“Reproduction-Resistant File Formats.”</span>
-March 28. <a href="https://marberts.github.io/blog/posts/2026/formats/">https://marberts.github.io/blog/posts/2026/formats/</a>.
+March 29. <a href="https://marberts.github.io/blog/posts/2026/formats/">https://marberts.github.io/blog/posts/2026/formats/</a>.
 </div></div></section></div> ]]></description>
   <category>RAPs</category>
   <category>R</category>
   <guid>https://marberts.github.io/blog/posts/2026/formats/</guid>
-  <pubDate>Sat, 28 Mar 2026 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 29 Mar 2026 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>The price of morality</title>

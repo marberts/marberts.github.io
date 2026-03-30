@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Steve Martin">
-<meta name="dcterms.date" content="2026-03-28">
+<meta name="dcterms.date" content="2026-03-29">
 <meta name="description" content="Why do certain file formats resist reproducible workflows?">
 
 <title>Reproduction-resistant file formats – Steve Martin</title>
@@ -419,7 +419,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 28, 2026</p>
+      <p class="date">March 29, 2026</p>
     </div>
   </div>
   
@@ -478,8 +478,8 @@ div.csl-indent {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">md5sum</span> data/mtcars<span class="pp">*</span>.xlsx</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>089cdcf4ee0d6efadc94de9f004ed119  data/mtcars1.xlsx
-a5b8eda1b7dacb1b05e380d233e9969c  data/mtcars2.xlsx</code></pre>
+<pre><code>827d4ca8f14f39fa7862df53032890b5  data/mtcars1.xlsx
+e3094e11d6ed1abcf9e767eeca72a0c1  data/mtcars2.xlsx</code></pre>
 </div>
 </div>
 <p>I expect this is a well-known property of excel files, but it was new to me so I decided to explore why. Let’s start by unpacking the archives of both excel files containing the mtcars data frame.</p>
@@ -542,7 +542,7 @@ ed20929d8fd97c202c34fd600dad7403  data/mtcars2.parquet</code></pre>
 </div>
 <p>The second issue was with a pipeline that was writing data as a partitioned parquet dataset. With sufficiently many rows, writing an arrow dataset doesn’t produce a stable hash for the individual partitions.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="fl">1.5e6</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="fl">2e6</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">write_dataset</span>(df, <span class="st">"data/df1"</span>)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">1</span>)</span>
@@ -551,8 +551,8 @@ ed20929d8fd97c202c34fd600dad7403  data/mtcars2.parquet</code></pre>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">md5sum</span> data/df<span class="pp">*</span>/<span class="pp">*</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>cb7ce4ff15aca43a45582255793f92b9  data/df1/part-0.parquet
-cb7ce4ff15aca43a45582255793f92b9  data/df2/part-0.parquet</code></pre>
+<pre><code>f9829be365805a7bb34afcb97f3d510e  data/df1/part-0.parquet
+173a94d10e8e00e9809ede831e3469d8  data/df2/part-0.parquet</code></pre>
 </div>
 </div>
 <p>Unlike with excel, the issue here is that <code>{arrow}</code> is trying to speed things up by working in parallel and consequently the ordering of the rows is not guaranteed when writing the dataset (even with no partitions).</p>
@@ -594,13 +594,13 @@ Landau, William Michael. 2021. <span>“The Targets r Package: A Dynamic Make-Li
 </section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2026,
   author = {Martin, Steve},
   title = {Reproduction-Resistant File Formats},
-  date = {2026-03-28},
+  date = {2026-03-29},
   url = {https://marberts.github.io/blog/posts/2026/formats/},
   langid = {en}
 }
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas" role="listitem">
 Martin, Steve. 2026. <span>“Reproduction-Resistant File Formats.”</span>
-March 28. <a href="https://marberts.github.io/blog/posts/2026/formats/">https://marberts.github.io/blog/posts/2026/formats/</a>.
+March 29. <a href="https://marberts.github.io/blog/posts/2026/formats/">https://marberts.github.io/blog/posts/2026/formats/</a>.
 </div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
