@@ -6,6 +6,7 @@ categories:
   - R
 description: Why do certain file formats resist reproducible workflows?
 engine: knitr
+doi: 10.59350/mdxxv-ke330
 ---
 
 I've been spending more time structuring projects as reproducible analytical pipelines and using tools like `dvc` [@dvc] and `{targets}` [@targets] to make analytical workflows reproducible. The idea is to represent the interaction between code and data as a directed acyclic graph (DAG) and keep track of the hashes of the data and code nodes in this graph. In this way, it is possible to know exactly the inputs, steps, and outputs of an analytical workflow, and to have a relatively automated way to reconstruct the graph that represents the pipeline.
@@ -124,4 +125,4 @@ all(df1$x == df$x)
 
 A new feature was added to the underlying arrow library last year to preserve the row ordering within partitions, and I recently contributed the bindings to this feature for the `{arrow}` R package (it's already in `pyarrow`). With this feature enabled, the example of writing the partitioned dataset above results in identical hashes.
 
-I suspect there are other file formats that also resistant reproducible workflows (maybe .RData or .Rds). In the case of arrow datasets, the fix was straightforward and it should soon go away; for excel, the format is inherently non-reproducible because it includes a timestamp.
+I suspect there are other file formats that are also resistant reproducible workflows (maybe .RData or .Rds). In the case of arrow datasets, the fix was straightforward and it should soon go away; for excel, the format is inherently non-reproducible because it includes a timestamp.
