@@ -1,10 +1,28 @@
 ## Publications
 
-### Software papers
+### Academic papers
+
+- Martin, S. (2026). [A Note on the Additive Decomposition of GEKS Indexes](https://doi.org/10.1177/0282423X261451318). *Journal of Official Statistics*, 0(0).
 
 - Martin, S. (2024). [piar: Price Index Aggregation in R](https://doi.org/10.21105/joss.06781). *Journal of Open Source Software*, 9(101): 6781.
 
+- Heyes, A., Kapur, S., Kennedy, P., Martin, S., and Maxwell, J. (2020). [But What Does it Mean? Competition between Products Carrying Alternative Green Labels when Consumers are Active Acquirers of Information](https://doi.org/10.1086/706548). *Journal of the Association of Environmental and Resource Economists*, 7(2): 243-277.
+
+- Martin, S. (2019). [Moral management in competitive markets](https://doi.org/10.1111/jems.12283). *Journal of Economics and Management Strategy*, 28(3): 541–560.
+
 - Kirby-McGregor, M. and Martin, S. (2019). [An R package for calculating repeat-sale price indices](https://www.revistadestatistica.ro/2019/09/an-r-package-for-calculating-repeat-sale-price-indices/). *Romanian Statistical Review*, 3/2019: 17-33.
+
+- Heyes, A. and Martin, S. (2018). [Inefficient social labels: Strategic proliferation and fragmentation in the market for certification](https://doi.org/10.1111/jems.12236). *Journal of Economics and Management Strategy*, 27(2): 206–220.
+
+- Heyes, A., Lyon, T. P., and Martin, S. (2018). [Salience games: Private politics when public attention is limited](https://doi.org/10.1016/j.jeem.2018.02.003). *Journal of Environmental Economics and Management*, 88: 396–410.
+
+- Martin, S. and Rivers, N. (2018). [Information provision, market incentives, and household electricity consumption: Evidence from a large-scale field deployment](https://doi.org/10.1086/694036). *Journal of the Association of Environmental and Resource Economists*, 5(1): 207–231.
+
+- Heyes, A. and Martin, S. (2017). [Social labeling by competing NGOs: A model with multiple issues and entry](https://doi.org/10.1287/mnsc.2015.2419). *Management Science*, 63(6): 1800–1813.
+
+- Heyes, A. and Martin, S. (2016). [Fuzzy products](https://doi.org/10.1016/j.ijindorg.2015.12.003). *International Journal of Industrial Organization*, 45: 1–9.
+
+- Heyes, A. and Martin, S. (2015). [NGO mission design](https://doi.org/10.1016/j.jebo.2015.08.007). *Journal of Economic Behavior & Organization*, 119: 197–210.s
 
 ### Statistics Canada papers
 
@@ -21,24 +39,6 @@
 - Martin, S. (2018). [The association between job flexibility and job satisfaction](https://publications.gc.ca/pub?id=9.865732&sl=0). *Insights on Canadian Society*. Statistics Canada Catalogue 75-006-X.
 
 - Martin, S. (2018). [In sickness and in health: The association between health and household income](https://publications.gc.ca/pub?id=9.857907&sl=0). *LISA Research Paper Series*. Statistics Canada Catalogue 89-648-X.
-
-### Academic papers
-
-- Heyes, A., Kapur, S., Kennedy, P., Martin, S., and Maxwell, J. (2020). [But What Does it Mean? Competition between Products Carrying Alternative Green Labels when Consumers are Active Acquirers of Information](https://doi.org/10.1086/706548). *Journal of the Association of Environmental and Resource Economists*, 7(2): 243-277.
-
-- Martin, S. (2019). [Moral management in competitive markets](https://doi.org/10.1111/jems.12283). *Journal of Economics and Management Strategy*, 28(3): 541–560.
-
-- Heyes, A. and Martin, S. (2018). [Inefficient social labels: Strategic proliferation and fragmentation in the market for certification](https://doi.org/10.1111/jems.12236). *Journal of Economics and Management Strategy*, 27(2): 206–220.
-
-- Heyes, A., Lyon, T. P., and Martin, S. (2018). [Salience games: Private politics when public attention is limited](https://doi.org/10.1016/j.jeem.2018.02.003). *Journal of Environmental Economics and Management*, 88: 396–410.
-
-- Martin, S. and Rivers, N. (2018). [Information provision, market incentives, and household electricity consumption: Evidence from a large-scale field deployment](https://doi.org/10.1086/694036). *Journal of the Association of Environmental and Resource Economists*, 5(1): 207–231.
-
-- Heyes, A. and Martin, S. (2017). [Social labeling by competing NGOs: A model with multiple issues and entry](https://doi.org/10.1287/mnsc.2015.2419). *Management Science*, 63(6): 1800–1813.
-
-- Heyes, A. and Martin, S. (2016). [Fuzzy products](https://doi.org/10.1016/j.ijindorg.2015.12.003). *International Journal of Industrial Organization*, 45: 1–9.
-
-- Heyes, A. and Martin, S. (2015). [NGO mission design](https://doi.org/10.1016/j.jebo.2015.08.007). *Journal of Economic Behavior & Organization*, 119: 197–210.
 
 ### Conference papers
 
@@ -85,6 +85,8 @@ Journal of the Association of Environmental and Resource Economists
 Journal of Economics and Management Strategy
 
 Journal of Environmental Economics and Management
+
+Journal of Official Statistics
 
 Journal of Open Source Software
 :::
