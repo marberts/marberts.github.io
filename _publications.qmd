@@ -53,6 +53,10 @@ Systems for Production of Producer Price Indexes](https://voorburggroup.org/Docu
 
 ## Other research activities
 
+### UN working groups
+
+- Goussev, S., Martin, S., Lamboray, C., Bontemps, C., Flower, T., Hillman, B., White, C., & Mehroff, J. (2026). [Price Statistics Reproducibility Project](https://un-task-team-for-scanner-data.github.io/reproducibility-project/docs/). https://doi.org/10.5281/zenodo.19779578
+
 ### Conference presentations
 
 - Statistics Canada's Price Measurement Advisory Committee (Ottawa, 2019 and 2025).
