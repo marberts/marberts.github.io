@@ -3,7 +3,7 @@ title: "Decomposing diversity indexes"
 date: "2025-10-19"
 date-modified: "2025-10-28"
 categories:
-  - Index numbers
+  - Ecology
   - R
 doi: 10.59350/dfntc-yfd90
 description: A diversity index is a way to measure the prevalence of different species in an ecosystem. I show how methods from the price-index literature can be used to decompose a diversity index into the contribution of each species towards overall diversity.

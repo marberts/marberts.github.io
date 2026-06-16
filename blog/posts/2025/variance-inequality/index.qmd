@@ -3,7 +3,6 @@ title: "How does the difference between the arithmetic and geometric mean depend
 date: "2025-11-12"
 categories:
   - Inequalities
-  - Index numbers
   - R
 description: It's well known that the arithmetic mean is larger than the geometric mean, but how does the difference between these means relate to variance?
 doi: 10.59350/rpvm0-57912

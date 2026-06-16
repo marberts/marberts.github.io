@@ -1,0 +1,89 @@
+---
+title: "Consistency in aggregation of the Fisher index"
+date: "2026-06-15"
+categories:
+  - index numbers
+  - R
+description: How can the Fisher index be consistent in aggregation? I wanted to work through an example to better unstand what consistency-in-aggregation means for this index.
+engine: knitr
+# doi: 10.59350/mdxxv-ke330
+---
+
+I was recently re-reading @vonauer2021's paper outlining how superlative price indexes can be viewed as consistent in aggregation. This is a surprising result because the Fisher index, among others superlative indexes, is famously _not_ consistent in aggregation. Here's an example.
+
+```{r}
+# Make some data.
+set.seed(74743)
+
+prices <- data.frame(
+  p0 = runif(5),
+  p1 = runif(5),
+  q0 = rlnorm(5),
+  q1 = rlnorm(5),
+  group = factor(c(1, 1, 1, 2, 2))
+)
+
+# Two-step calculation.
+prices |>
+  dplyr::group_by(group) |>
+  dplyr::summarize(
+    fisher = gpindex::fisher_mean(p1 / p0, p0 * q0, p1 * q1),
+    v0 = sum(p0 * q0),
+    v1 = sum(p1 * q1)
+  ) |>
+  dplyr::summarize(two_step = gpindex::fisher_mean(fisher, v0, v1)) |>
+  dplyr::pull(two_step)
+
+# One-step calculation.
+prices |>
+  dplyr::summarize(
+    one_step = gpindex::fisher_mean(p1 / p0, p0 * q0, p1 * q1)
+  ) |>
+  dplyr::pull(one_step)
+```
+
+Unlike the Laspeyres and Paasche indexes that make up the Fisher index, the overall Fisher index cannot be represented as a Fisher index of Fisher indexes for separate groups of products. In many cases the Fisher index can be _approximately_ consistent in aggregation [@cpitheory, pp. 27-28], but it's certainly not exactly so.
+
+So how do @vonauer2021 show that the Fisher index is consistent in aggregation? I'd read the paper before and got the basic idea, but I find this to be a sufficiently interesting result that I wanted to work through it. The trick is to represent the Fisher index in a way so that the aggregation rule is the same no matter how products are partitioned. What they do is write the Fisher index for $n$ products as a function of four variables 
+
+$$
+(z_1, z_2, z_3, z_4) \mapsto \sqrt{\frac{\sum_{i=1}^{n}z_{i1}}{\sum_{i=1}^{n}z_{i2}}\frac{ \sum_{i=1}^{n}z_{i3}}{\sum_{i=1}^{n}z_{i4}}},
+$$
+
+where $(z_1, z_2, z_3, z_4) = (p_1q_0, p_0q_0, p_1q_1, p_0q_1)$. This functions is clearly consistent in aggregation _with respect to $(z_1, z_2, z_3, z_4)$_: for each $z$, the sum is the same regardless of how each element of the vector is partitioned.
+
+Here's an example.
+
+```{r}
+fisher_agg <- function(z1, z2, z3, z4) {
+  sqrt(sum(z1) / sum(z2) * sum(z3) / sum(z4))
+}
+
+prices <- prices |>
+  dplyr::group_by(group) |>
+  dplyr::mutate(
+    z1 = p1 * q0,
+    z2 = p0 * q0,
+    z3 = p1 * q1,
+    z4 = p0 * q1
+  )
+
+# Group-wise indexes are the same as the regular calculation.
+prices |>
+  dplyr::summarize(
+    consistent = fisher_agg(z1, z2, z3, z4),
+    regular = gpindex::fisher_index(p1, p0, q1, q0)
+  )
+
+# Overall index is the same as the regular calculation.
+prices |>
+  dplyr::ungroup() |>
+  dplyr::summarize(
+    consistent = fisher_agg(z1, z2, z3, z4),
+    regular = gpindex::fisher_index(p1, p0, q1, q0)
+  )
+```
+
+The alternative representation of the Fisher index is the same as the ordinary calculation for both groups _and_ the overall Fisher index. But this aggregation rule is consistent in aggregation in the sense that pooling the products across separate partitions gives the correct result without needing to change the rule.
+
+Overall I think this is a neat result, especially as the authors show how this can be used to represent many indexes in a way that is consistent in aggregation. But I usually think about consistency in aggregation as a way to preserve a value decomposition across a hierarchical classification of economic activity, rather than only stability of an aggregation rule. This is why the Laspeyres and Paasche indexes are the two key indexes for this purpose, as they are the only pair of price/quantity indexes that can be used to deflate a system of economic accounts.
