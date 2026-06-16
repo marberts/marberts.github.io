@@ -10,7 +10,353 @@
 <atom:link href="https://marberts.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.9.38</generator>
-<lastBuildDate>Sun, 29 Mar 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 15 Jun 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Consistency in aggregation of the Fisher index</title>
+  <dc:creator>Steve Martin</dc:creator>
+  <link>https://marberts.github.io/blog/posts/2026/consistency/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>I was recently re-reading <span class="citation" data-cites="vonauer2021">Auer and Wengenroth (2021)</span>’s paper outlining how superlative price indexes can be viewed as consistent in aggregation. This is a surprising result because the Fisher index, among others superlative indexes, is famously <em>not</em> consistent in aggregation. Here’s an example.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Make some data.</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">74743</span>)</span>
+<span id="cb1-3"></span>
+<span id="cb1-4">prices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">p0 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>),</span>
+<span id="cb1-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">p1 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runif</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>),</span>
+<span id="cb1-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">q0 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>),</span>
+<span id="cb1-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">q1 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rlnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>),</span>
+<span id="cb1-9">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">group =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))</span>
+<span id="cb1-10">)</span>
+<span id="cb1-11"></span>
+<span id="cb1-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Two-step calculation.</span></span>
+<span id="cb1-13">prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-14">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(group) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-15">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb1-16">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fisher =</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fisher_mean</span>(p1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> p0, p0 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0, p1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1),</span>
+<span id="cb1-17">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">v0 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(p0 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0),</span>
+<span id="cb1-18">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">v1 =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(p1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1)</span>
+<span id="cb1-19">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-20">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">two_step =</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fisher_mean</span>(fisher, v0, v1)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-21">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pull</span>(two_step)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8643786</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># One-step calculation.</span></span>
+<span id="cb3-2">prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-3">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb3-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">one_step =</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fisher_mean</span>(p1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> p0, p0 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0, p1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1)</span>
+<span id="cb3-5">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-6">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pull</span>(one_step)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8567247</code></pre>
+</div>
+</div>
+<p>Unlike the Laspeyres and Paasche indexes that make up the Fisher index, and are generally the only two that are consistent in aggregation, the overall Fisher index cannot be represented as a Fisher index of Fisher indexes for separate groups of products. In many cases the Fisher index can be <em>approximately</em> consistent in aggregation <span class="citation" data-cites="cpitheory">(IMF et al. 2025, 27–28)</span>, but it’s certainly not exactly so.</p>
+<p>So how do <span class="citation" data-cites="vonauer2021">Auer and Wengenroth (2021)</span> show that the Fisher index is consistent in aggregation? I’d read the paper before and got the basic idea, but I find this to be a sufficiently interesting result that I wanted to work through it. The trick is to represent the Fisher index in a way so that the aggregation rule is the same no matter how products are partitioned. What they do is write the Fisher index for <img src="https://latex.codecogs.com/png.latex?n"> products as a function of four variables</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A(z_1,%20z_2,%20z_3,%20z_4)%20%5Cmapsto%20%5Csqrt%7B%5Cfrac%7B%5Csum_%7Bi=1%7D%5E%7Bn%7Dz_%7Bi1%7D%7D%7B%5Csum_%7Bi=1%7D%5E%7Bn%7Dz_%7Bi2%7D%7D%5Cfrac%7B%20%5Csum_%7Bi=1%7D%5E%7Bn%7Dz_%7Bi3%7D%7D%7B%5Csum_%7Bi=1%7D%5E%7Bn%7Dz_%7Bi4%7D%7D%7D,%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?(z_1,%20z_2,%20z_3,%20z_4)%20=%20(p_1q_0,%20p_0q_0,%20p_1q_1,%20p_0q_1)">. This functions is clearly consistent in aggregation <em>with respect to <img src="https://latex.codecogs.com/png.latex?(z_1,%20z_2,%20z_3,%20z_4)"></em>: for each <img src="https://latex.codecogs.com/png.latex?z">, the sum is the same regardless of how each element of the vector is partitioned.</p>
+<p>Here’s an example.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">fisher_agg <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(z1, z2, z3, z4) {</span>
+<span id="cb5-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sqrt</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(z1) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(z2) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(z3) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(z4))</span>
+<span id="cb5-3">}</span>
+<span id="cb5-4"></span>
+<span id="cb5-5">prices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-6">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(group) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-7">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb5-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">z1 =</span> p1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0,</span>
+<span id="cb5-9">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">z2 =</span> p0 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q0,</span>
+<span id="cb5-10">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">z3 =</span> p1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1,</span>
+<span id="cb5-11">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">z4 =</span> p0 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> q1</span>
+<span id="cb5-12">  )</span>
+<span id="cb5-13"></span>
+<span id="cb5-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Group-wise indexes are the same as the regular calculation.</span></span>
+<span id="cb5-15">prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-16">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb5-17">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">consistent =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fisher_agg</span>(z1, z2, z3, z4),</span>
+<span id="cb5-18">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">regular =</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fisher_index</span>(p1, p0, q1, q0)</span>
+<span id="cb5-19">  )</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  group consistent regular
+  &lt;fct&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+1 1          1.47    1.47 
+2 2          0.624   0.624</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Overall index is the same as the regular calculation.</span></span>
+<span id="cb7-2">prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-3">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ungroup</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb7-4">  dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb7-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">consistent =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fisher_agg</span>(z1, z2, z3, z4),</span>
+<span id="cb7-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">regular =</span> gpindex<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fisher_index</span>(p1, p0, q1, q0)</span>
+<span id="cb7-7">  )</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  consistent regular
+       &lt;dbl&gt;   &lt;dbl&gt;
+1      0.857   0.857</code></pre>
+</div>
+</div>
+<p>The alternative representation of the Fisher index is the same as the ordinary calculation for both groups <em>and</em> the overall Fisher index. But this aggregation rule is consistent in aggregation in the sense that pooling the products across separate partitions gives the correct result without needing to change the rule.</p>
+<p>Overall I think this is a neat result, especially as the authors show how this can be used to represent many indexes in a way that is consistent in aggregation. But I usually think about consistency in aggregation as a way to preserve a value decomposition across a hierarchical classification of economic activity, rather than only stability of an aggregation rule. This is why the Laspeyres and Paasche indexes are the two key indexes for this purpose, as they are the only pair of price/quantity indexes that can be used to deflate a system of economic accounts.</p>
+
+
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-vonauer2021" class="csl-entry">
+Auer, Ludwig von, and Jochen Wengenroth. 2021. <span>“Consistent Aggregation with Superlative and Other Price Indices.”</span> <em>Journal of the Royal Statistical Society Series A: Statistics in Society</em> 184 (2): 589–615. <a href="https://doi.org/10.1111/rssa.12633">https://doi.org/10.1111/rssa.12633</a>.
+</div>
+<div id="ref-cpitheory" class="csl-entry">
+IMF, ILO, Eurostat, UNECE, OECD, and World Bank. 2025. <em>Consumer Price Index Manual: Theory</em>. International Monetary Fund. <a href="https://doi.org/10.5089/9781513559605.069">https://doi.org/10.5089/9781513559605.069</a>.
+</div>
+</div></section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2026,
+  author = {Martin, Steve},
+  title = {Consistency in Aggregation of the {Fisher} Index},
+  date = {2026-06-15},
+  url = {https://marberts.github.io/blog/posts/2026/consistency/},
+  langid = {en}
+}
+</code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas">
+Martin, Steve. 2026. <span>“Consistency in Aggregation of the Fisher
+Index.”</span> June 15. <a href="https://marberts.github.io/blog/posts/2026/consistency/">https://marberts.github.io/blog/posts/2026/consistency/</a>.
+</div></div></section></div> ]]></description>
+  <category>index numbers</category>
+  <category>R</category>
+  <guid>https://marberts.github.io/blog/posts/2026/consistency/</guid>
+  <pubDate>Mon, 15 Jun 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Reproduction-resistant file formats</title>
   <dc:creator>Steve Martin</dc:creator>
@@ -2807,7 +3153,7 @@ font-style: inherit;">summary</span>(res)</span></code></pre></div></div>
   0.020   8.515  13.400  13.579  17.100  50.580 </code></pre>
 </div>
 </div>
-<p>As the support of the distribution shrinks, the difference between the arithmetic and geometric mean follows the variance more closely and the probabiltity that the difference in means decreases as variance increases becomes small.</p>
+<p>As the support of the distribution shrinks, the difference between the arithmetic and geometric mean follows the variance more closely and the probability that the difference in means decreases as variance increases becomes small.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">res <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -2881,7 +3227,6 @@ Arithmetic and Geometric Mean Depend on Variance?”</span> November 12.
 <a href="https://doi.org/10.59350/rpvm0-57912">https://doi.org/10.59350/rpvm0-57912</a>.
 </div></div></section></div> ]]></description>
   <category>Inequalities</category>
-  <category>Index numbers</category>
   <category>R</category>
   <guid>https://marberts.github.io/blog/posts/2025/variance-inequality/</guid>
   <pubDate>Wed, 12 Nov 2025 00:00:00 GMT</pubDate>
@@ -4470,7 +4815,7 @@ Hill, Mark O. 1973. <span>“Diversity and Evenness: A Unifying Notation and Its
 Martin, Steve. 2025. <span>“Decomposing Diversity Indexes.”</span>
 October 19. <a href="https://doi.org/10.59350/dfntc-yfd90">https://doi.org/10.59350/dfntc-yfd90</a>.
 </div></div></section></div> ]]></description>
-  <category>Index numbers</category>
+  <category>Ecology</category>
   <category>R</category>
   <guid>https://marberts.github.io/blog/posts/2025/diversity/</guid>
   <pubDate>Sun, 19 Oct 2025 00:00:00 GMT</pubDate>
