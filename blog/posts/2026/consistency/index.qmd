@@ -2,11 +2,11 @@
 title: "Consistency in aggregation of the Fisher index"
 date: "2026-06-15"
 categories:
-  - index numbers
+  - Index numbers
   - R
 description: How can the Fisher index be consistent in aggregation? I wanted to work through an example to better unstand what consistency-in-aggregation means for this index.
 engine: knitr
-# doi: 10.59350/mdxxv-ke330
+doi: 10.59350/f0qs7-tfe09 
 ---
 
 I was recently re-reading @vonauer2021's paper outlining how superlative price indexes can be viewed as consistent in aggregation. This is a surprising result because the Fisher index, among others superlative indexes, is famously _not_ consistent in aggregation. Here's an example.
