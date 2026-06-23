@@ -1,0 +1,54 @@
+---
+title: "Fun with anonymous functions in R"
+date: "2026-06-22"
+categories:
+  - Metaprogramming
+  - R
+description: A fun distraction to make an alternate syntax for anonymous functions in R.
+engine: knitr
+#doi: 10.59350/mdxxv-ke330
+---
+
+Julia has an elegant syntax for making anonymous functions: `(x, y) -> x^2 + x^2`. R's `\(x, y) x^2 + y^2` syntax isn't bad either, but I wanted to try and make something similar to Julia's syntax as an excuse to play around with R's metaprogramming facilities. It's quite possible that there's an R package out there that already does it---and I did look, briefly, without finding anything---but this is more of an excuse to do some metaprogramming than a serious need for a different way of writing out anonymous functions.
+
+Let's start by making a new, minimal infix operator.
+
+```{r}
+`%->%` <- function(lhs, rhs) {
+  res <- function() {}
+  formals(res) <- as.pairlist(lhs)
+  body(res) <- substitute(rhs)
+  environment(res) <- parent.frame()
+  res
+}
+
+Map(alist(x =, y = 1) %->% {x^2 + y^2}, 1:3)
+```
+Not bad. The curly braces make it look a bit more like Rust's syntax. But having `alist()` on the left-hand side seems ugly. What we can do instead is have something like `c(x, y = 1) %->% {x^2 + y^2}`.
+
+```{r}
+`%->%` <- function(lhs, rhs) {
+  res <- function() {}
+  # Extract the lhs args and set names.
+  args <- as.list(substitute(lhs))[-1]
+  unnamed <- if (is.null(names(args))) {
+    seq_along(args)
+  } else {
+    which(!nzchar(names(args)))
+  }
+  names(args)[unnamed] <- lapply(
+    args[unnamed],
+    \(x) if (is.symbol(x)) as.character(x) else stop("invalid lhs")
+  )
+  args[unnamed] <- list(quote(expr =))
+  # Same as before.
+  formals(res) <- as.pairlist(args)
+  body(res) <- substitute(rhs)
+  environment(res) <- parent.frame()
+  res
+}
+
+Map(c(x, y = 1) %->% {x^2 + y^2}, 1:3)
+```
+
+That seems about as close as we're going to get. Although this isn't particularly useful, it's neat to see how flexible R can be.
