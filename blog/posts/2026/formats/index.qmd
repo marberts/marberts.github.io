@@ -2,7 +2,7 @@
 title: "Reproduction-resistant file formats"
 date: "2026-03-29"
 categories:
-  - RAPs
+  - Reproducibility
   - R
 description: Why do certain file formats resist reproducible workflows?
 engine: knitr

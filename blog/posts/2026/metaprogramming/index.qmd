@@ -6,7 +6,7 @@ categories:
   - R
 description: A fun distraction to make an alternate syntax for anonymous functions in R.
 engine: knitr
-#doi: 10.59350/mdxxv-ke330
+doi: 10.59350/swkwd-0zc10
 ---
 
 Julia has an elegant syntax for making anonymous functions: `(x, y) -> x^2 + x^2`. R's `\(x, y) x^2 + y^2` syntax isn't bad either, but I wanted to try and make something similar to Julia's syntax as an excuse to play around with R's metaprogramming facilities. It's quite possible that there's an R package out there that already does it---and I did look, briefly, without finding anything---but this is more of an excuse to do some metaprogramming than a serious need for a different way of writing out anonymous functions.
