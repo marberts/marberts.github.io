@@ -274,11 +274,12 @@ font-style: inherit;">3</span>)</span></code></pre></div></div>
   title = {Fun with Anonymous Functions in {R}},
   date = {2026-06-22},
   url = {https://marberts.github.io/blog/posts/2026/metaprogramming/},
+  doi = {10.59350/swkwd-0zc10},
   langid = {en}
 }
 </code></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas">
 Martin, Steve. 2026. <span>“Fun with Anonymous Functions in R.”</span>
-June 22. <a href="https://marberts.github.io/blog/posts/2026/metaprogramming/">https://marberts.github.io/blog/posts/2026/metaprogramming/</a>.
+June 22. <a href="https://doi.org/10.59350/swkwd-0zc10">https://doi.org/10.59350/swkwd-0zc10</a>.
 </div></div></section></div> ]]></description>
   <category>Metaprogramming</category>
   <category>R</category>
@@ -988,7 +989,7 @@ Landau, William Michael. 2021. <span>“The Targets r Package: A Dynamic Make-Li
 Martin, Steve. 2026. <span>“Reproduction-Resistant File Formats.”</span>
 March 29. <a href="https://doi.org/10.59350/mdxxv-ke330">https://doi.org/10.59350/mdxxv-ke330</a>.
 </div></div></section></div> ]]></description>
-  <category>RAPs</category>
+  <category>Reproducibility</category>
   <category>R</category>
   <guid>https://marberts.github.io/blog/posts/2026/formats/</guid>
   <pubDate>Sun, 29 Mar 2026 00:00:00 GMT</pubDate>
