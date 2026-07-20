@@ -1,0 +1,44 @@
+---
+title: "Decomposing indexes with Euler weights"
+date: "2026-08=01"
+categories:
+  - Index numbers
+  - R
+description: X
+engine: knitr
+# doi: 10.59350/f0qs7-tfe09 
+---
+
+For an index based on a generalized mean of order $\rho$,
+
+$$
+\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w}) = 
+\begin{cases}
+\left(\sum_{i = 1}^{n} w_{i} r_i^{\rho}\right)^{1 / \rho} & \text{if } \rho \neq 0 \\
+\prod_{i = 1}^{n} r_{i}^{w_{i}} & \text{if } \rho = 0,
+\end{cases}
+$$
+the derivative with respect to $r_{i}$ is
+$$
+\frac{\partial \mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}{\partial r_{i}} = w_{i} \left(\frac{r_{i}}{\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}\right)^{\rho - 1}.
+$${#eq:euler-1}
+Multiplying each of these terms by $r_{i}$ and summing gives the value of $\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})$.
+
+@eq:euler1 is similar to the generalized additive decomposition by @martin2021
+$$
+ w_{i} \mathfrak{L}_{\rho}(r_i, \mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w}))^{\rho - 1} \Bigg/ \sum_{j=1}^{n} w_{j} \mathfrak{L}_{\rho}(r_j, \mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w}))^{\rho - 1},
+$${eq:logmean1}
+where $\mathfrak{L}$ is the generalized logarithmic mean [@balk2008, Chapter 4]. As with @eq:euler1, multiplying each of these terms by $r_{i}$ and summing returns the values of the generalized mean.
+
+Except when $\rho = 1$ (additive decomposition for an arithmetic mean) or all $r_{i}$ are the same, @eq:euler1 and @eq:logmean1 give different decompositions. This is maybe easiest to see with the additive decomposition of the geometric mean: each $i$ in @eq:euler1 gets the same value.
+
+```{r}
+r <- rlnorm(5)
+
+euler_weights <- function(r, weights = NULL, order = 0) {
+  weights * (r / piar::gmean(r, weights, order))^(order - 1)
+}
+
+euler_weights(r) * r
+piar::transmute_weights(r, order = 0) * r
+```
