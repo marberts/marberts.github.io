@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Steve Martin">
+<meta name="dcterms.date" content="2026-08-07">
+<meta name="description" content="The decomposition of the Fisher index based on Euler weights is a simple and straightforward way to decompose this index-number formula. But this technique can be applied to a wide range of index-numbers forulas. I show what some of these decompositions look like and explore some properties of decomposition based on Euler weights that are not obvious from the Fisher index alone.">
 
-<title>Inflationary Tendencies – Steve Martin</title>
+<title>Decomposing indexes with Euler weights – Steve Martin</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,35 +29,52 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../img/favicon-32x32.png" rel="icon" type="image/png">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-189549ecd294ed9837df383a4b42e31c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-8a591ff59271d21f6a5d1e80b3747fb5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-189549ecd294ed9837df383a4b42e31c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
+<script src="../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../">
+<link href="../../../../img/favicon-32x32.png" rel="icon" type="image/png">
+<script src="../../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../site_libs/bootstrap/bootstrap-189549ecd294ed9837df383a4b42e31c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/bootstrap/bootstrap-dark-8a591ff59271d21f6a5d1e80b3747fb5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../../site_libs/bootstrap/bootstrap-189549ecd294ed9837df383a4b42e31c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../../../site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
+<link href="../../../../site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -82,35 +102,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
@@ -142,8 +133,8 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="../styles.css">
-<link rel="alternate" type="application/rss+xml" title="Steve Martin" href="index.xml" data-external="1"></head>
+<link rel="stylesheet" href="../../../../styles.css">
+</head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
@@ -314,7 +305,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../../index.html">
     <span class="navbar-title">Steve Martin</span>
     </a>
   </div>
@@ -325,28 +316,28 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html"> 
+    <a class="nav-link" href="../../../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
+    <a class="nav-link" href="../../../../about.html"> 
 <span class="menu-text">About me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../software.html"> 
+    <a class="nav-link" href="../../../../software.html"> 
 <span class="menu-text">Software</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../publications.html"> 
+    <a class="nav-link" href="../../../../publications.html"> 
 <span class="menu-text">Research and publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../cv.pdf"> <i class="bi bi-pdf" role="img">
+    <a class="nav-link" href="../../../../cv.pdf"> <i class="bi bi-pdf" role="img">
 </i> 
 <span class="menu-text">cv</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../blog/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -387,23 +378,43 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(10)</span></div><div class="category" data-category="Q29ycG9yYXRlJTIwc29jaWFsJTIwcmVzcG9uc2liaWxpdHk=">Corporate social responsibility <span class="quarto-category-count">(1)</span></div><div class="category" data-category="RWNvbG9neQ==">Ecology <span class="quarto-category-count">(1)</span></div><div class="category" data-category="RWNvbm9tZXRyaWNz">Econometrics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SW5kZXglMjBudW1iZXJz">Index numbers <span class="quarto-category-count">(6)</span></div><div class="category" data-category="SW5lcXVhbGl0aWVz">Inequalities <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TWV0YXByb2dyYW1taW5n">Metaprogramming <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UGVyZm9ybWFuY2U=">Performance <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UHl0aG9u">Python <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Ug==">R <span class="quarto-category-count">(7)</span></div><div class="category" data-category="UmVwcm9kdWNpYmlsaXR5">Reproducibility <span class="quarto-category-count">(1)</span></div></div></div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Inflationary Tendencies</h1>
-</div>
+<h1 class="title">Decomposing indexes with Euler weights</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Index numbers</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    The decomposition of the Fisher index based on Euler weights is a simple and straightforward way to decompose this index-number formula. But this technique can be applied to a wide range of index-numbers forulas. I show what some of these decompositions look like and explore some properties of decomposition based on Euler weights that are not obvious from the Fisher index alone.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Steve Martin <a href="https://orcid.org/0000-0003-2544-9480" class="quarto-title-author-orcid" aria-label="ORCID profile for Steve Martin"> <img alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 7, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -413,340 +424,70 @@ window.Quarto = {
 </header>
 
 
-<p>Welcome to my blog. I write about topics in economics, statistics, and open source software (mostly so I don’t forget about it). All views expressed here are my own and do not necessarily reflect those of my employer or any affiliated organizations.</p>
+<p>I’ve always liked <span class="citation" data-cites="hallerbach2005">Hallerbach (<a href="#ref-hallerbach2005" role="doc-biblioref">2005</a>)</span>’s decomposition of the Fisher index. It’s such a simple and straightforward way to decompose the Fisher index that generalizes to a wide range of index-number formulas. The latter has, to my knowledge, not been explored before, and Hallerbach’s approach of using Euler weights to decompose an index number is instead associated with the Fisher index. What I want to do here is explore this decomposition in more detail and show a couple properties that aren’t obvious when decomposing the Fisher index alone.</p>
+<p>Let’s start with the family of generalized-mean indexes. For an index based on a generalized mean of order <span class="math inline">\(\rho\)</span>,</p>
+<p><span class="math display">\[
+\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w}) =
+\begin{cases}
+\left(\sum_{i = 1}^{n} w_{i} r_i^{\rho}\right)^{1 / \rho} &amp; \text{if } \rho \neq 0 \\
+\prod_{i = 1}^{n} r_{i}^{w_{i}} &amp; \text{if } \rho = 0,
+\end{cases}
+\]</span> the derivative with respect to <span class="math inline">\(r_{i}\)</span> is <span id="eq-euler1"><span class="math display">\[
+\frac{\partial \mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}{\partial r_{i}} = w_{i} \left(\frac{r_{i}}{\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}\right)^{\rho - 1}.
+\tag{1}\]</span></span> Multiplying each of these terms by <span class="math inline">\(r_{i}\)</span> and summing gives the value of <span class="math inline">\(\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})\)</span>.</p>
+<p><a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> is similar in form to the generalized additive decomposition by <span class="citation" data-cites="martin2021">Martin (<a href="#ref-martin2021" role="doc-biblioref">2021</a>)</span> <span id="eq-logmean1"><span class="math display">\[
+w_{i} \mathfrak{L}_{\rho}(r_i, \mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w}))^{\rho - 1} \Bigg/ \sum_{j=1}^{n} w_{j} \mathfrak{L}_{\rho}(r_j, \mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w}))^{\rho - 1},
+\tag{2}\]</span></span> where <span class="math inline">\(\mathfrak{L}\)</span> is the generalized logarithmic mean <span class="citation" data-cites="balk2008">(<a href="#ref-balk2008" role="doc-biblioref">Balk 2008, chap. 4</a>)</span>. As with <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a>, multiplying each of these terms by <span class="math inline">\(r_{i}\)</span> and summing returns the values of the generalized mean. In both cases, these decompositions work by shifting weight to the larger <span class="math inline">\(r_{i}\)</span>s when <span class="math inline">\(\rho &gt; 1\)</span> and shifting weight to the smaller <span class="math inline">\(r_{i}\)</span>s when <span class="math inline">\(\rho &lt; 1\)</span>. The break point is particularly clean for <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a>, as an <span class="math inline">\(r_{i}\)</span> above the mean gets more (less) weight whenever <span class="math inline">\(\rho &gt; 1\)</span> (<span class="math inline">\(\rho &lt; 1\)</span>), whereas this need not be true for <a href="#eq-logmean1" class="quarto-xref">Equation&nbsp;2</a>.</p>
+<p>Except when <span class="math inline">\(\rho = 1\)</span> (additive decomposition for an arithmetic mean) or all <span class="math inline">\(r_{i}\)</span> are the same, <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> and <a href="#eq-logmean1" class="quarto-xref">Equation&nbsp;2</a> give different decompositions. In particular, the terms in <a href="#eq-logmean1" class="quarto-xref">Equation&nbsp;2</a> always sum to 1, whereas <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> is greater than 1 whenever <span class="math inline">\(\rho &lt; 1\)</span> and less than 1 whenever <span class="math inline">\(\rho &gt; 1\)</span>. To see this, note that the sum of <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> is</p>
+<p><span class="math display">\[
+\frac{\sum_{i=1}^{n} w_{i}r_{i}^{\rho - 1}}{\mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w})^{\rho - 1}}.
+\]</span> If <span class="math inline">\(\rho &gt; 1\)</span> then this must be less than 1 because the generalized mean in an increasing function of <span class="math inline">\(\rho\)</span>. If <span class="math inline">\(\rho &lt; 1\)</span> then the inequality is reversed. This is in contrast to decomposition by <span class="citation" data-cites="hallerbach2005">Hallerbach (<a href="#ref-hallerbach2005" role="doc-biblioref">2005</a>)</span> where the Euler weights for Fisher index are always greater than 1 (unless the Laspeyres and Paasche indexes are equal, in which case the weights sum to 1).</p>
+<p>A stark example of the difference between the two decompositions is the additive decomposition of the geometric mean: each <span class="math inline">\(i\)</span> in <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> gets the same value when multiplied by <span class="math inline">\(r_{i}\)</span>, whereas <a href="#eq-logmean1" class="quarto-xref">Equation&nbsp;2</a> is increasing with respect to <span class="math inline">\(r_{i}\)</span>.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> This seems like a counter-intuitive property for the decomposition of an index based on the geometric mean. <a href="#eq-logmean1" class="quarto-xref">Equation&nbsp;2</a> transfers weight from the larger <span class="math inline">\(r_{i}\)</span>s to the smaller ones—so that the arithmetic mean equals the geometric one—to determine the contribution of each <span class="math inline">\(r_{i}\)</span> while preserving the overall ranking. Instead, <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> divides the value of the geometric mean into equal parts so that the sum equals the geometric mean, independent of the value of each <span class="math inline">\(r_{i}\)</span>.</p>
+<p><a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> can be extended to the family indexes based on nested generalized means. For a pair of generalized means <span class="math inline">\(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2})=\left(\mathfrak{M}_{\rho_1}(\mathbf{r}, \mathbf{w}_1), \mathfrak{M}_{\rho_2}(\mathbf{r}, \mathbf{w}_2)\right)\)</span> with weights <span class="math inline">\(\mathbf{\omega}=(\omega_1, \omega_2)\)</span>, an index based on nested generalized means is written as <span class="math display">\[
+\mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right).
+\]</span> The Euler weights for this index are then</p>
+<p><span id="eq-euler2"><span class="math display">\[
+\begin{align*}
+\frac{\partial \mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right)}{\partial r_{i}} &amp;= \omega_{1} \left(\frac{\mathfrak{M}_{\rho_{1}}(\mathbf{r}, \mathbf{w_{1}})}{\mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right)}\right)^{\rho - 1} w_{i1} \left(\frac{r_{i}}{\mathfrak{M}_{\rho_{1}}(\mathbf{r}, \mathbf{w_{1}})}\right)^{\rho_{1} - 1}\\
+&amp;+ \omega_{2} \left(\frac{\mathfrak{M}_{\rho_{2}}(\mathbf{r}, \mathbf{w_{2}})}{\mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right)}\right)^{\rho - 1} w_{i2} \left(\frac{r_{i}}{\mathfrak{M}_{\rho_{2}}(\mathbf{r}, \mathbf{w_{2}})}\right)^{\rho_{2} - 1}.
+\end{align*}
+\tag{3}\]</span></span></p>
+<p>For the Fisher index (<span class="math inline">\(\rho = 0\)</span>, <span class="math inline">\(\rho_{1} = 1\)</span>, <span class="math inline">\(\rho_{2} = -1\)</span>, <span class="math inline">\(\omega_{1} = \omega_{2} = 1 / 2\)</span>), <a href="#eq-euler2" class="quarto-xref">Equation&nbsp;3</a> simplifies to</p>
+<p><span class="math display">\[
+\frac{1}{2}\sqrt{\frac{\mathfrak{M}_{-1}(\mathbf{r}, \mathbf{w_{2}})}{\mathfrak{M}_{1}(\mathbf{r}, \mathbf{w_{1})}}} w_{i1} + \frac{1}{2}\sqrt{\frac{\mathfrak{M}_{1}(\mathbf{r}, \mathbf{w_{1}})}{\mathfrak{M}_{-1}(\mathbf{r}, \mathbf{w_{2})}}} w_{i2} \left(\frac{r_{i}}{\mathfrak{M}_{-1}(\mathbf{r}, \mathbf{w_{2}})}\right)^{-2}.
+\]</span></p>
+<p>Note that the second term is not the same as in Equation 13 by <span class="citation" data-cites="hallerbach2005">Hallerbach (<a href="#ref-hallerbach2005" role="doc-biblioref">2005</a>)</span>. Applying <a href="#eq-logmean1" class="quarto-xref">Equation&nbsp;2</a> to transmute the weights <span class="math inline">\(\mathbf{w}_{2}\)</span> to represent the harmonic mean as an arithmetic mean (i.e., hybrid weights for the Paasche index) yields the decomposition due to <span class="citation" data-cites="hallerbach2005">Hallerbach (<a href="#ref-hallerbach2005" role="doc-biblioref">2005</a>)</span>. But this alternate form is interesting because it gives larger weights that are strictly greater than 1 even when the Laspeyres and Paasche indexes are the same (unless all <span class="math inline">\(r_{i}\)</span> are the same). This suggests that <a href="#eq-euler1" class="quarto-xref">Equation&nbsp;1</a> can be combined with <a href="#eq-logmean1" class="quarto-xref">Equation&nbsp;2</a> to produce even more decompositions based on Euler weights.</p>
 
 
 
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="SW5kZXglMjBudW1iZXJz" data-listing-date-sort="1786060800000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="774">
-<div class="thumbnail"><a href="../blog/posts/2026/euler/index.html" class="no-external">
 
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-balk2008" class="csl-entry" role="listitem">
+Balk, Bert M. 2008. <em>Price and Quantity Index Numbers: Models for Measuring Aggregate Change and Difference</em>. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511720758">https://doi.org/10.1017/CBO9780511720758</a>.
+</div>
+<div id="ref-hallerbach2005" class="csl-entry" role="listitem">
+Hallerbach, W. G. 2005. <span>“An Alternative Decomposition of the <span>F</span>isher Index.”</span> <em>Economics Letters</em> 86 (2): 147–52. <a href="https://doi.org/10.1016/j.econlet.2004.07.008">https://doi.org/10.1016/j.econlet.2004.07.008</a>.
+</div>
+<div id="ref-martin2021" class="csl-entry" role="listitem">
+Martin, S. 2021. <em>A Note on Generalized Decompositions for Price Indexes</em>. Prices Analytical Series. Statistics Canada. <a href="https://www150.statcan.gc.ca/n1/pub/62f0014m/62f0014m2021012-eng.htm">https://www150.statcan.gc.ca/n1/pub/62f0014m/62f0014m2021012-eng.htm</a>.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2026/euler/index.html" class="no-external">Decomposing indexes with Euler weights</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2026/euler/index.html" class="no-external">
-<p>The decomposition of the Fisher index based on Euler weights is a simple and straightforward way to decompose this index-number formula. But this technique can be applied to a wide range of index-numbers forulas. I show what some of these decompositions look like and explore some properties of decomposition based on Euler weights that are not obvious from the Fisher index alone.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2026/euler/index.html" class="no-external">
-<div class="listing-date">
-Aug 7, 2026
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="TWV0YXByb2dyYW1taW5nJTJDUg==" data-listing-date-sort="1782086400000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="287">
-<div class="thumbnail"><a href="../blog/posts/2026/metaprogramming/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2026/metaprogramming/index.html" class="no-external">Fun with anonymous functions in R</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('TWV0YXByb2dyYW1taW5n'); return false;">Metaprogramming</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2026/metaprogramming/index.html" class="no-external">
-<p>A fun distraction to make an alternate syntax for anonymous functions in R.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2026/metaprogramming/index.html" class="no-external">
-<div class="listing-date">
-Jun 22, 2026
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="SW5kZXglMjBudW1iZXJzJTJDUg==" data-listing-date-sort="1781481600000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="593">
-<div class="thumbnail"><a href="../blog/posts/2026/consistency/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2026/consistency/index.html" class="no-external">Consistency in aggregation of the Fisher index</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2026/consistency/index.html" class="no-external">
-<p>How can the Fisher index be consistent in aggregation? I wanted to work through an example to better unstand what consistency-in-aggregation means for this index.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2026/consistency/index.html" class="no-external">
-<div class="listing-date">
-Jun 15, 2026
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="UmVwcm9kdWNpYmlsaXR5JTJDUg==" data-listing-date-sort="1774742400000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="920">
-<div class="thumbnail"><a href="../blog/posts/2026/formats/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2026/formats/index.html" class="no-external">Reproduction-resistant file formats</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('UmVwcm9kdWNpYmlsaXR5'); return false;">Reproducibility</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2026/formats/index.html" class="no-external">
-<p>Why do certain file formats resist reproducible workflows?</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2026/formats/index.html" class="no-external">
-<div class="listing-date">
-Mar 29, 2026
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="Q29ycG9yYXRlJTIwc29jaWFsJTIwcmVzcG9uc2liaWxpdHklMkNJbmRleCUyMG51bWJlcnMlMkNQeXRob24=" data-listing-date-sort="1767571200000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1906">
-<div class="thumbnail"><a href="../blog/posts/2026/morality/index.html" class="no-external">
-
-<p class="card-img-top"><img loading='lazy' src="posts/2026/morality/index_files/figure-html/cell-3-output-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2026/morality/index.html" class="no-external">The price of morality</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Q29ycG9yYXRlJTIwc29jaWFsJTIwcmVzcG9uc2liaWxpdHk='); return false;">Corporate social responsibility</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">Python</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2026/morality/index.html" class="no-external">
-<p>What would happen to prices if firms started internalizing the social impact of their behavior?</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2026/morality/index.html" class="no-external">
-<div class="listing-date">
-Jan 5, 2026
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="UGVyZm9ybWFuY2UlMkNJbmRleCUyMG51bWJlcnMlMkNS" data-listing-date-sort="1763942400000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1557">
-<div class="thumbnail"><a href="../blog/posts/2025/multilaterals/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/multilaterals/index.html" class="no-external">Making big multilateral indexes fast</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('UGVyZm9ybWFuY2U='); return false;">Performance</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/multilaterals/index.html" class="no-external">
-<p>Multilateral price indexes that use large volumes of transaction data can be challenging to compute. I show some tricks to calculate big indexes fast.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/multilaterals/index.html" class="no-external">
-<div class="listing-date">
-Nov 24, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-categories="SW5lcXVhbGl0aWVzJTJDUg==" data-listing-date-sort="1762905600000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="868">
-<div class="thumbnail"><a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">
-
-<p class="card-img-top"><img loading='lazy' src="posts/2025/variance-inequality/index_files/figure-html/unnamed-chunk-2-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">How does the difference between the arithmetic and geometric mean depend on variance?</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5lcXVhbGl0aWVz'); return false;">Inequalities</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">
-<p>It’s well known that the arithmetic mean is larger than the geometric mean, but how does the difference between these means relate to variance?</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/variance-inequality/index.html" class="no-external">
-<div class="listing-date">
-Nov 12, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="7" data-categories="SW5kZXglMjBudW1iZXJzJTJDRWNvbm9tZXRyaWNzJTJDUg==" data-listing-date-sort="1761523200000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="1764115200000" data-listing-reading-time-sort="6" data-listing-word-count-sort="1144">
-<div class="thumbnail"><a href="../blog/posts/2025/hedonics/index.html" class="no-external">
-
-<p class="card-img-top"><img loading='lazy' src="posts/2025/hedonics/index_files/figure-html/unnamed-chunk-8-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/hedonics/index.html" class="no-external">Hedonic imputation with one regression, not two</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('RWNvbm9tZXRyaWNz'); return false;">Econometrics</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/hedonics/index.html" class="no-external">
-<p>Hedonic imputation is a standard method to compare prices over time when the composition of products also changes. In all cases I’ve seen, the method is implemented by using the fitted values from two regression models. I show how it can be done with one regression.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/hedonics/index.html" class="no-external">
-<div class="listing-date">
-Oct 27, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="8" data-categories="SW5kZXglMjBudW1iZXJzJTJDUHl0aG9u" data-listing-date-sort="1761091200000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="1761609600000" data-listing-reading-time-sort="5" data-listing-word-count-sort="967">
-<div class="thumbnail"><a href="../blog/posts/2025/inflation/index.html" class="no-external">
-
-<p class="card-img-top"><img loading='lazy' src="posts/2025/inflation/index_files/figure-html/cell-4-output-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/inflation/index.html" class="no-external">What causes inflation?</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SW5kZXglMjBudW1iZXJz'); return false;">Index numbers</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UHl0aG9u'); return false;">Python</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/inflation/index.html" class="no-external">
-<p>Long-term inflation requires something that increase prices and grow without bound (i.e., money supply). I show that the way that inflation is measured can itself be a source of inflation.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/inflation/index.html" class="no-external">
-<div class="listing-date">
-Oct 22, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="9" data-categories="RWNvbG9neSUyQ1I=" data-listing-date-sort="1760832000000" data-listing-file-modified-sort="1786076563890" data-listing-date-modified-sort="1761609600000" data-listing-reading-time-sort="4" data-listing-word-count-sort="718">
-<div class="thumbnail"><a href="../blog/posts/2025/diversity/index.html" class="no-external">
-
-<p class="card-img-top"><img loading='lazy' src="posts/2025/diversity/index_files/figure-html/unnamed-chunk-1-1.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../blog/posts/2025/diversity/index.html" class="no-external">Decomposing diversity indexes</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('RWNvbG9neQ=='); return false;">Ecology</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
-
-</div>
-<div class="delink listing-description"><a href="../blog/posts/2025/diversity/index.html" class="no-external">
-<p>A diversity index is a way to measure the prevalence of different species in an ecosystem. I show how methods from the price-index literature can be used to decompose a diversity index into the contribution of each species towards overall diversity.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../blog/posts/2025/diversity/index.html" class="no-external">
-<div class="listing-date">
-Oct 19, 2025
-</div>
-<div class="listing-author">
-Steve Martin
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+<ol>
+<li id="fn1"><p>To see this, note that <span class="math inline">\(\partial (x / \mathfrak{L}(x, y))/ \partial x &gt; 0\)</span> if <span class="math inline">\(x - y &gt; y \log(x / y)\)</span>. This is true whenever <span class="math inline">\(x \neq y\)</span> because <span class="math inline">\(\min(x, y) &lt; \mathfrak{L}(x , y) &lt; \max(x, y)\)</span>; otherwise, <span class="math inline">\(\partial (x / \mathfrak{L}(x, y))/ \partial x = 0\)</span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section><section class="quarto-appendix-contents" id="quarto-reuse"><h2 class="anchored quarto-appendix-heading">Reuse</h2><div class="quarto-appendix-contents"><div><a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></div></div></section><section class="quarto-appendix-contents" id="quarto-citation"><h2 class="anchored quarto-appendix-heading">Citation</h2><div><div class="quarto-appendix-secondary-label">BibTeX citation:</div><pre class="sourceCode code-with-copy quarto-appendix-bibtex"><code class="sourceCode bibtex">@online{martin2026,
+  author = {Martin, Steve},
+  title = {Decomposing Indexes with {Euler} Weights},
+  date = {2026-08-07},
+  url = {https://marberts.github.io/blog/posts/2026/euler/},
+  langid = {en}
+}
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre><div class="quarto-appendix-secondary-label">For attribution, please cite this work as:</div><div id="ref-martin2026" class="csl-entry quarto-appendix-citeas" role="listitem">
+Martin, Steve. 2026. <span>“Decomposing Indexes with Euler
+Weights.”</span> August 7. <a href="https://marberts.github.io/blog/posts/2026/euler/">https://marberts.github.io/blog/posts/2026/euler/</a>.
+</div></div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
