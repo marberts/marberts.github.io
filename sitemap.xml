@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://marberts.github.io/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.893Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/blog/posts/2026/formats/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/blog/posts/2026/morality/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/blog/posts/2026/consistency/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/blog/posts/2025/variance-inequality/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/blog/posts/2025/diversity/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
-  </url>
-  <url>
     <loc>https://marberts.github.io/software.html</loc>
-    <lastmod>2026-08-07T04:22:43.893Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/about.html</loc>
-    <lastmod>2026-08-07T04:22:43.889Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/publications.html</loc>
-    <lastmod>2026-08-07T04:22:43.893Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/blog/posts/2025/hedonics/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
-  </url>
-  <url>
-    <loc>https://marberts.github.io/blog/posts/2025/multilaterals/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
+    <lastmod>2026-08-07T11:29:36.988Z</lastmod>
   </url>
   <url>
     <loc>https://marberts.github.io/blog/posts/2025/inflation/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
   </url>
   <url>
-    <loc>https://marberts.github.io/blog/posts/2026/metaprogramming/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
+    <loc>https://marberts.github.io/blog/posts/2025/diversity/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
   </url>
   <url>
     <loc>https://marberts.github.io/blog/posts/2026/euler/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.890Z</lastmod>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/blog/posts/2026/formats/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/blog/posts/2026/consistency/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/publications.html</loc>
+    <lastmod>2026-08-07T11:29:36.988Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.988Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/about.html</loc>
+    <lastmod>2026-08-07T11:29:36.985Z</lastmod>
   </url>
   <url>
     <loc>https://marberts.github.io/blog/index.html</loc>
-    <lastmod>2026-08-07T04:22:43.889Z</lastmod>
+    <lastmod>2026-08-07T11:29:36.985Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/blog/posts/2026/metaprogramming/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/blog/posts/2026/morality/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/blog/posts/2025/multilaterals/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/blog/posts/2025/hedonics/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://marberts.github.io/blog/posts/2025/variance-inequality/index.html</loc>
+    <lastmod>2026-08-07T11:29:36.986Z</lastmod>
   </url>
 </urlset>
