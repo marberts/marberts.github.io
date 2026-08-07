@@ -1,0 +1,65 @@
+---
+title: "Decomposing indexes with Euler weights"
+date: "2026-08-07"
+categories:
+  - Index numbers
+description: The decomposition of the Fisher index based on Euler weights is a simple and straightforward way to decompose this index-number formula. But this technique can be applied to a wide range of index-numbers forulas. I show what some of these decompositions look like and explore some properties of decomposition based on Euler weights that are not obvious from the Fisher index alone.
+engine: knitr
+# doi: 10.59350/f0qs7-tfe09 
+---
+
+I've always liked @hallerbach2005's decomposition of the Fisher index. It's such a simple and straightforward way to decompose the Fisher index that generalizes to a wide range of index-number formulas. The latter has, to my knowledge, not been explored before, and Hallerbach's approach of using Euler weights to decompose an index number is instead associated with the Fisher index. What I want to do here is explore this decomposition in more detail and show a couple properties that aren't obvious when decomposing the Fisher index alone.
+
+Let's start with the family of generalized-mean indexes. For an index based on a generalized mean of order $\rho$,
+
+$$
+\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w}) = 
+\begin{cases}
+\left(\sum_{i = 1}^{n} w_{i} r_i^{\rho}\right)^{1 / \rho} & \text{if } \rho \neq 0 \\
+\prod_{i = 1}^{n} r_{i}^{w_{i}} & \text{if } \rho = 0,
+\end{cases}
+$$
+the derivative with respect to $r_{i}$ is
+$$
+\frac{\partial \mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}{\partial r_{i}} = w_{i} \left(\frac{r_{i}}{\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}\right)^{\rho - 1}.
+$${#eq-euler1}
+Multiplying each of these terms by $r_{i}$ and summing gives the value of $\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})$.
+
+@eq-euler1 is similar in form to the generalized additive decomposition by @martin2021
+$$
+ w_{i} \mathfrak{L}_{\rho}(r_i, \mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w}))^{\rho - 1} \Bigg/ \sum_{j=1}^{n} w_{j} \mathfrak{L}_{\rho}(r_j, \mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w}))^{\rho - 1},
+$${#eq-logmean1}
+where $\mathfrak{L}$ is the generalized logarithmic mean [@balk2008, Chapter 4]. As with @eq-euler1, multiplying each of these terms by $r_{i}$ and summing returns the values of the generalized mean. In both cases, these decompositions work by shifting weight to the larger $r_{i}$s when $\rho > 1$ and shifting weight to the smaller $r_{i}$s when $\rho < 1$. The break point is particularly clean for @eq-euler1, as an $r_{i}$ above the mean gets more (less) weight whenever $\rho > 1$ ($\rho < 1$), whereas this need not be true for @eq-logmean1.
+
+Except when $\rho = 1$ (additive decomposition for an arithmetic mean) or all $r_{i}$ are the same, @eq-euler1 and @eq-logmean1 give different decompositions. In particular, the terms in @eq-logmean1 always sum to 1, whereas @eq-euler1 is greater than 1 whenever $\rho < 1$ and less than 1 whenever $\rho > 1$. To see this, note that the sum of @eq-euler1 is
+
+$$
+\frac{\sum_{i=1}^{n} w_{i}r_{i}^{\rho - 1}}{\mathfrak{M}_{\rho} (\mathbf{r}, \mathbf{w})^{\rho - 1}}.
+$$
+If $\rho > 1$ then this must be less than 1 because the generalized mean in an increasing function of $\rho$. If $\rho < 1$ then the inequality is reversed. This is in contrast to decomposition by @hallerbach2005 where the Euler weights for Fisher index are always greater than 1 (unless the Laspeyres and Paasche indexes are equal, in which case the weights sum to 1).
+
+A stark example of the difference between the two decompositions is the additive decomposition of the geometric mean: each $i$ in @eq-euler1 gets the same value when multiplied by $r_{i}$, whereas @eq-logmean1 is increasing with respect to $r_{i}$.[^1] This seems like a counter-intuitive property for the decomposition of an index based on the geometric mean. @eq-logmean1 transfers weight from the larger $r_{i}$s to the smaller ones---so that the arithmetic mean equals the geometric one---to determine the contribution of each $r_{i}$ while preserving the overall ranking. Instead, @eq-euler1 divides the value of the geometric mean into equal parts so that the sum equals the geometric mean, independent of the value of each $r_{i}$.
+
+[^1]: To see this, note that $\partial (x / \mathfrak{L}(x, y))/ \partial x > 0$ if $x - y > y \log(x / y)$. This is true whenever $x \neq y$ because $\min(x, y) < \mathfrak{L}(x , y) < \max(x, y)$; otherwise, $\partial (x / \mathfrak{L}(x, y))/ \partial x = 0$.
+
+@eq-euler1 can be extended to the family indexes based on nested generalized means. For a pair of generalized means $\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2})=\left(\mathfrak{M}_{\rho_1}(\mathbf{r}, \mathbf{w}_1), \mathfrak{M}_{\rho_2}(\mathbf{r}, \mathbf{w}_2)\right)$ with weights $\mathbf{\omega}=(\omega_1, \omega_2)$, an index based on nested generalized means is written as
+$$
+\mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right).
+$$
+The Euler weights for this index are then
+
+$$
+\begin{align*}
+\frac{\partial \mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right)}{\partial r_{i}} &= \omega_{1} \left(\frac{\mathfrak{M}_{\rho_{1}}(\mathbf{r}, \mathbf{w_{1}})}{\mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right)}\right)^{\rho - 1} w_{i1} \left(\frac{r_{i}}{\mathfrak{M}_{\rho_{1}}(\mathbf{r}, \mathbf{w_{1}})}\right)^{\rho_{1} - 1}\\
+&+ \omega_{2} \left(\frac{\mathfrak{M}_{\rho_{2}}(\mathbf{r}, \mathbf{w_{2}})}{\mathfrak{M}_{\rho}\left(\mathfrak{N}_{\rho_{1}\rho_{2}}(\mathbf{r}, \mathbf{w}_{1}, \mathbf{w}_{2}), \mathbf{\omega}\right)}\right)^{\rho - 1} w_{i2} \left(\frac{r_{i}}{\mathfrak{M}_{\rho_{2}}(\mathbf{r}, \mathbf{w_{2}})}\right)^{\rho_{2} - 1}.
+\end{align*}
+$${#eq-euler2}
+
+For the Fisher index ($\rho = 0$, $\rho_{1} = 1$, $\rho_{2} = -1$, $\omega_{1} = \omega_{2} = 1 / 2$), @eq-euler2 simplifies to
+
+$$
+\frac{1}{2}\sqrt{\frac{\mathfrak{M}_{-1}(\mathbf{r}, \mathbf{w_{2}})}{\mathfrak{M}_{1}(\mathbf{r}, \mathbf{w_{1})}}} w_{i1} + \frac{1}{2}\sqrt{\frac{\mathfrak{M}_{1}(\mathbf{r}, \mathbf{w_{1}})}{\mathfrak{M}_{-1}(\mathbf{r}, \mathbf{w_{2})}}} w_{i2} \left(\frac{r_{i}}{\mathfrak{M}_{-1}(\mathbf{r}, \mathbf{w_{2}})}\right)^{-2}. 
+$$
+
+Note that the second term is not the same as in Equation 13 by @hallerbach2005. Applying @eq-logmean1 to transmute the weights $\mathbf{w}_{2}$ to represent the harmonic mean as an arithmetic mean (i.e., hybrid weights for the Paasche index) yields the decomposition due to @hallerbach2005. But this alternate form is interesting because it gives larger weights that are strictly greater than 1 even when the Laspeyres and Paasche indexes are the same (unless all $r_{i}$ are the same). This suggests that @eq-euler1 can be combined with @eq-logmean1 to produce even more decompositions based on Euler weights.
+
