@@ -4,7 +4,7 @@ date: "2026-08-07"
 categories:
   - Index numbers
 description: The decomposition of the Fisher index based on Euler weights is a simple and straightforward way to decompose this index-number formula. But this technique can be applied to a wide range of index-numbers forulas. I show what some of these decompositions look like and explore some properties of decomposition based on Euler weights that are not obvious from the Fisher index alone.
-# doi: 10.59350/f0qs7-tfe09 
+doi: 10.59350/jwyjp-wqm17
 ---
 
 I've always liked @hallerbach2005's decomposition of the Fisher index. It's such a simple and straightforward way to decompose the Fisher index that generalizes to a wide range of index-number formulas. The latter has, to my knowledge, not been explored before, and Hallerbach's approach of using Euler weights to decompose an index number is instead associated with the Fisher index. What I want to do here is explore this decomposition in more detail and show a couple properties that aren't obvious when decomposing the Fisher index alone.
