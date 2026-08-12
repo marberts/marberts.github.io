@@ -22,7 +22,7 @@ the derivative with respect to $r_{i}$ is
 $$
 \frac{\partial \mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}{\partial r_{i}} = w_{i} \left(\frac{r_{i}}{\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})}\right)^{\rho - 1}.
 $${#eq-euler1}
-Multiplying each of these terms by $r_{i}$ and summing gives the value of $\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})$.
+The generalized mean is a homogeneous function, so multiplying each of these terms by $r_{i}$ and summing gives the value of $\mathfrak{M}_{\rho}(\mathbf{r}, \mathbf{w})$ by [Euler's theorem](https://en.wikipedia.org/wiki/Homogeneous_function#Euler's_theorem).
 
 @eq-euler1 is similar in form to the generalized additive decomposition by @martin2021
 $$
